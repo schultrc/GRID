@@ -1,0 +1,11 @@
+/DenyAllFilter.class
+/ExternallyRolledFileAppender.class
+/FallbackErrorHandler.class
+/HUP.class
+/HUPNode.class
+/LevelMatchFilter.class
+/LevelRangeFilter.class
+/NullAppender.class
+/ReloadingPropertyConfigurator.class
+/Roller.class
+/StringMatchFilter.class

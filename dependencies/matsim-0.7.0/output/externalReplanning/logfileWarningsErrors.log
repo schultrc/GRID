@@ -1,0 +1,58 @@
+2016-04-04 10:49:56,985  WARN PlanCalcScoreConfigGroup$ActivityParams:645 Setting minimalDuration different from zero is discouraged.  It is probably implemented correctly, but there is as of now no indication that it makes the results more realistic.  KN, Sep'08 This message given only once.
+2016-04-04 10:49:57,704  WARN QueueWithBuffer:426 Link 1 too small: enlarge storage capacity from: 1333.3333333333333 Vehicles to: 3599.712023038157 Vehicles.  This is not fatal, but modifies the traffic flow dynamics.
+2016-04-04 10:49:57,705  WARN QueueWithBuffer:426 Link 20 too small: enlarge storage capacity from: 1333.3333333333333 Vehicles to: 3599.712023038157 Vehicles.  This is not fatal, but modifies the traffic flow dynamics.
+2016-04-04 10:49:57,705  WARN QueueWithBuffer:426 Link 21 too small: enlarge storage capacity from: 1333.3333333333333 Vehicles to: 3599.712023038157 Vehicles.  This is not fatal, but modifies the traffic flow dynamics.
+2016-04-04 10:49:57,705  WARN QueueWithBuffer:426 Link 22 too small: enlarge storage capacity from: 4666.666666666667 Vehicles to: 12598.99208063355 Vehicles.  This is not fatal, but modifies the traffic flow dynamics.
+2016-04-04 10:49:57,705  WARN QueueWithBuffer:426 Link 23 too small: enlarge storage capacity from: 1333.3333333333333 Vehicles to: 3599.712023038157 Vehicles.  This is not fatal, but modifies the traffic flow dynamics.
+2016-04-04 10:49:57,712  WARN QVehicle:74 No VehicleCapacity (= maximum number of passengers) set in Vehicle. Using default value of 4.  This is only a problem if you need vehicles with different capacities, e.g. for minibuses.
+2016-04-04 10:49:57,712  WARN QVehicle:74 No VehicleCapacity (= maximum number of passengers) set in Vehicle. Using default value of 4.  This is only a problem if you need vehicles with different capacities, e.g. for minibuses.
+2016-04-04 10:49:57,712  WARN QVehicle:74 No VehicleCapacity (= maximum number of passengers) set in Vehicle. Using default value of 4.  This is only a problem if you need vehicles with different capacities, e.g. for minibuses.
+2016-04-04 10:49:57,712  WARN QVehicle:74 No VehicleCapacity (= maximum number of passengers) set in Vehicle. Using default value of 4.  This is only a problem if you need vehicles with different capacities, e.g. for minibuses.
+2016-04-04 10:49:57,712  WARN QVehicle:74 No VehicleCapacity (= maximum number of passengers) set in Vehicle. Using default value of 4.  This is only a problem if you need vehicles with different capacities, e.g. for minibuses.
+2016-04-04 10:49:57,712  WARN QVehicle:74 No VehicleCapacity (= maximum number of passengers) set in Vehicle. Using default value of 4.  This is only a problem if you need vehicles with different capacities, e.g. for minibuses.
+2016-04-04 10:49:57,712  WARN QVehicle:74 No VehicleCapacity (= maximum number of passengers) set in Vehicle. Using default value of 4.  This is only a problem if you need vehicles with different capacities, e.g. for minibuses.
+2016-04-04 10:49:57,712  WARN QVehicle:74 No VehicleCapacity (= maximum number of passengers) set in Vehicle. Using default value of 4.  This is only a problem if you need vehicles with different capacities, e.g. for minibuses.
+2016-04-04 10:49:57,712  WARN QVehicle:74 No VehicleCapacity (= maximum number of passengers) set in Vehicle. Using default value of 4.  This is only a problem if you need vehicles with different capacities, e.g. for minibuses.
+2016-04-04 10:49:57,712  WARN QVehicle:74 No VehicleCapacity (= maximum number of passengers) set in Vehicle. Using default value of 4.  This is only a problem if you need vehicles with different capacities, e.g. for minibuses.
+2016-04-04 10:49:57,712  WARN QVehicle:79  Future occurences of this logging statement are suppressed.
+2016-04-04 10:49:57,777  WARN CharyparNagelActivityScoring:212 encountering duration < zeroUtilityDuration; the logic for this was changed around mid-nov 2013.
+2016-04-04 10:49:57,777  WARN CharyparNagelActivityScoring:213 your final score thus will be different from earlier runs; set usingOldScoringBelowZeroUtilityDuration to true if you absolutely need the old version.  See https://matsim.atlassian.net/browse/MATSIM-191.
+2016-04-04 10:49:57,777  WARN CharyparNagelActivityScoring:215  This message given only once.
+2016-04-04 10:49:58,585 ERROR AbstractController:175 Getting uncaught Exception in Thread main
+java.lang.RuntimeException: External Replanning exited with error.
+	at org.matsim.core.replanning.modules.ExternalModule.finishReplanning(ExternalModule.java:139)
+	at org.matsim.core.replanning.GenericPlanStrategyImpl.finish(GenericPlanStrategyImpl.java:114)
+	at org.matsim.core.replanning.GenericStrategyManager.run(GenericStrategyManager.java:216)
+	at org.matsim.core.replanning.StrategyManager.run(StrategyManager.java:145)
+	at org.matsim.core.replanning.StrategyManager.run(StrategyManager.java:131)
+	at org.matsim.core.controler.corelisteners.PlansReplanningImpl.notifyReplanning(PlansReplanningImpl.java:53)
+	at org.matsim.core.controler.ControlerListenerManager.fireControlerReplanningEvent(ControlerListenerManager.java:207)
+	at org.matsim.core.controler.AbstractController$3.run(AbstractController.java:256)
+	at org.matsim.core.controler.AbstractController.iterationStep(AbstractController.java:338)
+	at org.matsim.core.controler.AbstractController.iteration(AbstractController.java:253)
+	at org.matsim.core.controler.AbstractController.doIterations(AbstractController.java:198)
+	at org.matsim.core.controler.AbstractController.run(AbstractController.java:139)
+	at org.matsim.core.controler.Controler.run(Controler.java:215)
+	at org.matsim.run.Controler.run(Controler.java:56)
+	at org.matsim.run.Controler.main(Controler.java:60)
+2016-04-04 10:49:58,585 ERROR AbstractController:205 ERROR --- This is an unexpected shutdown!
+2016-04-04 10:49:58,586 ERROR AbstractController:208 Shutdown possibly caused by the following Exception:
+java.lang.RuntimeException: External Replanning exited with error.
+	at org.matsim.core.replanning.modules.ExternalModule.finishReplanning(ExternalModule.java:139)
+	at org.matsim.core.replanning.GenericPlanStrategyImpl.finish(GenericPlanStrategyImpl.java:114)
+	at org.matsim.core.replanning.GenericStrategyManager.run(GenericStrategyManager.java:216)
+	at org.matsim.core.replanning.StrategyManager.run(StrategyManager.java:145)
+	at org.matsim.core.replanning.StrategyManager.run(StrategyManager.java:131)
+	at org.matsim.core.controler.corelisteners.PlansReplanningImpl.notifyReplanning(PlansReplanningImpl.java:53)
+	at org.matsim.core.controler.ControlerListenerManager.fireControlerReplanningEvent(ControlerListenerManager.java:207)
+	at org.matsim.core.controler.AbstractController$3.run(AbstractController.java:256)
+	at org.matsim.core.controler.AbstractController.iterationStep(AbstractController.java:338)
+	at org.matsim.core.controler.AbstractController.iteration(AbstractController.java:253)
+	at org.matsim.core.controler.AbstractController.doIterations(AbstractController.java:198)
+	at org.matsim.core.controler.AbstractController.run(AbstractController.java:139)
+	at org.matsim.core.controler.Controler.run(Controler.java:215)
+	at org.matsim.run.Controler.run(Controler.java:56)
+	at org.matsim.run.Controler.main(Controler.java:60)
+2016-04-04 10:49:58,598 ERROR AbstractController:223 ERROR --- MATSim unexpectedly terminated. Please check the output or the logfile with warnings and errors for hints.
+2016-04-04 10:49:58,598 ERROR AbstractController:224 ERROR --- results should not be used for further analysis.
+2016-04-04 10:49:58,598 ERROR AbstractController:228 ERROR --- This was an unexpected shutdown! See the log file for a possible reason.

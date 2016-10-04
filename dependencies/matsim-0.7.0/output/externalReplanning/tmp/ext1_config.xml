@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE config SYSTEM "http://www.matsim.org/files/dtd/config_v2.dtd">
+<config>
+
+<!-- ====================================================================== -->
+
+	<module name="scenario" >
+		<param name="inputPlansFilename" value="./output/externalReplanning/tmp//ext1_plans.in.xml" />
+		<param name="networkFilename" value="./examples/equil/network.xml" />
+		<param name="workingEventsTxtFilename" value="./output/externalReplanning/ITERS/it.0/0.events.txt" />
+		<param name="workingPlansFilename" value="./output/externalReplanning/tmp//ext1_plans.out.xml" />
+	</module>
+
+<!-- ====================================================================== -->
+
+</config>

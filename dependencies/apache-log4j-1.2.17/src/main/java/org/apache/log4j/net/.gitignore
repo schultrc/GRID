@@ -1,0 +1,15 @@
+/DefaultEvaluator.class
+/JMSAppender.class
+/JMSSink.class
+/SMTPAppender.class
+/SimpleSocketServer.class
+/SocketAppender$Connector.class
+/SocketAppender.class
+/SocketHubAppender$ServerMonitor.class
+/SocketHubAppender.class
+/SocketNode.class
+/SocketServer.class
+/SyslogAppender.class
+/TelnetAppender$SocketHandler.class
+/TelnetAppender.class
+/ZeroConfSupport.class
