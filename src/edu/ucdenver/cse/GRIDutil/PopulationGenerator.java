@@ -33,7 +33,7 @@ public class PopulationGenerator {
 		// Load our version of the map first
 		GRIDmapReader masterMap = new GRIDmapReader();
 		
-		String mapFile = FileUtils.getConfigFile();
+		String mapFile = FileUtils.getXmlFile();
 		myMap = masterMap.readMapFile(mapFile);
 		
 		//Drivers distribution on road

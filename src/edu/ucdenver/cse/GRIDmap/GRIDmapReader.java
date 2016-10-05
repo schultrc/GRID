@@ -12,7 +12,7 @@ public class GRIDmapReader {
 	public GRIDmap readMapFile(String mapFile){
 			
 		if (mapFile == "") {
-			mapFile = FileUtils.getConfigFile(); 
+			mapFile = FileUtils.getXmlFile(); 
 		}
 		
 		try {	
