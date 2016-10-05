@@ -5,12 +5,16 @@ import java.net.*;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDcommon.GRIDrouteRequest;
+import edu.ucdenver.cse.GRIDmap.*;
+import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 
 public class GRIDrequestListenerTCP extends Thread {
 	Socket theSocket = null;
+	private GRIDworld theGRID = null;
 	
-	public GRIDrequestListenerTCP( Socket client){
+	public GRIDrequestListenerTCP( Socket client, GRIDworld grid){
 		this.theSocket = client;
+		this.theGRID    = grid;
 	}
 
 	public void run() {
@@ -25,6 +29,23 @@ public class GRIDrequestListenerTCP extends Thread {
 			// Add more options as we define requests
 			if (theRequest instanceof GRIDrouteRequest) {
 				System.out.println("Route Request Received");
+				
+				// Is this a new agent or an existing one?
+				
+				if (theGRID.getMasterAgents().containsKey(((GRIDrouteRequest) theRequest).getAgentID() )){
+					System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " already exists!");
+
+				}
+				
+				else {
+					System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " NOT FOUND!");
+
+					GRIDagent tempAgent = new GRIDagent((((GRIDrouteRequest) theRequest).getAgentID()), 
+							                            (((GRIDrouteRequest) theRequest).getOrigin()), 
+							                            (((GRIDrouteRequest) theRequest).getDestination()));
+					
+					theGRID.getMasterAgents().put(((GRIDrouteRequest) theRequest).getAgentID(), tempAgent);
+				}
 
 				GRIDroute theRoute = new GRIDroute();
 				

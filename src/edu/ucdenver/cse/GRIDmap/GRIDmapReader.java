@@ -27,10 +27,7 @@ public class GRIDmapReader {
 	         xmlreader.parse(new InputSource(mapFile));	             
 	         
 	         GRIDmap theMap = GMP.getMap();
-	         
-	         // This breaks shit
-	         //setDefaultWeights(theMap);
-	         
+	         	         
 	         return theMap;
 	    } 
 		catch (Exception e) {

@@ -1,4 +1,5 @@
-Oct 03, 2016 8:17:00 PM edu.ucdenver.cse.GRIDcommon.logWriter log
-INFO: Starting SIM
-Oct 03, 2016 8:17:19 PM edu.ucdenver.cse.GRIDcommon.logWriter log
-WARNING: You didn't choose a config file!!!
+Oct 05, 2016 12:25:24 AM edu.ucdenver.cse.GRIDcommon.logWriter log
+INFO: CONFIG FILE: C:\Users\Ray\git\GRID\data\5X5Network.xml in use
+
+
+
