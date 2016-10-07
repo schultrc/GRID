@@ -4,10 +4,10 @@ import java.io.*;
 import java.net.*;
 import java.util.logging.Level;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
-import edu.ucdenver.cse.GRIDcommon.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
 import edu.ucdenver.cse.GRIDmap.GRIDmapReader;
+import edu.ucdenver.cse.GRIDuser.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDutil.FileUtils;
 
 

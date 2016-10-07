@@ -36,7 +36,6 @@ public class GRIDagent {
 		this.currentLink = curLink;
         this.origin      = curLink;
         this.destination = destination;
-
 	}
 
     public void setRoute(GRIDroute newPath){ myRoute = newPath;}
@@ -76,17 +75,9 @@ public class GRIDagent {
 	public boolean getSimCalcFlag() { return this.simCalcFlag; }
 
     @Override
-    // step through both arrays in order, do something like:
-    // intx - road - intx - road - intx - road etc
-    // we need a method to translate intersections into roads and store the roads
-    // in the GRIDroute class object
     public String toString()
-    {
-        for (String intx : myRoute.getIntersections())
-        {
-
-        }
-        return "GRIDagent Id=" + this.Id + " Origin: " + this.origin + " Dest: " + this.destination;
+    {  
+        return "GRIDagent Id=" + this.Id + " Origin: " + this.origin + " CurrentLink: " + this.currentLink + " Dest: " + this.destination;
     }
 
 

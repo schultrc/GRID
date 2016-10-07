@@ -4,8 +4,8 @@ import java.io.*;
 import java.net.*;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
-import edu.ucdenver.cse.GRIDcommon.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDmap.*;
+import edu.ucdenver.cse.GRIDuser.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 
 public class GRIDrequestListenerTCP extends Thread {
@@ -20,6 +20,7 @@ public class GRIDrequestListenerTCP extends Thread {
 	public void run() {
 		System.out.println("Inside listener");
 		
+		long timeNow = System.currentTimeMillis() / 1000l;
 		try {
 			ObjectInputStream  inputStream  = new ObjectInputStream (theSocket.getInputStream());
 			ObjectOutputStream outputStream = new ObjectOutputStream (theSocket.getOutputStream());
@@ -28,33 +29,38 @@ public class GRIDrequestListenerTCP extends Thread {
 			
 			// Add more options as we define requests
 			if (theRequest instanceof GRIDrouteRequest) {
-				System.out.println("Route Request Received");
+				//System.out.println("Route Request Received: " + (((GRIDrouteRequest)theRequest).toString()));
+				
+				GRIDagent tempAgent;
 				
 				// Is this a new agent or an existing one?
 				
 				if (theGRID.getMasterAgents().containsKey(((GRIDrouteRequest) theRequest).getAgentID() )){
 					System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " already exists!");
+					tempAgent = theGRID.getMasterAgents().get(((GRIDrouteRequest) theRequest).getAgentID());
 
 				}
 				
 				else {
 					System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " NOT FOUND!");
 
-					GRIDagent tempAgent = new GRIDagent((((GRIDrouteRequest) theRequest).getAgentID()), 
-							                            (((GRIDrouteRequest) theRequest).getOrigin()), 
-							                            (((GRIDrouteRequest) theRequest).getDestination()));
+					tempAgent = new GRIDagent((((GRIDrouteRequest) theRequest).getAgentID()), 
+					                          (((GRIDrouteRequest) theRequest).getOrigin()), 
+					                          (((GRIDrouteRequest) theRequest).getDestination()));
 					
 					theGRID.getMasterAgents().put(((GRIDrouteRequest) theRequest).getAgentID(), tempAgent);
 				}
 
-				GRIDroute theRoute = new GRIDroute();
-				
-				theRoute.addIntersection("DUMMY_INT");
-				theRoute.addRoad("DUMMY_ROAD");
+				//System.out.println("Agent to be replanned: " + tempAgent.toString());
 
-				System.out.println("Object to be written = " + theRoute.toString());
-				outputStream.writeObject(theRoute);
-				//outputStream.flush();
+				GRIDheapDynamicAlg theALG = new GRIDheapDynamicAlg(theGRID.getTheMap());
+				GRIDroute tempRoute = theALG.findPath(tempAgent, timeNow);
+				
+				tempRoute.setRoads(theGRID.getTheMap().getPathByRoad(tempRoute.getIntersections()));
+				
+				System.out.println("Object to be written = " + tempRoute.toString());
+				outputStream.writeObject(tempRoute);
+				outputStream.flush();
 				
 				inputStream.close();
 				outputStream.close();

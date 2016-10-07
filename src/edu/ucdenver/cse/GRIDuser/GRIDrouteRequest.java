@@ -1,8 +1,9 @@
-package edu.ucdenver.cse.GRIDcommon;
+package edu.ucdenver.cse.GRIDuser;
 
 import java.io.Serializable;
 
-public class GRIDrouteRequest implements Serializable {
+
+public class GRIDrouteRequest  implements GRIDrequest, Serializable {
 	/**
 	 * 
 	 */

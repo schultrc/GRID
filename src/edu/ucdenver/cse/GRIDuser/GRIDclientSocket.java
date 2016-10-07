@@ -35,6 +35,7 @@ public class GRIDclientSocket extends Thread {
 				outputStream = new ObjectOutputStream(socket.getOutputStream());
 				inputStream = new ObjectInputStream(socket.getInputStream());
 
+				System.out.println("Sending: " + myRequest.toString());
 				// Send the route request
 				outputStream.writeObject(myRequest);
 				outputStream.flush();
