@@ -43,7 +43,6 @@ public class GRIDrequestListenerTCP extends Thread {
 				if (theGRID.getMasterAgents().containsKey(((GRIDrouteRequest) theRequest).getAgentID() )){
 					//System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " already exists!");
 					tempAgent = theGRID.getMasterAgents().get(((GRIDrouteRequest) theRequest).getAgentID());
-
 				}
 				
 				else {
@@ -62,6 +61,8 @@ public class GRIDrequestListenerTCP extends Thread {
 				GRIDroute tempRoute = theALG.findPath(tempAgent, timeNow);
 				
 				tempRoute.setRoads(theGRID.getTheMap().getPathByRoad(tempRoute.getIntersections()));
+				
+				// need to update the map with the new agent's route
 				
 				//System.out.println("Object to be written = " + tempRoute.toString());
 				outputStream.writeObject(tempRoute);

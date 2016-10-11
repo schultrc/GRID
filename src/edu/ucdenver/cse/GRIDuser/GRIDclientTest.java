@@ -1,10 +1,6 @@
 package edu.ucdenver.cse.GRIDuser;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
@@ -16,8 +12,6 @@ import edu.ucdenver.cse.GRIDutil.FileUtils;
 
 public class GRIDclientTest extends Thread {
 
-	private ObjectInputStream inputStream = null;
-	private GRIDroute myRoute;
 	private GRIDmap theMap;
 
 	public GRIDclientTest() {
