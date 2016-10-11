@@ -30,7 +30,7 @@ public final class GRIDserverConnectionTCPSocket implements GRIDserverConnection
 
 				Socket clientSocket = servSocket.accept();
 
-				System.out.println("Client has connected");
+				//System.out.println("Client has connected");
 
 				GRIDrequestListenerTCP listener = new GRIDrequestListenerTCP(clientSocket, theGRID);
 				listener.run();

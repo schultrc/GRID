@@ -11,6 +11,8 @@ import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 public class GRIDrequestListenerTCP extends Thread {
 	Socket theSocket = null;
 	private GRIDworld theGRID = null;
+	ObjectInputStream  inputStream;
+	ObjectOutputStream outputStream;
 	
 	public GRIDrequestListenerTCP( Socket client, GRIDworld grid){
 		this.theSocket = client;
@@ -18,12 +20,12 @@ public class GRIDrequestListenerTCP extends Thread {
 	}
 
 	public void run() {
-		System.out.println("Inside listener");
+		//System.out.println("Inside listener");
 		
-		long timeNow = System.currentTimeMillis() / 1000l;
+		long timeNow = System.currentTimeMillis() / 1000;
 		try {
-			ObjectInputStream  inputStream  = new ObjectInputStream (theSocket.getInputStream());
-			ObjectOutputStream outputStream = new ObjectOutputStream (theSocket.getOutputStream());
+			inputStream  = new ObjectInputStream (theSocket.getInputStream());
+			outputStream = new ObjectOutputStream (theSocket.getOutputStream());
 
 			Object theRequest = inputStream.readObject();
 			
@@ -35,14 +37,17 @@ public class GRIDrequestListenerTCP extends Thread {
 				
 				// Is this a new agent or an existing one?
 				
+				
+				// This is broken, need to be able to change location / destination
+				
 				if (theGRID.getMasterAgents().containsKey(((GRIDrouteRequest) theRequest).getAgentID() )){
-					System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " already exists!");
+					//System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " already exists!");
 					tempAgent = theGRID.getMasterAgents().get(((GRIDrouteRequest) theRequest).getAgentID());
 
 				}
 				
 				else {
-					System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " NOT FOUND!");
+					//System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " NOT FOUND!");
 
 					tempAgent = new GRIDagent((((GRIDrouteRequest) theRequest).getAgentID()), 
 					                          (((GRIDrouteRequest) theRequest).getOrigin()), 
@@ -58,7 +63,7 @@ public class GRIDrequestListenerTCP extends Thread {
 				
 				tempRoute.setRoads(theGRID.getTheMap().getPathByRoad(tempRoute.getIntersections()));
 				
-				System.out.println("Object to be written = " + tempRoute.toString());
+				//System.out.println("Object to be written = " + tempRoute.toString());
 				outputStream.writeObject(tempRoute);
 				outputStream.flush();
 				
@@ -70,7 +75,14 @@ public class GRIDrequestListenerTCP extends Thread {
 				System.out.println("ERROR: Unknown Request Received");				
 			}
 		} 
-		
+		catch (SocketException se) {
+			// se.printStackTrace();
+			System.out.println("Socket Exception");
+			// try to keep going
+			//inputStream.close();
+			//outputStream.close();
+			
+		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
