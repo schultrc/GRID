@@ -8,12 +8,8 @@ import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Set;
 import java.util.logging.Level;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class GRIDtestRunner{
@@ -24,9 +20,7 @@ public class GRIDtestRunner{
     // SmallNetwork2 PuebloNetwork 5x5network RyeNetwork
     private GRIDmap myMap = myReader.readMapFile("data/PuebloNetwork.xml");
     //private GRIDmap networkMap = graphMiddleware(myMap);
-    private ArrayList myPathGreedy = new ArrayList();
-    private ArrayList myPathDynamic = new ArrayList();
-
+    
     private GRIDagent testAgent001 = getTestAgent();
     //private GRIDintersection from = new GRIDintersection("test",1d,2d);
     //private GRIDintersection to = new GRIDintersection("test",1d,2d);

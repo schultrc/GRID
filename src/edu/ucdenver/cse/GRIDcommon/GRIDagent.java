@@ -16,22 +16,30 @@ public class GRIDagent {
     private boolean routeHasChanged = false;
     
     // These 2 values are for matsim integration only. Could be put into extended class
-    private boolean simCalcFlag;       // Is this one of OUR agents, so we can change its route
-    private boolean needsDestination;  // The event we use to create new agents does not have access to their destination
+    private boolean simCalcFlag      = false;       // Is this one of OUR agents, so we can change its route
+    private boolean needsDestination = false;  // The event we use to create new agents does not have access to their destination
 
 	public GRIDagent(String Id, String curLink, String origin, String destination, boolean simFlag, boolean needDest) {
         //super();
 
-        this.Id = Id;
-        this.myRoute = new GRIDroute();
-        this.currentLink = curLink;
-        this.origin = origin;
-        this.destination = destination;
-        this.simCalcFlag = simFlag;
+        this.Id               = Id;
+        this.myRoute          = new GRIDroute();
+        this.currentLink      = curLink;
+        this.origin           = origin;
+        this.destination      = destination;
+        this.simCalcFlag      = simFlag;
         this.needsDestination = needDest;
     }
+	
+	public GRIDagent(String Id, String curLink, String destination) {
+		this.Id          = Id;
+		this.currentLink = curLink;
+        this.origin      = curLink;
+        this.destination = destination;
+	}
 
     public void setRoute(GRIDroute newPath){ myRoute = newPath;}
+    
     public void setX(Long x) {
         this.x = x;
     }
@@ -67,17 +75,9 @@ public class GRIDagent {
 	public boolean getSimCalcFlag() { return this.simCalcFlag; }
 
     @Override
-    // step through both arrays in order, do something like:
-    // intx - road - intx - road - intx - road etc
-    // we need a method to translate intersections into roads and store the roads
-    // in the GRIDroute class object
     public String toString()
-    {
-        for (String intx : myRoute.getIntersections())
-        {
-
-        }
-        return "GRIDagent Id=" + this.Id + " Origin: " + this.origin + " Dest: " + this.destination;
+    {  
+        return "GRIDagent Id=" + this.Id + " Origin: " + this.origin + " CurrentLink: " + this.currentLink + " Dest: " + this.destination;
     }
 
 

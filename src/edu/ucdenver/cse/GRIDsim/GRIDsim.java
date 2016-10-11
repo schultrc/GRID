@@ -36,18 +36,13 @@ import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
 import edu.ucdenver.cse.GRIDmap.GRIDmapReader;
 import edu.ucdenver.cse.GRIDutil.FileUtils;
-import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 
 public class GRIDsim {
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-		/* This is the primary interface between the GRID algorithm and MATSIM
-		 * It will create the controller for matsim as well as the MAP and other
-		 * data sources needed for GRID.
-		 * 
+		/* This is the primary simulation. It will run the sim (currently matsim) making requests of the 
+		 * GRIDserver as needed to determine routes
 		 */
 		
 		Long startTime = System.currentTimeMillis();
@@ -59,8 +54,6 @@ public class GRIDsim {
 		
 		// This will get filled and emptied via departure / arrival events
 		final ConcurrentHashMap<String, GRIDagent> masterAgents = new ConcurrentHashMap<String, GRIDagent> ();	
-		final ConcurrentHashMap<String, GRIDagent> agentsNeedingDest = new ConcurrentHashMap<String, GRIDagent> ();	
-
 		final Queue<String> agentsToReplan = new LinkedList<String>();
 		double totalTravelTime = 0;
 		
@@ -70,7 +63,7 @@ public class GRIDsim {
 		// Load our version of the map first
 		GRIDmapReader masterMap = new GRIDmapReader();
 				
-		String configFile = FileUtils.getConfigFile();
+		String configFile = FileUtils.getXmlFile();
 	        
 	    if (configFile == "") {
 	    	logWriter.log(Level.WARNING, "You didn't choose a config file!!!");

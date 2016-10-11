@@ -16,7 +16,7 @@ public class FileUtils {
 	}
 	
 	// Specific to return a MATSIM config file
-	public static String getConfigFile() {
+	public static String getXmlFile() {
 
 		JFileChooser chooser = new JFileChooser();
 	    chooser.setCurrentDirectory(new File("./"));

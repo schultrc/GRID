@@ -3,8 +3,6 @@ package edu.ucdenver.cse.GRIDmap;
 import java.util.*;
 import java.util.concurrent.*;
 
-import edu.ucdenver.cse.GRIDcommon.*;
-
 
 public final class GRIDmap implements Iterable<String> {
 //public class GRIDmap {
@@ -31,7 +29,7 @@ public final class GRIDmap implements Iterable<String> {
         roads.forEach((item,value)->
                 roadList.put(value.getFrom()+value.getTo(),value));
     }
-    public Hashtable getRoadList() { return roadList; }
+    public Hashtable<String, GRIDroad> getRoadList() { return roadList; }
 
     public GRIDroad getRoadListItem(String itemID) { return roadList.get(itemID); }
 

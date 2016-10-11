@@ -12,7 +12,7 @@ public class GRIDmapReader {
 	public GRIDmap readMapFile(String mapFile){
 			
 		if (mapFile == "") {
-			mapFile = FileUtils.getConfigFile(); 
+			mapFile = FileUtils.getXmlFile(); 
 		}
 		
 		try {	
@@ -27,10 +27,7 @@ public class GRIDmapReader {
 	         xmlreader.parse(new InputSource(mapFile));	             
 	         
 	         GRIDmap theMap = GMP.getMap();
-	         
-	         // This breaks shit
-	         //setDefaultWeights(theMap);
-	         
+	         	         
 	         return theMap;
 	    } 
 		catch (Exception e) {
