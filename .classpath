@@ -6,5 +6,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/guice"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/javax"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/junit"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apacheCLI"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -5,7 +5,7 @@ import java.net.*;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDmap.*;
-import edu.ucdenver.cse.GRIDuser.GRIDrouteRequest;
+import edu.ucdenver.cse.GRIDclient.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 
 public class GRIDrequestListenerTCP extends Thread {
