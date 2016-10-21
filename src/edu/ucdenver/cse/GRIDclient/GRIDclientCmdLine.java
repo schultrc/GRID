@@ -11,7 +11,7 @@ public class GRIDclientCmdLine {
 		this.theArgs = args;
 		this.theOptions = new Options();
 		
-		final Option mapOption = Option.builder("m")
+		final Option mapOption = Option.builder("map")
 				                 .argName("mapfile")
 				                 .hasArg(true)
 				                 .required(false)
@@ -20,7 +20,7 @@ public class GRIDclientCmdLine {
 		
 		this.theOptions.addOption(mapOption);
 		
-		final Option portOption = Option.builder("p")
+		final Option portOption = Option.builder("port")
 				                  .argName("port")
 				                  .hasArg(true)
 				                  .required(false)
@@ -29,7 +29,7 @@ public class GRIDclientCmdLine {
 		
 		this.theOptions.addOption(portOption);
 		             
-		final Option ipOption = Option.builder("i")
+		final Option ipOption = Option.builder("ip")
                 .argName("ip")
                 .hasArg(true)
                 .required(false)
@@ -37,7 +37,24 @@ public class GRIDclientCmdLine {
                 .build();
 		
 		this.theOptions.addOption(ipOption);
+	
+		final Option agentTries = Option.builder("a")
+                .argName("agentTries")
+                .hasArg(true)
+                .required(false)
+                .desc("Number of agents to send")
+                .build();
 		
+		this.theOptions.addOption(agentTries);
+	
+		final Option outputDir = Option.builder("output")
+                .argName("Output Directory")
+                .hasArg(true)
+                .required(false)
+                .desc("Output Directory")
+                .build();
+		
+		this.theOptions.addOption(outputDir);
 	}
 	
 	public CommandLine parseArgs() throws ParseException{

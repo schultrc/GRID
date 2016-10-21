@@ -28,7 +28,32 @@ public class GRIDserverCmdLine {
 				                        .build();
 
 		this.theOptions.addOption(portOption);
+
+		final Option outputDirOption = Option.builder("o")
+                                             .argName("outputDir")
+                                             .hasArg(true)
+                                             .required(false)
+                                             .desc("Output Directory")
+                                             .build();
+
+		final Option agentPercent = Option.builder("ap")
+										  .argName("agentPercent")
+										  .hasArg(true)
+										  .required(false)
+										  .desc("Percentage of Agents we control")
+										  .build();
+
+		this.theOptions.addOption(agentPercent);
 		
+		final Option outputDir = Option.builder("output")
+                                       .argName("Output Directory")
+                                       .hasArg(true)
+                                       .required(false)
+                                       .desc("Output Directory")
+                                       .build();
+		
+		this.theOptions.addOption(outputDir);
+
 		this.theOptions.addOption("a", "agentPercent", false, "agent control percentage");
 	}
 	
