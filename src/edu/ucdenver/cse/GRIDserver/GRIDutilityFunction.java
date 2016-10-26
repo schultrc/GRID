@@ -1,5 +1,7 @@
-package edu.ucdenver.cse.GRID.GRID_ALGORITHM;
-import edu.ucdenver.cse.GRID.MAP.*;
+package edu.ucdenver.cse.GRIDserver;
+
+import edu.ucdenver.cse.GRIDcommon.GRIDroute;
+import edu.ucdenver.cse.GRIDmap.*;
 
 /**
  * Created by MFS on 9/25/2016.

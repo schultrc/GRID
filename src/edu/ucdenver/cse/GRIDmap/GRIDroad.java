@@ -2,6 +2,9 @@ package edu.ucdenver.cse.GRIDmap;
 
 
 import java.util.concurrent.ConcurrentHashMap;
+
+import edu.ucdenver.cse.GRIDserver.GRIDutilityFunction;
+
 import java.util.LinkedList;
 import java.util.List;
 

@@ -35,7 +35,7 @@ public class GRIDpathrecalc {
     public GRIDpathrecalc(GRIDagent thisAgent, GRIDmap selfishMap, Long currentTime){
         this.intersections = selfishMap.getIntersections();
         this.roads = selfishMap.getRoads();
-        selfishMap.loadRoadList(selfishMap.getRoads());
+        //selfishMap.loadRoadList(selfishMap.getRoads());
         this.thisRoadList = selfishMap.getRoadList();
 
         // agtTo = thisAgent.getDestination();
@@ -201,7 +201,7 @@ public class GRIDpathrecalc {
         long startTimeCounter = System.nanoTime();
 
         tempTimeslice = thisRoadList.get(startNode+endNode).getTravelTime();
-        tempWeight = thisRoadList.get(startNode+endNode).getWeightOverInterval(startTime);
+        tempWeight = thisRoadList.get(startNode+endNode).getTimeWeightOverInterval(startTime);
         tempNode.setNodeWtTotal(tempWeight);
         tempNode.setNodeTmTotal(tempTimeslice);
 
