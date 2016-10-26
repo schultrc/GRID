@@ -13,7 +13,7 @@
 package edu.ucdenver.cse.GRIDserver;
 
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
-import edu.ucdenver.cse.GRIDmap.GRIDnodeWeightTime;
+import edu.ucdenver.cse.GRIDmap.GRIDnodeWtTmEm;
 import edu.ucdenver.cse.GRIDmap.GRIDroad;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
@@ -33,8 +33,8 @@ public class GRIDheapDynamicAlg {
         GRIDfibHeap pq = new GRIDfibHeap();
 
         Map<String, GRIDfibHeap.Entry> entries = new HashMap<>();
-        GRIDnodeWeightTime startNodeValues;
-        ConcurrentMap<String, GRIDnodeWeightTime> currentPathTotal = new ConcurrentHashMap<>();
+        GRIDnodeWtTmEm startNodeValues;
+        ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
         ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
         Long thisTimeslice = currentTime/1000;
         Long totalTravelTime = thisTimeslice;
@@ -48,10 +48,10 @@ public class GRIDheapDynamicAlg {
         agtTo = graph.getRoad(thisAgent.getDestination()).getFrom();
 
         ConcurrentMap<String, GRIDroad> roads = graph.getRoads();
-        startNodeValues = new GRIDnodeWeightTime();
+        startNodeValues = new GRIDnodeWtTmEm();
         startNodeValues.setNodeWtTotal(0.0);
         startNodeValues.setNodeTmTotal(thisTimeslice);
-        GRIDnodeWeightTime tempNode = startNodeValues;
+        GRIDnodeWtTmEm tempNode = startNodeValues;
 
         /* source/destination check
          */
@@ -68,7 +68,7 @@ public class GRIDheapDynamicAlg {
          * combining operations of GRIDmap and the DirectedGraph class
          * more seamlessly
          */
-        graph.loadRoadList(roads);
+        graph.initMap();
 
         for (String node : graph)
             entries.put(node, pq.enqueue(node, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0L));

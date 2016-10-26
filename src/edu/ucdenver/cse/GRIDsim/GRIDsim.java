@@ -7,6 +7,11 @@
  */
 package edu.ucdenver.cse.GRIDsim;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -14,6 +19,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 //import org.matsim.api.core.*;
@@ -32,6 +39,7 @@ import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripRouterProviderImpl;
 import com.google.inject.Provider;
 
+import edu.ucdenver.cse.GRIDclient.GRIDclientCmdLine;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
 import edu.ucdenver.cse.GRIDmap.GRIDmapReader;
@@ -40,30 +48,75 @@ import edu.ucdenver.cse.GRIDcommon.logWriter;
 
 public class GRIDsim {
 	
+	private CommandLine theCmdLine;
+	private Path outputDir;
+	final ConcurrentHashMap<String, GRIDagent> masterAgents;
+	final Queue<String> agentsToReplan;
+	
+	// The official map
+	private GRIDmap ourMap;
+
 	public static void main(String[] args) {
-		/* This is the primary simulation. It will run the sim (currently matsim) making requests of the 
-		 * GRIDserver as needed to determine routes
-		 */
+		GRIDsim theSim = new GRIDsim(args);
 		
-		Long startTime = System.currentTimeMillis();
+		theSim.simulate();
+	}
+	
+	public GRIDsim(String[] theArgs) {
+		GRIDsimCmdLine cmdLine = new GRIDsimCmdLine(theArgs);
+
+		try {
+			this.theCmdLine = cmdLine.parseArgs();
+		} 
 		
-		System.out.println("It's not hard--you just gotta use finesse!");
-				
-		logWriter.log(Level.INFO, "Starting SIM");
+		catch (ParseException e) {
+			System.out.println("This is bad: " + e.toString());
+		}
 		
+		masterAgents = new ConcurrentHashMap<String, GRIDagent> ();
 		
 		// This will get filled and emptied via departure / arrival events
-		final ConcurrentHashMap<String, GRIDagent> masterAgents = new ConcurrentHashMap<String, GRIDagent> ();	
-		final Queue<String> agentsToReplan = new LinkedList<String>();
+		agentsToReplan = new LinkedList<String>();
+		
+		ourMap = null;
+	}
+	
+	private void simulate() {
+		
+		/* This is the primary simulation. It will run the sim (currently matsim) making requests of the 
+		 * GRIDserver as needed to determine routes
+		 */		
+		System.out.println("It's not hard--you just gotta use finesse!");
+		
+		if (!setPath()) {
+			// This sucks, we can't even log it
+			System.out.println("Error setting output path");
+			System.exit(1);
+		}
+		
+		// Get the logger. Since this "should" be the first time, we can set the path
+		logWriter.setOutputDir(outputDir);
+		logWriter.log(Level.INFO, "DOES THIS WORK???!!!");		
+				
 		double totalTravelTime = 0;
 		
-		// The official map
-		final GRIDmap ourMap;
+		
 		
 		// Load our version of the map first
 		GRIDmapReader masterMap = new GRIDmapReader();
-				
-		String configFile = FileUtils.getXmlFile();
+		
+		// the matsim config file
+		String configFile;
+		
+		if (theCmdLine.hasOption("config")) {
+
+			configFile = (String) theCmdLine.getOptionValue("config");
+			System.out.println("The mapfile from the cmdLine: " + configFile);
+		}
+		
+		else {
+			configFile = FileUtils.getXmlFile();
+		}
 	        
 	    if (configFile == "") {
 	    	logWriter.log(Level.WARNING, "You didn't choose a config file!!!");
@@ -71,7 +124,10 @@ public class GRIDsim {
 	    }
 	    
 	    logWriter.log(Level.INFO, "CONFIG FILE: " + configFile + " in use\n\n\n");
-				
+			
+	    Long startTime = System.currentTimeMillis();
+		logWriter.log(Level.INFO, "Starting SIM @" + startTime.toString());
+
 		try {
 			Config config = new Config();
 			
@@ -91,8 +147,10 @@ public class GRIDsim {
 			String mapFile = config.network().getInputFile();
 
 			System.out.println("File Chosen: " + mapFile);
-			ourMap = masterMap.readMapFile(mapFile);
 			
+			// build our map from the data file
+			ourMap = masterMap.readMapFile(mapFile);
+			ourMap.initMap();
 
 			// From WithinDayReplanning
 			Set<String> analyzedModes = new HashSet<String>();
@@ -166,5 +224,39 @@ public class GRIDsim {
 		System.out.println("\n it took: " + timeToRun + " seconds to run this sim");
 		
 		System.out.println("\n\nWell, we got to the end. \n\n\n\n");	
+	}
+	
+	public Boolean setPath() {
+		// Get the output dir first, so log messages go there
+		
+		if (theCmdLine.hasOption("output")) {
+			outputDir = Paths.get((String) theCmdLine.getOptionValue("output"));
+		}
+
+		else {
+			outputDir = Paths.get("./output");
+		}
+
+		if ((Files.exists(outputDir, LinkOption.NOFOLLOW_LINKS))) {
+
+			if (Files.isDirectory(outputDir)) {
+				// Do we want to clear it at this point? Add a cmd line flag
+			}
+		}
+
+		else {
+			// We need to create a new directory
+			System.out.println("Attempting to create: " + outputDir.toString());
+			try {
+				Files.createDirectories(outputDir);
+			} 
+			
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}		
+		return true;
 	}
 }

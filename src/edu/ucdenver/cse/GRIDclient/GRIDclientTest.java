@@ -1,6 +1,5 @@
 package edu.ucdenver.cse.GRIDclient;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -8,12 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Set;
 import java.util.logging.Level;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 
@@ -122,9 +116,9 @@ public class GRIDclientTest extends Thread {
 
 		Long timeToRun = (stopTime - startTime) / 1000;
 		System.out.println("\n it took: " + timeToRun + " seconds to run this sim");
-
 	}
 
+	// move to utility
 	public Boolean setPath() {
 		// Get the output dir first, so log messages go there
 		

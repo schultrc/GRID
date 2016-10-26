@@ -10,7 +10,7 @@ import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDmap.GRIDintersection;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
-import edu.ucdenver.cse.GRIDmap.GRIDnodeWeightTime;
+import edu.ucdenver.cse.GRIDmap.GRIDnodeWtTmEm;
 import edu.ucdenver.cse.GRIDmap.GRIDroad;
 
 import java.util.concurrent.*;
@@ -25,8 +25,8 @@ public class GRIDpathrecalc {
     private Long thisTimeslice;
     private Set<String> visited;
     private Set<String> unVisited;
-    private ConcurrentMap<String, GRIDnodeWeightTime> currentPathTotal;
-    GRIDnodeWeightTime startNodeValues;
+    private ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal;
+    GRIDnodeWtTmEm startNodeValues;
     private Map<String,String> previousIntersections;
     private Hashtable<String,GRIDroad> thisRoadList;
     private long totalCalcTime;
@@ -72,7 +72,7 @@ public class GRIDpathrecalc {
         unVisited = new HashSet<String>();
         currentPathTotal = new ConcurrentHashMap<>();
         previousIntersections = new HashMap<String,String>();
-        startNodeValues = new GRIDnodeWeightTime();
+        startNodeValues = new GRIDnodeWtTmEm();
         startNodeValues.setNodeWtTotal(0.0);
         startNodeValues.setNodeTmTotal(this.thisTimeslice);
         currentPathTotal.put(agtFrom,startNodeValues);
@@ -145,7 +145,7 @@ public class GRIDpathrecalc {
     private void findOptimalEdges(String startNode)
     {
         ArrayList<String> adjNodes = getAdjNodes(startNode);
-        GRIDnodeWeightTime tempNode = new GRIDnodeWeightTime();
+        GRIDnodeWtTmEm tempNode = new GRIDnodeWtTmEm();
 
         for(String endNode : adjNodes)
         {
@@ -191,12 +191,12 @@ public class GRIDpathrecalc {
         }
     }
 
-    private GRIDnodeWeightTime calcEdgeWeight(String startNode, String endNode)
+    private GRIDnodeWtTmEm calcEdgeWeight(String startNode, String endNode)
     {
         double tempWeight = 0.0;
         long tempTimeslice = 0L;
         long startTime = currentPathTotal.get(startNode).getNodeTmTotal();
-        GRIDnodeWeightTime tempNode = new GRIDnodeWeightTime();
+        GRIDnodeWtTmEm tempNode = new GRIDnodeWtTmEm();
 
         long startTimeCounter = System.nanoTime();
 

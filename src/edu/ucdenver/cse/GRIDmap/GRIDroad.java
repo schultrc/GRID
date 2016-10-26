@@ -27,6 +27,7 @@ public class GRIDroad {
 
 	// Use a long as the key, which represents miliseconds since midnight, January 1, 1970
 	private ConcurrentHashMap<Long, Double> vehiclesCurrentlyOnRoadAtTime = new ConcurrentHashMap<Long, Double>();
+	private ConcurrentHashMap<Long, Double> emissionsCurrentlyOnRoadAtTime = new ConcurrentHashMap<>();
 	
 	// Max capacity is defined in vehicles per hour
 	private double maxCapacity;
@@ -86,13 +87,37 @@ public class GRIDroad {
 		this.currentSpeed = currentSpeed;
 	}
 	
+	public void calcCurrentSpeed(Long intervalStartTime) {
+		double carLengths = 0.0,
+			   speedModifier = 1.0;
+
+		carLengths = this.getAvgVehicleCount(intervalStartTime)*4.5;
+		speedModifier = carLengths/this.getLength();
+
+		if(speedModifier > 0.8) {
+			this.currentSpeed = this.currentSpeed/3.0;
+		}
+	}
+	
 	public void addToWeight(Long time) {
 		// If there is already an offset, add to it
 		if(this.vehiclesCurrentlyOnRoadAtTime.containsKey(time)) {
+			//System.out.println("\nREVISED: "+this.vehiclesCurrentlyOnRoadAtTime.get(time)+"\n");
 			this.vehiclesCurrentlyOnRoadAtTime.replace(time, (this.vehiclesCurrentlyOnRoadAtTime.get(time) + 1));
 		}
 		else {
+			//System.out.println("\nNEW: "+this.vehiclesCurrentlyOnRoadAtTime.get(time)+"\n");
 			this.vehiclesCurrentlyOnRoadAtTime.put(time, ourDefaultValue + 1);
+		}
+	}
+	
+	public void addEmmissionsAtTime(Long time, Double emissions) {
+		if(this.emissionsCurrentlyOnRoadAtTime.containsKey(time)) {
+			this.emissionsCurrentlyOnRoadAtTime.replace(time,
+					this.emissionsCurrentlyOnRoadAtTime.get(time) + emissions);
+		}
+		else {
+			this.emissionsCurrentlyOnRoadAtTime.put(time, emissions);
 		}
 	}
 	
@@ -107,9 +132,25 @@ public class GRIDroad {
 		}
 		else {
 			// This should never happen
+			//System.out.println("\nSHOULD NOT HAPPEN: "+time+"\n");
 			this.vehiclesCurrentlyOnRoadAtTime.put(time, 0.0);
 		}
 	}
+	
+	public void subEmmissionsAtTime(Long time, Double emissions) {
+		if(this.emissionsCurrentlyOnRoadAtTime.containsKey(time)) {
+			this.emissionsCurrentlyOnRoadAtTime.replace(time,
+					this.emissionsCurrentlyOnRoadAtTime.get(time) - emissions);
+			if (this.emissionsCurrentlyOnRoadAtTime.get(time) < 0) {
+				this.emissionsCurrentlyOnRoadAtTime.replace(time, 0.0);
+			}
+		}
+		else {
+			// This should never happen
+			this.emissionsCurrentlyOnRoadAtTime.put(time, 0.0);
+		}
+	}
+	
 	public double getWeightAtTime(Long time) {
 		if (this.vehiclesCurrentlyOnRoadAtTime.containsKey(time) ) {
 			return this.vehiclesCurrentlyOnRoadAtTime.get(time) + this.getDefaultWeight();
@@ -118,23 +159,50 @@ public class GRIDroad {
 		return this.getDefaultWeight();
 	}
 
+	public double getEmissionsAtTime(Long time) {
+		if (this.emissionsCurrentlyOnRoadAtTime.containsKey(time) ) {
+			return this.emissionsCurrentlyOnRoadAtTime.get(time) + this.getDefaultWeight();
+		}
+
+		return 0.0; // is there a default emissions level...?
+	}
+	
 	/* so an agent arrives at link01 at time 0.0
 	*  the link is 1000 long and fspeed is 12/5, so 80s req'd to traverse link01
 	*  so we take all the weights from roadWeight[0] to roadWeight[79] and either AVG or MAX them
 	*  and that is the weight for that link*/
-	public double getWeightOverInterval(Long intervalStartTime)
+	public double getTimeWeightOverInterval(Long intervalStartTime)
 	{ // vehiclesCurrentlyOnRoad
-		Double theWeight = 0.0,
+		Double timeWeight = 0.0,
 			   capMinusActual = maxCapacity-this.getAvgVehicleCount(intervalStartTime);
+		GRIDutilityFunction calculator = new GRIDutilityFunction();
+
+		/*System.out.println("\nmaxCAPACITY: "+capMinusActual+"\n");
+		System.out.println("\nAVG: "+this.getAvgVehicleCount(intervalStartTime)+"\n");
+		System.out.println("\nCAPACITY: "+capMinusActual+"\n");*/
+		
 		if(getCurrentSpeed() == 0)
 			return MAX_WEIGHT;
 
-		if(capMinusActual <= 0.0)
-			theWeight = this.Length/this.getCurrentSpeed();
-		else
-			theWeight = this.Length/(this.getCurrentSpeed()*capMinusActual);
+		calcCurrentSpeed(intervalStartTime);
+		
+		if(capMinusActual <= 0.0) {
+			timeWeight = this.Length/this.getCurrentSpeed();
+		}
+		else {
+			timeWeight = this.Length/(this.getCurrentSpeed()*capMinusActual);
+		}
+		return timeWeight;
+	}
+	
+	public double getEmissionsWeightOverInterval(Long intervalStartTime) {
+		Double emissionsWeight = 0.0,
+			   avgEmissions = this.getAvgEmissions(intervalStartTime);
+		GRIDutilityFunction calculator = new GRIDutilityFunction();
 
-		return theWeight;
+		emissionsWeight += calculator.calcEmissions(this.getCurrentSpeed(),this.getLength()) + avgEmissions;
+
+		return emissionsWeight;
 	}
 	
 	public boolean setWeightAtTime(Long time, double capacity) {
@@ -177,6 +245,26 @@ public class GRIDroad {
 			avgVehicleCount /= numberOfKeys;
 
 		return avgVehicleCount;
+	}
+
+	private double getAvgEmissions(Long intervalStartTime){
+		int numberOfKeys = 0;
+		Double avgEmissions = 0.0,
+				timeOnLink = this.Length/this.getCurrentSpeed(),
+				timeInterval = intervalStartTime + timeOnLink;
+
+		for(Long i = intervalStartTime; i < timeInterval; i++)
+		{
+			if(this.emissionsCurrentlyOnRoadAtTime.containsKey(i)) {
+				avgEmissions += this.emissionsCurrentlyOnRoadAtTime.get(i);
+				numberOfKeys++;
+			}
+		}
+
+		if( numberOfKeys > 1 )
+			avgEmissions /= numberOfKeys;
+
+		return avgEmissions;
 	}
 
 	public Long getTravelTime()

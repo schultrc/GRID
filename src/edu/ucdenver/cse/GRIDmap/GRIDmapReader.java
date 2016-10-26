@@ -27,6 +27,8 @@ public class GRIDmapReader {
 	         xmlreader.parse(new InputSource(mapFile));	             
 	         
 	         GRIDmap theMap = GMP.getMap();
+	         
+	         // For now, init the map once done - this makes it ready to go
 	         	         
 	         return theMap;
 	    } 

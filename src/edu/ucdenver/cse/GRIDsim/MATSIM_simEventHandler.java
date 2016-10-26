@@ -28,6 +28,10 @@ import org.matsim.core.mobsim.qsim.qnetsimengine.NetsimLink;
 import org.matsim.core.mobsim.qsim.qnetsimengine.NetsimNetwork;
 import org.matsim.core.population.routes.NetworkRoute;
 import org.matsim.core.router.TripRouter;
+
+import edu.ucdenver.cse.GRIDclient.GRIDrequest;
+import edu.ucdenver.cse.GRIDclient.GRIDrequestSender;
+import edu.ucdenver.cse.GRIDclient.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDcommon.*;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDmap.*;
@@ -193,14 +197,21 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 	    // Recalculate the route from here to destination
 	    Long startTime = System.currentTimeMillis();	    
 
-		GRIDroute tempRoute = theALG.findPath(tempGRIDagent, timeNow);
-	    //GRIDroute tempRoute = theNaiveALG.findPath();
-	    if (tempRoute == null) {
+	    // here is where we contact the server for a new route
+	    GRIDrequestSender theRequestSender = new GRIDrequestSender();
+
+		GRIDrequest testReq = new GRIDrouteRequest(agent.getId().toString(), 
+				                                   currentLinkId,
+				                                   tempGRIDagent.getDestination());				                                   
+
+		GRIDroute tempRoute = (GRIDroute) theRequestSender.sendRequest(testReq);
+		
+		if (tempRoute == null) {
 	    	System.out.println("ROUTE FROM ALG NULL");
 
 	    	return false; 
-	    	}
-
+	    }
+	
 	    // Initially, routes only have intersections, so set the roads
     	tempRoute.setRoads(theMap.getPathByRoad(tempRoute.getIntersections()));
     	   	
