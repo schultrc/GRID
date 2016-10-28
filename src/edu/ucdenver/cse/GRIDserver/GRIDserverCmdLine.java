@@ -57,7 +57,7 @@ public class GRIDserverCmdLine {
 		this.theOptions.addOption("a", "agentPercent", false, "agent control percentage");
 	}
 	
-	public CommandLine parseArgs() {
+	public CommandLine parseArgs() throws ParseException {
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd = null;
@@ -68,6 +68,7 @@ public class GRIDserverCmdLine {
 		catch (ParseException e) {
 			// This is bad, what should we do?
 			System.out.println("Parser error - invalid input");
+			throw e;
 		}
 
 		return cmd;
