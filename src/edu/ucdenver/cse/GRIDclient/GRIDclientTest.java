@@ -14,6 +14,8 @@ import org.apache.commons.cli.ParseException;
 import edu.ucdenver.cse.GRIDcommon.*;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
 import edu.ucdenver.cse.GRIDmap.GRIDmapReader;
+import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
+import edu.ucdenver.cse.GRIDmessages.GRIDtimeMsg;
 import edu.ucdenver.cse.GRIDutil.FileUtils;
 
 public class GRIDclientTest extends Thread {
@@ -85,7 +87,7 @@ public class GRIDclientTest extends Thread {
 		}
 
 		else {
-			maxTries = 10000;
+			maxTries = 10;
 		}
 
 		while (i < maxTries) {
@@ -106,8 +108,14 @@ public class GRIDclientTest extends Thread {
 
 			GRIDroute theRoute = (GRIDroute) theRequestSender.sendRequest(testReq);
 
-			// System.out.println("The returned route was: " +
-			// theRoute.toString());
+			 System.out.println("The returned route was: " +
+			 theRoute.toString());
+			
+			if (i%2 == 0) {
+				System.out.println("sending time msg");
+				GRIDtimeMsg timeMsg = new GRIDtimeMsg(Long.valueOf(i));
+			}
+			
 			System.out.println("Try #: " + i);
 			i++;
 		}

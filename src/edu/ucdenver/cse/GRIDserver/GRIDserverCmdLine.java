@@ -11,50 +11,51 @@ public class GRIDserverCmdLine {
 	public GRIDserverCmdLine(String[] args) {
 		this.theArgs = args;
 		this.theOptions = new Options();
-		final Option mapOption = Option.builder("m")
-				                       .argName("mapfile")
-				                       .hasArg(true)
-				                       .required(false)
-				                       .desc("Map File")
-				                       .build();
+		final Option mapOpt = Option.builder("map")
+				                    .argName("map file")
+				                    .hasArg(true)
+				                    .required(false)
+				                    .desc("Map File")
+				                    .build();
 
-		this.theOptions.addOption(mapOption);
+		this.theOptions.addOption(mapOpt);
 
-		final Option portOption = Option.builder("p")
-				                        .argName("port")
-				                        .hasArg(true)
-				                        .required(false)
-				                        .desc("Server Port")
-				                        .build();
+		final Option portOpt = Option.builder("port")
+				                     .argName("port")
+				                     .hasArg(true)
+				                     .required(false)
+				                     .desc("Server Port")
+				                     .build();
 
-		this.theOptions.addOption(portOption);
+		this.theOptions.addOption(portOpt);
 
-		final Option outputDirOption = Option.builder("o")
-                                             .argName("outputDir")
-                                             .hasArg(true)
-                                             .required(false)
-                                             .desc("Output Directory")
-                                             .build();
-
-		final Option agentPercent = Option.builder("ap")
+		final Option agentPercentOpt = Option.builder("ap")
 										  .argName("agentPercent")
 										  .hasArg(true)
 										  .required(false)
 										  .desc("Percentage of Agents we control")
 										  .build();
 
-		this.theOptions.addOption(agentPercent);
+		this.theOptions.addOption(agentPercentOpt);
 		
-		final Option outputDir = Option.builder("output")
+		final Option outputDirOpt = Option.builder("output")
                                        .argName("Output Directory")
                                        .hasArg(true)
                                        .required(false)
                                        .desc("Output Directory")
                                        .build();
 		
-		this.theOptions.addOption(outputDir);
+		this.theOptions.addOption(outputDirOpt);
 
-		this.theOptions.addOption("a", "agentPercent", false, "agent control percentage");
+		// sim option is a flag, if set we will use sim time, not real time
+		final Option simOpt = Option.builder("sim")
+                                    .argName("sim flag")
+                                    .hasArg(false)
+                                    .required(false)
+                                    .desc("sim flag")
+                                    .build();
+
+		this.theOptions.addOption(simOpt);
 	}
 	
 	public CommandLine parseArgs() throws ParseException {

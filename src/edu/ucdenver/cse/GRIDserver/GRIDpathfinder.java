@@ -12,23 +12,33 @@
 
 package edu.ucdenver.cse.GRIDserver;
 
-import edu.ucdenver.cse.GRIDmap.GRIDmap;
-import edu.ucdenver.cse.GRIDmap.GRIDnodeWtTmEm;
-import edu.ucdenver.cse.GRIDmap.GRIDroad;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
+import edu.ucdenver.cse.GRIDcommon.GRIDrouteSegment;
+import edu.ucdenver.cse.GRIDmap.*;
 
 import java.util.concurrent.*;
 import java.util.*;
 
-public class GRIDheapDynamicAlg {
-    private GRIDmap graph;
-    GRIDroute finalPath;
-    
-    public GRIDheapDynamicAlg(GRIDmap thisMap) {
-        //graph = thisMap;
-        graph = graphMiddleware(thisMap);
-        finalPath = new GRIDroute();
+public class GRIDpathfinder {
+    private static GRIDmap graph;
+    private ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, GRIDrouteSegment> finalRouteSegments = new ConcurrentHashMap<>();
+
+    public GRIDpathfinder(GRIDmap thisMap) {
+        graph = graphLoadEdges(thisMap);
+    }
+
+    public static class GRIDgreenPathfinder extends GRIDpathfinder {
+
+        public GRIDgreenPathfinder(GRIDmap thisMap) {
+            super(thisMap);
+        };
+
+        public Double getEdgeWeight(GRIDnodeWtTmEm thisNode) {
+            return thisNode.getNodeEmissions()+thisNode.getNodeWtTotal();
+        }
     }
 
     public GRIDroute findPath(GRIDagent thisAgent, Long currentTime) {
@@ -36,20 +46,22 @@ public class GRIDheapDynamicAlg {
 
         Map<String, GRIDfibHeap.Entry> entries = new HashMap<>();
         GRIDnodeWtTmEm startNodeValues;
-        ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
-        ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
+        //ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
+        //ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
+        /* BEGIN here is the new data structure for segments */
+        //ConcurrentMap<String, GRIDrouteSegment> finalRouteSegments = new ConcurrentHashMap<>();
+        /* END */
         Long thisTimeslice = currentTime/1000;
         Long totalTravelTime = thisTimeslice;
         String agtFrom, agtTo;
 
-        /* The agent is already on the link, so we need its end point
+        /* The agent is already on the link, so we need its endpoint
          */
         agtFrom = graph.getRoad(thisAgent.getCurrentLink()).getTo();
         /* The agent will end somewhere on the final link, so we need to get to its "from end"
          */
         agtTo = graph.getRoad(thisAgent.getDestination()).getFrom();
 
-        //ConcurrentMap<String, GRIDroad> roads = graph.getRoads();
         startNodeValues = new GRIDnodeWtTmEm();
         startNodeValues.setNodeWtTotal(0.0);
         startNodeValues.setNodeTmTotal(thisTimeslice);
@@ -60,16 +72,15 @@ public class GRIDheapDynamicAlg {
         //System.out.println("agtFrom: "+agtFrom);
         //System.out.println("agtTo: "+agtTo);
 
+        /* DUMB check - prevent elsewhere
+         */
         if (agtTo.equals(agtFrom)) {
-        	
-            return errorRoute();
+            return null;
         }
 
-        /* roadList creation--this will be fixed in the GRIDmap class by
-         * combining operations of GRIDmap and the DirectedGraph class
-         * more seamlessly
+        /* roadList creation--necessary for fibHeap mGraph data structure
          */
-        graph.initMap();
+        graph.loadRoadList();
 
         for (String node : graph)
             entries.put(node, pq.enqueue(node, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0L));
@@ -100,16 +111,27 @@ public class GRIDheapDynamicAlg {
                  * the cost of the shortest path.
                  */
                 GRIDfibHeap.Entry dest = entries.get(arc.getKey());
+                //Double newWeight = tempNode.getNodeWtTotal()+curr.getWtTotal();
+                /* BEGIN new code for different weight calculations*/
+                Double newWeight = getEdgeWeight(tempNode)+curr.getWtTotal();
+                /* END */
 
-                if ((tempNode.getNodeWtTotal()+curr.getWtTotal()) < dest.getWtTotal())
+                if (newWeight < dest.getWtTotal())
                 {
                     Long tempTime = currentPathTotal.get(curr.getValue()).getNodeTmTotal();
 
                     tempNode.setNodeTmTotal(tempTime+tempNode.getNodeTmTotal());
                     Long tempTmTotal = tempNode.getNodeTmTotal();
+                    Double tempEmissions = tempNode.getNodeEmissions();
 
-                    pq.decreaseKey(dest, 0D, (tempNode.getNodeWtTotal()+curr.getWtTotal()),tempTmTotal);
+                    pq.decreaseKey(dest, 0D, newWeight, tempTmTotal);
                     previousIntersections.put(dest.getValue(),curr.getValue());
+
+                    /* BEGIN here is the new data structure for segments */
+                    String tempString = graph.getRoadListItem(curr.getValue()+dest.getValue()).getId();
+                    GRIDrouteSegment tempSegment = new GRIDrouteSegment(tempString, tempTmTotal, tempEmissions);
+                    finalRouteSegments.put(tempString, tempSegment);
+                    /* END */
                 }
             }
 
@@ -120,11 +142,22 @@ public class GRIDheapDynamicAlg {
             tempNode.setNodeTmTotal(curr.getTmTotal());
 
             /* this conditional statement is necessary to correct for not starting
-             * at the actual starting, i.e., from node for the startingh link; we
+             * at the actual starting, i.e., from node for the starting link; we
              * can look at correcting this...
              */
             if(curr.getValue().equals(agtTo)) totalTravelTime = curr.getTmTotal();
         }
+
+        /* BEGIN weight/time testing
+         * 38347489_0 (404)
+         * 38347521_0 (404)
+         * 1779115801223351743
+        */
+        //GRIDroad tempTestRoad = graph.getRoadListItem("1779115801223351743");
+        //System.out.println("weight on 38347521_0 at 404: "+tempTestRoad.getWeightAtTime(404L));
+        /* END weight/time testing */
+
+        GRIDroute finalPath = new GRIDroute();
 
         String step = agtTo;
 
@@ -132,7 +165,7 @@ public class GRIDheapDynamicAlg {
         if(previousIntersections.get(step) == null)
         {
             System.out.println("\nI guess it's null, friend.");
-            return errorRoute();
+            return null;
         }
 
         /* Create the final path from source to destination
@@ -145,15 +178,20 @@ public class GRIDheapDynamicAlg {
 
         Collections.reverse(finalPath.getIntersections());
 
+        /* BEGIN build segment list */
+        finalPath.setRouteSegments(graph.getPathBySegment(finalPath.getIntersections(), finalRouteSegments));
+        /* END */
+
         finalPath.setCalculatedTravelTime(totalTravelTime);
+        finalPath.setCalculatedEmissionsTotal();
         return finalPath;
     }
 
-    private GRIDroute errorRoute() {
-    	// Should we do something with this to make it clear that it is null?
-    	return finalPath;
+    protected Double getEdgeWeight(GRIDnodeWtTmEm thisNode) {
+        return thisNode.getNodeWtTotal();
     }
-    private GRIDmap graphMiddleware(GRIDmap myGraph) {
+
+    private static GRIDmap graphLoadEdges(GRIDmap myGraph) {
         Long startTime = System.nanoTime();
 
         ArrayList<String> networkIntersections = new ArrayList<>(myGraph.getIntersections().keySet());
@@ -178,6 +216,6 @@ public class GRIDheapDynamicAlg {
         return myGraph;
     }
 
-/* END GRIDheapDynamicAlg CLASS */
+/* END GRIDpathfinder CLASS */
 }
 

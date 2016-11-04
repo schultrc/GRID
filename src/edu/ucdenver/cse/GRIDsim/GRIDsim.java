@@ -99,9 +99,7 @@ public class GRIDsim {
 		logWriter.log(Level.INFO, "DOES THIS WORK???!!!");		
 				
 		double totalTravelTime = 0;
-		
-		
-		
+				
 		// Load our version of the map first
 		GRIDmapReader masterMap = new GRIDmapReader();
 		

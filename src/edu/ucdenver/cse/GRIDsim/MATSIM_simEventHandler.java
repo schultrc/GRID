@@ -31,10 +31,11 @@ import org.matsim.core.router.TripRouter;
 
 import edu.ucdenver.cse.GRIDclient.GRIDrequest;
 import edu.ucdenver.cse.GRIDclient.GRIDrequestSender;
-import edu.ucdenver.cse.GRIDclient.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDcommon.*;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDmap.*;
+import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
+import edu.ucdenver.cse.GRIDmessages.GRIDtimeMsg;
 import edu.ucdenver.cse.GRIDserver.GRIDheapDynamicAlg;
 
 public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, MobsimAfterSimStepListener {
@@ -190,10 +191,6 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 	    
 	    tempGRIDagent.setLink(agent.getCurrentLinkId().toString());
 
-	    // This is where we will make server calls
-		GRIDheapDynamicAlg theALG = new GRIDheapDynamicAlg(theMap);
-	    //GRIDpathrecalc theNaiveALG = new GRIDpathrecalc(tempGRIDagent, theMap, timeNow);
-	    	 
 	    // Recalculate the route from here to destination
 	    Long startTime = System.currentTimeMillis();	    
 
@@ -291,31 +288,10 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
     							mobsimLinks, 
     							currentLeg.getRoute().getEndLinkId());
     	
-
 	    	currentLeg.setRoute(netRoute);
 	    			
 	    	// Reset so the sim uses the new route
 	    	WithinDayAgentUtils.resetCaches(agent);
-	    	
-	    	// Now we update the map, both removing ALL entries from before now
-		    // and adding the new traffic in the future
-		    for(String ourRoad:theRoute) {
-		    	// Add vehicle count to the roads
-		    	for (Long i = 0L; i < theMap.getRoad(ourRoad).getTravelTime(); i++) {
-		    		// This isn't correct, but we aren't running matsim with a real now time
-		    		// Should have timeNow added to i
-		    		theMap.getRoad(ourRoad).addToWeight(i);
-		    	}
-		    }
-		    
-		    for (String ourRoad:origRoute.getRoads()) {
-		    	// Remove vehicles from the roads
-		    	for (Long i = 0L; i < theMap.getRoad(ourRoad).getTravelTime(); i++) {
-		    		// This isn't correct, but we aren't running matsim with a real now time
-		    		// Should have timeNow added to i
-		    		theMap.getRoad(ourRoad).subFromWeight(i);
-		    	}
-		    }
 	    }
   
 		return true;
@@ -346,6 +322,16 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		// Not currently used. May change call to replan to here so the agents haven't entered
 		// the next link. Currently, we plan from the end of the the next road
 		//System.out.println("We got to the beginning of notifyMobsimAfterSimStep at time: " + event.getSimulationTime());
+		
+		// here is where we contact the server for a new route
+	    GRIDrequestSender theRequestSender = new GRIDrequestSender();
+
+	    GRIDtimeMsg theTimeMsg = new GRIDtimeMsg((long)event.getSimulationTime());	                                   
+
+		theRequestSender.sendRequest(theTimeMsg);
+		System.out.println("**************************************************************\n" +
+		                   " END of SIM Time Step: " + event.getSimulationTime() + "\n" +
+		                   "**************************************************************\n\n");
 	}
 }
 

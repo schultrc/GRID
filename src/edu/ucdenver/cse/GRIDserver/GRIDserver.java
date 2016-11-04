@@ -17,61 +17,76 @@ public class GRIDserver extends Thread {
 
 	private CommandLine theCmdLine;
 	private Path outputDir;
-	
+	GRIDworld theGRID;
+
 	public static void main(String[] args) {
 		GRIDserver theServer = new GRIDserver(args);
-		
+		theServer.init();
+
 		theServer.serve();
 	}
-	
+
 	public GRIDserver(String[] theArgs) {
 		GRIDserverCmdLine cmdLine = new GRIDserverCmdLine(theArgs);
-		
+
 		try {
 			this.theCmdLine = cmdLine.parseArgs();
-		} 
-		
+		}
+
 		catch (ParseException e) {
 			System.out.println("This is bad: " + e.toString());
 		}
-		
 	}
-	
-	private void serve() {
-	
-		System.out.println("It's not hard--you just gotta use finesse!");
 
+	private void init() {
+
+		System.out.println("It's not hard--you just gotta use finesse!");
 		
+		if (!setPath()) {
+			// This sucks, we can't even log it
+			System.out.println("Error setting output path");
+			System.exit(1);
+		}
+		logWriter.setOutputDir(outputDir);
+
 		String mapFile = "";
-		
-		if(theCmdLine.hasOption("mf")) {
-			mapFile = theCmdLine.getOptionValue("mf");
+
+		if (theCmdLine.hasOption("map")) {
+			mapFile = theCmdLine.getOptionValue("map");
+		} else {
+			mapFile = FileUtils.getXmlFile();
 		}
-		else {
-			mapFile = FileUtils.getXmlFile();			
-		}
-		
+
 		// Load our version of the map first
 		GRIDmapReader masterMap = new GRIDmapReader();
 
-	    if (mapFile == "") {
-	    	logWriter.log(Level.WARNING, "You didn't choose a map file!!!");
-	    	System.exit(0);
-	    }
-	    
-	    // The official map
+		if (mapFile == "") {
+			logWriter.log(Level.WARNING, "You didn't choose a map file!!!");
+			System.exit(0);
+		}
+
+		// The official map
 		GRIDmap ourMap = masterMap.readMapFile(mapFile);
-	    
-	    logWriter.log(Level.INFO, "CONFIG FILE: " + mapFile + " in use\n\n\n");
-	    
-	    GRIDworld theGRID = new GRIDworld(ourMap);
-	    
+
+		logWriter.log(Level.INFO, "CONFIG FILE: " + mapFile + " in use\n\n\n");
+		
+		if (theCmdLine.hasOption("sim")) {
+			theGRID = new GRIDworld(ourMap, 0L);
+		}
+
+		else {
+			theGRID = new GRIDworld(ourMap, (System.currentTimeMillis()/1000) );
+		}
+	}
+
+	private void serve() {
+
 		// Setup the connection for the clients.
 		GRIDserverConnection myConnection;
 		myConnection = new GRIDserverConnectionTCPSocket(theGRID);
 		myConnection.run();
 	}
-	
+
 	// move to utility
 	public Boolean setPath() {
 		// Get the output dir first, so log messages go there

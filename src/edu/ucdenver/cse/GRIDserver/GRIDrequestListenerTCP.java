@@ -5,7 +5,8 @@ import java.net.*;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDmap.*;
-import edu.ucdenver.cse.GRIDclient.GRIDrouteRequest;
+import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
+import edu.ucdenver.cse.GRIDmessages.GRIDtimeMsg;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 
 public class GRIDrequestListenerTCP extends Thread {
@@ -16,7 +17,7 @@ public class GRIDrequestListenerTCP extends Thread {
 	
 	public GRIDrequestListenerTCP( Socket client, GRIDworld grid){
 		this.theSocket = client;
-		this.theGRID    = grid;
+		this.theGRID   = grid;
 	}
 
 	public void run() {
@@ -33,11 +34,11 @@ public class GRIDrequestListenerTCP extends Thread {
 			if (theRequest instanceof GRIDrouteRequest) {
 				//System.out.println("Route Request Received: " + (((GRIDrouteRequest)theRequest).toString()));
 				
+				// We need to know if we have to remove an old route or not
+				boolean newAgentFlag = false;
+				
 				GRIDagent tempAgent;
-				
-				// Is this a new agent or an existing one?
-				
-				
+
 				// This is broken, need to be able to change location / destination
 				
 				if (theGRID.getMasterAgents().containsKey(((GRIDrouteRequest) theRequest).getAgentID() )){
@@ -53,23 +54,50 @@ public class GRIDrequestListenerTCP extends Thread {
 					                          (((GRIDrouteRequest) theRequest).getDestination()));
 					
 					theGRID.getMasterAgents().put(((GRIDrouteRequest) theRequest).getAgentID(), tempAgent);
+					
+					newAgentFlag = true;
 				}
 
-				//System.out.println("Agent to be replanned: " + tempAgent.toString());
+				System.out.println("Agent to be replanned: " + tempAgent.toString() );
 
-				GRIDheapDynamicAlg theALG = new GRIDheapDynamicAlg(theGRID.getTheMap());
+				GRIDheapDynamicAlg theALG = new GRIDheapDynamicAlg(theGRID.getMap());
 				GRIDroute tempRoute = theALG.findPath(tempAgent, timeNow);
 				
-				tempRoute.setRoads(theGRID.getTheMap().getPathByRoad(tempRoute.getIntersections()));
+				if (tempRoute == null) {
+					System.out.println("ROUTE WAS NULL:");
+					inputStream.close();
+					outputStream.close();
+
+					return;
+				}
 				
+				tempRoute.setRoads(theGRID.getMap().getPathByRoad(tempRoute.getIntersections()));
+				System.out.println("Route to be written = " + tempRoute.toString() +"\n\n");
 				// need to update the map with the new agent's route
 				
-				//System.out.println("Object to be written = " + tempRoute.toString());
+				
+				theGRID.getMap().updateRoadsWithAgents(tempRoute, theGRID.getTime());
+				
+				if(!newAgentFlag) {
+					// This is wrong, as it will remove the route as of now, not at the proper time
+					// GRIDsegments will fix this
+					theGRID.getMap().reduceRoadsWithAgents(tempAgent.getRoute(), theGRID.getTime());
+				}
+				
+				tempAgent.setRoute(tempRoute);
+				
 				outputStream.writeObject(tempRoute);
 				outputStream.flush();
 				
 				inputStream.close();
 				outputStream.close();
+			}
+			
+			else if (theRequest instanceof GRIDtimeMsg) {
+				System.out.println("******* \n GridTimeMsg received with time: " + 
+						((GRIDtimeMsg) theRequest).getTheTime() + "\n********");
+				
+				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
 			}
 			
 			else {

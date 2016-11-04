@@ -1,4 +1,4 @@
-package edu.ucdenver.cse.GRIDmap;
+package edu.ucdenver.cse.GRIDcommon;
 
 public class GRIDrouteSegment {
     private String road_ID;

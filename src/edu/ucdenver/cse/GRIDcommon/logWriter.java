@@ -34,7 +34,7 @@ public class logWriter {
 			
 			// Otherwise, append so we always have the output
 			else {
-				filePath = "./output/TEST_ERR_LOG.log";
+				filePath = outputDir +  "/TEST_ERR_LOG.log";
 				errFileHandler = new FileHandler(filePath, false);
 			}
 							

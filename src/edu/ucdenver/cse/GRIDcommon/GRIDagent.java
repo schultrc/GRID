@@ -7,6 +7,7 @@ public class GRIDagent {
     private GRIDroute origRoute;
     private GRIDroute newRoute;
     private GRIDroute myRoute;
+    private GRIDroute actualRouteTaken; // add reset function, methods to add to this as we travel
     
     private Long x; private Long y; // Future Use for now 05/08
     private String currentLink;     // Future Use 05/08
@@ -58,7 +59,7 @@ public class GRIDagent {
     public void setEmissions(Double mewEmissions){ this.emissions = mewEmissions; }
     public void setVehOccupancy(Long vehOccupancy){ this.vehOccupancy = vehOccupancy; }
     public void setVehSize(Double vehSize){ this.vehSize = vehSize; }
-	public void setDepartureTime(double departureTime) { this.departureTime = departureTime; }
+	public void setDepartureTime(Double newDepartureTime) { this.departureTime = newDepartureTime; }
 	public void setRouteHasChanged(boolean hasRouteChanged) { this.routeHasChanged = hasRouteChanged; }
 	
 	// matsim integration only. Move to extended class?
