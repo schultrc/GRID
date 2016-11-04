@@ -147,6 +147,7 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 		
 		//String theOriginIntersection = ourMap.getRoad(event.getLinkId().toString()).getFrom();
 		
+		
 		GRIDagent newAgent = new GRIDagent(event.getPersonId().toString(),
 										   event.getLinkId().toString(),
 				                           event.getLinkId().toString(),

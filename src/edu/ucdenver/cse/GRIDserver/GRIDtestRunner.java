@@ -39,7 +39,7 @@ public class GRIDtestRunner{
         // to.setId("864162469");   // to.setId("10"); // 864162469 // 50
     	Long startTime = System.nanoTime();
 
-        GRIDheapAlg greedy = new GRIDheapAlg();
+        //GRIDheapAlg greedy = new GRIDheapAlg();
         GRIDheapDynamicAlg dyna = new GRIDheapDynamicAlg(myMap); //
         //myPathGreedy = greedy.shortestPath(networkMap,"1040921516","864162469");
 

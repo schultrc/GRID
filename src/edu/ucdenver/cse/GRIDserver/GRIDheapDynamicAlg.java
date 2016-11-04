@@ -13,7 +13,7 @@
 package edu.ucdenver.cse.GRIDserver;
 
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
-import edu.ucdenver.cse.GRIDmap.GRIDnodeWeightTime;
+import edu.ucdenver.cse.GRIDmap.GRIDnodeWtTmEm;
 import edu.ucdenver.cse.GRIDmap.GRIDroad;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
@@ -23,52 +23,53 @@ import java.util.*;
 
 public class GRIDheapDynamicAlg {
     private GRIDmap graph;
-
+    GRIDroute finalPath;
+    
     public GRIDheapDynamicAlg(GRIDmap thisMap) {
         //graph = thisMap;
         graph = graphMiddleware(thisMap);
+        finalPath = new GRIDroute();
     }
 
     public GRIDroute findPath(GRIDagent thisAgent, Long currentTime) {
         GRIDfibHeap pq = new GRIDfibHeap();
 
         Map<String, GRIDfibHeap.Entry> entries = new HashMap<>();
-        GRIDnodeWeightTime startNodeValues;
-        ConcurrentMap<String, GRIDnodeWeightTime> currentPathTotal = new ConcurrentHashMap<>();
+        GRIDnodeWtTmEm startNodeValues;
+        ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
         ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
         Long thisTimeslice = currentTime/1000;
         Long totalTravelTime = thisTimeslice;
         String agtFrom, agtTo;
 
-        /* The agent is already on the link, so we need its endpoint
+        /* The agent is already on the link, so we need its end point
          */
         agtFrom = graph.getRoad(thisAgent.getCurrentLink()).getTo();
         /* The agent will end somewhere on the final link, so we need to get to its "from end"
          */
         agtTo = graph.getRoad(thisAgent.getDestination()).getFrom();
 
-        ConcurrentMap<String, GRIDroad> roads = graph.getRoads();
-        startNodeValues = new GRIDnodeWeightTime();
+        //ConcurrentMap<String, GRIDroad> roads = graph.getRoads();
+        startNodeValues = new GRIDnodeWtTmEm();
         startNodeValues.setNodeWtTotal(0.0);
         startNodeValues.setNodeTmTotal(thisTimeslice);
-        GRIDnodeWeightTime tempNode = startNodeValues;
+        GRIDnodeWtTmEm tempNode = startNodeValues;
 
         /* source/destination check
          */
         //System.out.println("agtFrom: "+agtFrom);
         //System.out.println("agtTo: "+agtTo);
 
-        /* DUMB check - prevent elsewhere
-         */
         if (agtTo.equals(agtFrom)) {
-            return null;
+        	
+            return errorRoute();
         }
 
         /* roadList creation--this will be fixed in the GRIDmap class by
          * combining operations of GRIDmap and the DirectedGraph class
          * more seamlessly
          */
-        graph.loadRoadList(roads);
+        graph.initMap();
 
         for (String node : graph)
             entries.put(node, pq.enqueue(node, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0L));
@@ -125,14 +126,13 @@ public class GRIDheapDynamicAlg {
             if(curr.getValue().equals(agtTo)) totalTravelTime = curr.getTmTotal();
         }
 
-        GRIDroute finalPath = new GRIDroute();
         String step = agtTo;
 
         finalPath.getIntersections().add(step);
         if(previousIntersections.get(step) == null)
         {
             System.out.println("\nI guess it's null, friend.");
-            return null;
+            return errorRoute();
         }
 
         /* Create the final path from source to destination
@@ -145,10 +145,14 @@ public class GRIDheapDynamicAlg {
 
         Collections.reverse(finalPath.getIntersections());
 
-        finalPath.setcalculatedTravelTime(totalTravelTime);
+        finalPath.setCalculatedTravelTime(totalTravelTime);
         return finalPath;
     }
 
+    private GRIDroute errorRoute() {
+    	// Should we do something with this to make it clear that it is null?
+    	return finalPath;
+    }
     private GRIDmap graphMiddleware(GRIDmap myGraph) {
         Long startTime = System.nanoTime();
 

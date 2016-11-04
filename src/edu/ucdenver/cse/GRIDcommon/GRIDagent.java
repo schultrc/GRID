@@ -4,14 +4,19 @@ package edu.ucdenver.cse.GRIDcommon;
 
 public class GRIDagent {
     private String Id = "";
+    private GRIDroute origRoute;
+    private GRIDroute newRoute;
     private GRIDroute myRoute;
+    private GRIDroute actualRouteTaken; // add reset function, methods to add to this as we travel
+    
     private Long x; private Long y; // Future Use for now 05/08
     private String currentLink;     // Future Use 05/08
     private String origin;
     private String destination;
     private Long fuelEconomy;
+    private Double emissions;
     private Long vehOccupancy;
-    private Long vehSize;
+    private Double vehSize;
     private double departureTime;
     private boolean routeHasChanged = false;
     
@@ -29,6 +34,7 @@ public class GRIDagent {
         this.destination      = destination;
         this.simCalcFlag      = simFlag;
         this.needsDestination = needDest;
+        this.vehSize          = 4.5;
     }
 	
 	public GRIDagent(String Id, String curLink, String destination) {
@@ -49,11 +55,12 @@ public class GRIDagent {
     public void setLink(String newLink){ this.currentLink = newLink; }
     public void setOrigin(String newOrigin){ this.origin = newOrigin; }
     public void setDestination(String newDest){ this.destination = newDest; }
-    public void setFuelEconomy(Long fuelEconomy){ this.fuelEconomy = fuelEconomy; }
+    public void setFuelEconomy(Long newFuelEconomy){ this.fuelEconomy = newFuelEconomy; }
+    public void setEmissions(Double mewEmissions){ this.emissions = mewEmissions; }
     public void setVehOccupancy(Long vehOccupancy){ this.vehOccupancy = vehOccupancy; }
-    public void setvehSize(Long vehSize){ this.vehSize = vehSize; }
-	public void setDepartureTime(double departureTime) { this.departureTime = departureTime; }
-	public void setRouteHasChanged(boolean routeHasChanged) { this.routeHasChanged = routeHasChanged; }
+    public void setVehSize(Double vehSize){ this.vehSize = vehSize; }
+	public void setDepartureTime(Double newDepartureTime) { this.departureTime = newDepartureTime; }
+	public void setRouteHasChanged(boolean hasRouteChanged) { this.routeHasChanged = hasRouteChanged; }
 	
 	// matsim integration only. Move to extended class?
 	// Should we always force to false? once the destination is set, we'll never go back to needing
@@ -66,8 +73,8 @@ public class GRIDagent {
     public String getDestination(){ return this.destination; }
     public Long getFuelEconomy(){ return this.fuelEconomy; }
     public Long getVehOccupancy(){ return this.vehOccupancy; }
-    public Long getVehSize(){ return this.vehSize; }
-    public double getDepartureTime() { return this.departureTime; }
+    public Double getVehSize(){ return this.vehSize; }
+    public Double getDepartureTime() { return this.departureTime; }
 	public boolean getRouteHasChanged() { return this.routeHasChanged; }
 	
 	// matsim integration only. Move to extended class?

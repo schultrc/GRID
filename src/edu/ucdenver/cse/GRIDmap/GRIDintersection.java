@@ -4,25 +4,20 @@ public class GRIDintersection {
 	private String Id = "";
 	private double x;
 	private double y;
-
+	private Long timeAtExit;
+	
     public GRIDintersection(String id, double x, double y) {
 		super();
 		Id = id;
 		this.x = x;
 		this.y = y;
+		this.timeAtExit = 0L;
 	}
 
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	public void setY(double y) {
-		this.y = y;
-	}
-
-	public void setId(String id) {
-		Id = id;
-	}
+	public void setId(String id) { Id = id; }
+	public void setX(double x) { this.x = x; }
+	public void setY(double y) { this.y = y; }
+	public void setTimeAtExit(Long exitTime) { this.timeAtExit = exitTime; }
 
 	public String getId(){return Id;}
 

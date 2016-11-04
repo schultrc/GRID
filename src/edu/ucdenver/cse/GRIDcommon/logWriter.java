@@ -2,35 +2,60 @@ package edu.ucdenver.cse.GRIDcommon;
 
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.*;
 
 public class logWriter {
 	static Logger myErrLogger;
-	public Handler errFileHandler;
-	public Formatter errFormatter;
+	private Handler errFileHandler;
+	private Formatter errFormatter;
 	
 	static Logger myInfoLogger;
-	public Handler infoFileHandler;
-	public Formatter infoFormatter;
+	private Handler infoFileHandler;
+	private Formatter infoFormatter;
+	
+	private static Path outputDir;
+	private static boolean loggerInit;
 	
 	private logWriter() throws IOException {
+	
+		if (myErrLogger == null) {
+			myErrLogger = Logger.getLogger(logWriter.class.getName());
+			errFormatter = new SimpleFormatter();
+			
+			String filePath; 
+			
+			// If we have set the outputDir, do not append, overwrite
+			if (loggerInit) {
+				filePath = outputDir + "/TEST_ERR_LOG.log";
+				errFileHandler = new FileHandler(filePath, false);
+
+			}
+			
+			// Otherwise, append so we always have the output
+			else {
+				filePath = outputDir +  "/TEST_ERR_LOG.log";
+				errFileHandler = new FileHandler(filePath, false);
+			}
+							
+			errFileHandler.setLevel(Level.WARNING);
+			errFileHandler.setFormatter(errFormatter);
+			
+			
+			myErrLogger.addHandler(errFileHandler);
+		}
+
+		if (myInfoLogger == null) {
+			myInfoLogger = Logger.getLogger(logWriter.class.getName());
+			infoFormatter = new SimpleFormatter();
+			infoFileHandler = new FileHandler(outputDir + "TEST_INFO_LOG.log", false);
+			infoFileHandler.setLevel(Level.INFO);
+			infoFileHandler.setFormatter(infoFormatter);
+			
+			myInfoLogger.addHandler(infoFileHandler);
+		}
 		
-		 
 		
-		myErrLogger = Logger.getLogger(logWriter.class.getName());
-		errFormatter = new SimpleFormatter();
-		errFileHandler = new FileHandler("TEST_ERR_LOG.log",false);
-		errFileHandler.setLevel(Level.WARNING);
-		errFileHandler.setFormatter(errFormatter);
-		
-		myInfoLogger = Logger.getLogger(logWriter.class.getName());
-		infoFormatter = new SimpleFormatter();
-		infoFileHandler = new FileHandler("TEST_INFO_LOG.log", false);
-		infoFileHandler.setLevel(Level.INFO);
-		infoFileHandler.setFormatter(infoFormatter);
-		
-		myErrLogger.addHandler(errFileHandler);
-		myInfoLogger.addHandler(infoFileHandler);
 	}
 	
 	private static Logger getErrLogger() {
@@ -67,4 +92,10 @@ public class logWriter {
 			getInfoLogger().log(level, msg);
 		}
 	}
+	
+	public static void setOutputDir(Path theDir) {
+		outputDir = theDir;
+		loggerInit = true;
+	}
+	
 }

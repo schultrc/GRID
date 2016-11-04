@@ -2,13 +2,9 @@ package edu.ucdenver.cse.GRIDserver;
 
 import java.io.IOException;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-
-import edu.ucdenver.cse.GRIDmap.*;
 
 public final class GRIDserverConnectionTCPSocket implements GRIDserverConnection {
 
