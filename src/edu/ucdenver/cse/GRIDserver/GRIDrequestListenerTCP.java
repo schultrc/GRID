@@ -2,8 +2,10 @@ package edu.ucdenver.cse.GRIDserver;
 
 import java.io.*;
 import java.net.*;
+import java.util.logging.Level;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
+import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmap.*;
 import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDmessages.GRIDtimeMsg;
@@ -44,6 +46,12 @@ public class GRIDrequestListenerTCP extends Thread {
 				if (theGRID.getMasterAgents().containsKey(((GRIDrouteRequest) theRequest).getAgentID() )){
 					//System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " already exists!");
 					tempAgent = theGRID.getMasterAgents().get(((GRIDrouteRequest) theRequest).getAgentID());
+					tempAgent.setLink(((GRIDrouteRequest) theRequest).getOrigin());
+					
+					// Agents can change destination (and origin?)
+					// We should check before setting
+					tempAgent.setOrigin(((GRIDrouteRequest) theRequest).getOrigin());
+					tempAgent.setDestination(((GRIDrouteRequest) theRequest).getDestination());
 				}
 				
 				else {
@@ -58,13 +66,13 @@ public class GRIDrequestListenerTCP extends Thread {
 					newAgentFlag = true;
 				}
 
-				System.out.println("Agent to be replanned: " + tempAgent.toString() );
+				//logWriter.log(Level.INFO, "RequestListener - Agent to be replanned: " + tempAgent.toString());
 
 				GRIDheapDynamicAlg theALG = new GRIDheapDynamicAlg(theGRID.getMap());
 				GRIDroute tempRoute = theALG.findPath(tempAgent, timeNow);
 				
 				if (tempRoute == null) {
-					System.out.println("ROUTE WAS NULL:");
+					logWriter.log(Level.WARNING, "RequestListener - ROUTE WAS NULL:");
 					inputStream.close();
 					outputStream.close();
 
@@ -72,14 +80,16 @@ public class GRIDrequestListenerTCP extends Thread {
 				}
 				
 				tempRoute.setRoads(theGRID.getMap().getPathByRoad(tempRoute.getIntersections()));
-				System.out.println("Route to be written = " + tempRoute.toString() +"\n\n");
+				logWriter.log(Level.INFO, "RequestListener - Route to be written = " + tempRoute.toString());
+
+				//System.out.println("Route to be written = " + tempRoute.toString() +"\n\n");
 				// need to update the map with the new agent's route
 				
 				
 				theGRID.getMap().updateRoadsWithAgents(tempRoute, theGRID.getTime());
 				
 				if(!newAgentFlag) {
-					// This is wrong, as it will remove the route as of now, not at the proper time
+					// This is wrong, as it will remove the route as of time now, not at the proper time
 					// GRIDsegments will fix this
 					theGRID.getMap().reduceRoadsWithAgents(tempAgent.getRoute(), theGRID.getTime());
 				}
@@ -94,14 +104,17 @@ public class GRIDrequestListenerTCP extends Thread {
 			}
 			
 			else if (theRequest instanceof GRIDtimeMsg) {
-				System.out.println("******* \n GridTimeMsg received with time: " + 
-						((GRIDtimeMsg) theRequest).getTheTime() + "\n********");
+				logWriter.log(Level.INFO, "RequestListener - GridTimeMsg received with time: " +
+						((GRIDtimeMsg) theRequest).getTheTime());
 				
 				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
+				
+				inputStream.close();
+				outputStream.close();
 			}
 			
 			else {
-				System.out.println("ERROR: Unknown Request Received");				
+				logWriter.log(Level.WARNING, "RequestListener - ERROR: Unknown Request Received");			
 			}
 		} 
 		catch (SocketException se) {

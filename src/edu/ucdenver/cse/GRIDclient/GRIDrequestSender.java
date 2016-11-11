@@ -5,8 +5,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.logging.Level;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
+import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDmessages.GRIDtimeMsg;
 
@@ -23,24 +25,24 @@ public class GRIDrequestSender {
 
 			// Make this configurable
 			socket = new Socket("localHost", 9998);
-			System.out.println("Connected");
+			logWriter.log(Level.INFO, "requestSender - Connected");
 
 			outputStream = new ObjectOutputStream(socket.getOutputStream());
 			inputStream = new ObjectInputStream(socket.getInputStream());
 
-			System.out.println("Sending: " + theRequest.toString());
+			logWriter.log(Level.INFO, "requestSender - Sending: " + theRequest.toString());
 			// Send the route request
 			outputStream.writeObject(theRequest);
 			outputStream.flush();
 
-			System.out.println("request sent");
+			//System.out.println("request sent");
 
 			if (theRequest instanceof GRIDrouteRequest) {
 				// Get the new route back
 				theReturnObj = inputStream.readObject();
 				
 				if(theReturnObj == null) {
-					System.out.println("Found null route in: GRIDrequestSender");
+					logWriter.log(Level.WARNING, "requestSender - Found null route");
 					
 				}
 				return theReturnObj;
@@ -60,7 +62,7 @@ public class GRIDrequestSender {
 
 		} catch (SocketException se) {
 			// se.printStackTrace();
-			System.out.println("Socket Exception");
+			logWriter.log(Level.WARNING,"requestSender - Socket Exception");
 			
 			//System.exit(1);
 
