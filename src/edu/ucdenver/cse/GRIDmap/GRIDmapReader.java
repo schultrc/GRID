@@ -24,6 +24,8 @@ public class GRIDmapReader {
 	         GRIDmapParser GMP = new GRIDmapParser();
 	         xmlreader.setContentHandler(GMP);
 	      
+	         System.out.println("Trying to open: " + mapFile);
+	         
 	         xmlreader.parse(new InputSource(mapFile));	             
 	         
 	         GRIDmap theMap = GMP.getMap();

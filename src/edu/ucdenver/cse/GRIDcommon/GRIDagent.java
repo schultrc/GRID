@@ -4,7 +4,6 @@ package edu.ucdenver.cse.GRIDcommon;
 
 public class GRIDagent {
     private String Id = "";
-    private GRIDroute origRoute;
     private GRIDroute newRoute;
     private GRIDroute myRoute;
     private GRIDroute actualRouteTaken; // add reset function, methods to add to this as we travel
@@ -68,6 +67,8 @@ public class GRIDagent {
 
     public String getId(){return this.Id;}
     public GRIDroute getRoute(){ return this.myRoute;}
+	public void setNewRoute(GRIDroute newRoute) { this.newRoute = newRoute;	}
+	public GRIDroute getNewRoute() { return this.newRoute; }
     public String getCurrentLink(){ return this.currentLink; }
     public String getOrigin(){ return this.origin; }
     public String getDestination(){ return this.destination; }
@@ -86,6 +87,8 @@ public class GRIDagent {
     {  
         return "GRIDagent Id=" + this.Id + " Origin: " + this.origin + " CurrentLink: " + this.currentLink + " Dest: " + this.destination;
     }
+
+
 
 
 }

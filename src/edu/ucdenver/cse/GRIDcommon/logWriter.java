@@ -3,59 +3,66 @@ package edu.ucdenver.cse.GRIDcommon;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.*;
 
 public class logWriter {
 	static Logger myErrLogger;
-	private Handler errFileHandler;
-	private Formatter errFormatter;
+	private static Handler errFileHandler;
+	private static Formatter errFormatter;
 	
 	static Logger myInfoLogger;
-	private Handler infoFileHandler;
-	private Formatter infoFormatter;
+	private static Handler infoFileHandler;
+	private static Formatter infoFormatter;
 	
 	private static Path outputDir;
 	private static boolean loggerInit;
 	
 	private logWriter() throws IOException {
 	
+		String errFilePath;
+		String infoFilePath;
+		boolean appendFlag = false;
+		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+		
+		// If we have set the outputDir, do not append, overwrite
+		if (loggerInit) {
+			errFilePath = outputDir  + "/" + timeStamp + "_TEST_ERR.log";
+			infoFilePath = outputDir + "/" + timeStamp + "_TEST_INFO.log";
+			appendFlag = false;
+		}
+
+		// Otherwise, append so we always have the output
+		else {
+			errFilePath = "./"  + timeStamp + "_TEST_ERR.log";
+			infoFilePath = "./" + timeStamp + "_TEST_INFO.log";
+
+			appendFlag = true;
+		}
+
 		if (myErrLogger == null) {
 			myErrLogger = Logger.getLogger(logWriter.class.getName());
-			errFormatter = new SimpleFormatter();
-			
-			String filePath; 
-			
-			// If we have set the outputDir, do not append, overwrite
-			if (loggerInit) {
-				filePath = outputDir + "/TEST_ERR_LOG.log";
-				errFileHandler = new FileHandler(filePath, false);
-
-			}
-			
-			// Otherwise, append so we always have the output
-			else {
-				filePath = outputDir +  "/TEST_ERR_LOG.log";
-				errFileHandler = new FileHandler(filePath, false);
-			}
-							
+			errFormatter = new SimpleFormatter();						
+			errFileHandler = new FileHandler(errFilePath, appendFlag);				
 			errFileHandler.setLevel(Level.WARNING);
 			errFileHandler.setFormatter(errFormatter);
 			
-			
+			//myErrLogger.setUseParentHandlers(false);
 			myErrLogger.addHandler(errFileHandler);
 		}
 
 		if (myInfoLogger == null) {
 			myInfoLogger = Logger.getLogger(logWriter.class.getName());
 			infoFormatter = new SimpleFormatter();
-			infoFileHandler = new FileHandler(outputDir + "TEST_INFO_LOG.log", false);
+			infoFileHandler = new FileHandler(infoFilePath, appendFlag);
 			infoFileHandler.setLevel(Level.INFO);
 			infoFileHandler.setFormatter(infoFormatter);
 			
+			// Do not output to the console
+			myInfoLogger.setUseParentHandlers(false);
 			myInfoLogger.addHandler(infoFileHandler);
-		}
-		
-		
+		}		
 	}
 	
 	private static Logger getErrLogger() {
@@ -97,5 +104,16 @@ public class logWriter {
 		outputDir = theDir;
 		loggerInit = true;
 	}
-	
+
+	public static void stop() {
+		try {
+			infoFileHandler.close();
+			errFileHandler.close();
+		}
+		
+		finally {
+			System.out.println("We are done");
+		}
+		
+	}
 }

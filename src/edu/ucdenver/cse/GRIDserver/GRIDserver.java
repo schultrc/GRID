@@ -24,6 +24,8 @@ public class GRIDserver extends Thread {
 		theServer.init();
 
 		theServer.serve();
+		
+		logWriter.stop();
 	}
 
 	public GRIDserver(String[] theArgs) {

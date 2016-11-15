@@ -69,8 +69,8 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 		// If an agent enters a link, it will be there for the duration of:
 		// length / current speed
 		
-		double timeToTransit = (ourMap.getRoad(event.getLinkId().toString()).getLength() /
-				                ourMap.getRoad(event.getLinkId().toString()).getCurrentSpeed());
+		//double timeToTransit = (ourMap.getRoad(event.getLinkId().toString()).getLength() /
+		//		                ourMap.getRoad(event.getLinkId().toString()).getCurrentSpeed());
         
 		//System.out.println("Time to transit link: " + event.getLinkId().toString() +
 		//		           " is currently: " + timeToTransit);
@@ -78,14 +78,14 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 		// So, from now (sim now) until sim now + timeToTransit, this Agent will be on this link
 		// lets add to the weight of this link so we know this road is busier
 		
-		for (int i = 0; i < timeToTransit; ++i) {
-			ourMap.getRoad(event.getLinkId().toString()).addToWeight((long) (event.getTime() + i));
+		//for (int i = 0; i < timeToTransit; ++i) {
+		//	ourMap.getRoad(event.getLinkId().toString()).addToWeight((long) (event.getTime() + i));
 			//System.out.println("adding to link: " + event.getLinkId() +
 			//		           " at time: " + (event.getTime() + i) );
 					
-		}
+		//}
 		// Tell our agent where it is
-		ourAgents.get(event.getPersonId().toString()).setLink(event.getLinkId().toString());	
+		ourAgents.get(event.getPersonId().toString()).setLink(event.getLinkId().toString());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -105,8 +105,6 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 		}
 		else {
 			// This is bad, an agent we don't know about just left a link
-			System.out.println("ERROR in LinkLeaveEvent: Agent: " + event.getPersonId().toString() +
-					           " does not exist in our system!");
 			logWriter.log(Level.WARNING, "Agent: " + event.getPersonId().toString() + " just left a link, but we don't know that agent!");
 		}
 	}
@@ -129,10 +127,16 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 			
 			totalTravelTime += travelTime;
 			ourAgents.remove(event.getPersonId().toString());
+			
+			logWriter.log(Level.INFO, "Agent: " + tempAgent.getId() +
+					      " departed at: "      + tempAgent.getDepartureTime() + 
+					      " and arrived at: "   + event.getTime());
+			
 		}
 		
 		else {
-			System.out.println("ERROR!!! Attempt to remove an agent: " + event.getPersonId() + " that never started!!");
+			logWriter.log(Level.WARNING, "ERROR!!! Attempt to remove an agent: " + 
+		                  event.getPersonId() + " that never started!!");
 		}
 	}
 
@@ -143,7 +147,7 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 		// Is this going to be one of OUR agents?  change the % value to change how many we do. %5 = 20 % of all agents
 		boolean simFlag = ((Double.parseDouble(event.getPersonId().toString()) % 2) == 0);
 		simFlag = true;
-		// Get the destination - future MOD ?
+		//simFlag = false;
 		
 		//String theOriginIntersection = ourMap.getRoad(event.getLinkId().toString()).getFrom();
 		
