@@ -30,7 +30,7 @@ public class GRIDrequestSender {
 			outputStream = new ObjectOutputStream(socket.getOutputStream());
 			inputStream = new ObjectInputStream(socket.getInputStream());
 
-			logWriter.log(Level.INFO, "requestSender - Sending: " + theRequest.toString());
+			logWriter.log(Level.FINEST, "requestSender - Sending: " + theRequest.toString());
 			// Send the route request
 			outputStream.writeObject(theRequest);
 			outputStream.flush();

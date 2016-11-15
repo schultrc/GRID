@@ -104,8 +104,12 @@ public class GRIDrequestListenerTCP extends Thread {
 			}
 			
 			else if (theRequest instanceof GRIDtimeMsg) {
+				// Only log every so often
+				if ((((GRIDtimeMsg) theRequest).getTheTime() % 1000) == 0) {
 				logWriter.log(Level.INFO, "RequestListener - GridTimeMsg received with time: " +
 						((GRIDtimeMsg) theRequest).getTheTime());
+				
+				}
 				
 				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
 				

@@ -156,8 +156,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		//Long startTime = System.currentTimeMillis();
 		GRIDagent tempGRIDagent = theAgents.get(agent.getId().toString());
 
-		if (areWeThere(tempGRIDagent)) {
-			logWriter.log(Level.INFO, "Agent: " + tempGRIDagent.getId() + " has arrived or can no longer replan");
+		if (weAreThere(tempGRIDagent)) {
 			return true;
 		}
 		
@@ -253,7 +252,6 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		// for(String ourRoad:theRoute) {
 		for (int i = 0; i < theRoute.size(); ++i) {
 			// Add the road to the list for mobsim
-			logWriter.log(Level.INFO, "2ndLOOP adding: " + theRoute.get(i) + " at position: " + (i + currentLinkIndex) );
 			mobsimLinks.add(i + currentLinkIndex, Id.createLinkId(theRoute.get(i)));
 		}
 
@@ -302,7 +300,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		return true;
 	}
 	
-	private boolean areWeThere(GRIDagent tempGRIDagent) {
+	private boolean weAreThere(GRIDagent tempGRIDagent) {
 		if (tempGRIDagent.getCurrentLink().equals(tempGRIDagent.getDestination())) {
 			// We must already be at our destination!
 
@@ -358,7 +356,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		GRIDtimeMsg theTimeMsg = new GRIDtimeMsg((long) event.getSimulationTime());
 
 		theRequestSender.sendRequest(theTimeMsg);
-		logWriter.log(Level.INFO,
+		logWriter.log(Level.FINEST,
 				"**************************************************************\n" + " END of SIM Time Step: "
 						+ event.getSimulationTime() + "\n"
 						+ "**************************************************************\n\n");

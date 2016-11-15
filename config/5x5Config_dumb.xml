@@ -2,11 +2,11 @@
 <!DOCTYPE config SYSTEM "./dtd/config_v2.dtd">
 <config>
 	<module name="network">
-		<param name="inputNetworkFile" value="./data/5x5Network.xml"/>
+		<param name="inputNetworkFile" value="data/5x5Network.xml"/>
 	</module>
 
 	<module name="plans">
-		<param name="inputPlansFile" value="./data/5x5Population_dumb.xml"/>
+		<param name="inputPlansFile" value="data/5x5Population_dumb.xml"/>
 	</module>
 
 	<module name="controler">
