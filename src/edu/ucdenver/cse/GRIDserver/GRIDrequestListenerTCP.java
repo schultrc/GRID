@@ -32,7 +32,6 @@ public class GRIDrequestListenerTCP extends Thread {
 
 			Object theRequest = inputStream.readObject();
 			
-			// Add more options as we define requests
 			if (theRequest instanceof GRIDrouteRequest) {
 				//System.out.println("Route Request Received: " + (((GRIDrouteRequest)theRequest).toString()));
 				
@@ -40,15 +39,13 @@ public class GRIDrequestListenerTCP extends Thread {
 				boolean newAgentFlag = false;
 				
 				GRIDagent tempAgent;
-
-				// This is broken, need to be able to change location / destination
 				
 				if (theGRID.getMasterAgents().containsKey(((GRIDrouteRequest) theRequest).getAgentID() )){
 					//System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " already exists!");
 					tempAgent = theGRID.getMasterAgents().get(((GRIDrouteRequest) theRequest).getAgentID());
 					tempAgent.setLink(((GRIDrouteRequest) theRequest).getOrigin());
 					
-					// Agents can change destination (and origin?)
+					// Agents can change destination (and origin?) - same agent requests new route
 					// We should check before setting
 					tempAgent.setOrigin(((GRIDrouteRequest) theRequest).getOrigin());
 					tempAgent.setDestination(((GRIDrouteRequest) theRequest).getDestination());
@@ -61,14 +58,14 @@ public class GRIDrequestListenerTCP extends Thread {
 					                          (((GRIDrouteRequest) theRequest).getOrigin()), 
 					                          (((GRIDrouteRequest) theRequest).getDestination()));
 					
-					theGRID.getMasterAgents().put(((GRIDrouteRequest) theRequest).getAgentID(), tempAgent);
+					this.theGRID.getMasterAgents().put(((GRIDrouteRequest) theRequest).getAgentID(), tempAgent);
 					
 					newAgentFlag = true;
 				}
 
-				//logWriter.log(Level.INFO, "RequestListener - Agent to be replanned: " + tempAgent.toString());
+				logWriter.log(Level.INFO, "RequestListener - Agent to be replanned: " + tempAgent.toString());
 
-				GRIDheapDynamicAlg theALG = new GRIDheapDynamicAlg(theGRID.getMap());
+				GRIDheapDynamicAlg theALG = new GRIDheapDynamicAlg(this.theGRID.getMap());
 				GRIDroute tempRoute = theALG.findPath(tempAgent, timeNow);
 				
 				if (tempRoute == null) {
@@ -79,19 +76,21 @@ public class GRIDrequestListenerTCP extends Thread {
 					return;
 				}
 				
-				tempRoute.setRoads(theGRID.getMap().getPathByRoad(tempRoute.getIntersections()));
-				logWriter.log(Level.INFO, "RequestListener - Route to be written = " + tempRoute.toString());
+				tempRoute.setRoads(this.theGRID.getMap().getPathByRoad(tempRoute.getIntersections()));
+				logWriter.log(Level.INFO, "RequestListener - Route to be written = " + 
+				                           tempRoute.toString() +
+				                           " at GRID time: " + 
+				                           this.theGRID.getTime());
 
-				//System.out.println("Route to be written = " + tempRoute.toString() +"\n\n");
 				// need to update the map with the new agent's route
 				
+				this.theGRID.getMap().updateRoadsWithAgents(tempRoute, this.theGRID.getTime());
 				
-				theGRID.getMap().updateRoadsWithAgents(tempRoute, theGRID.getTime());
-				
+				// If we just added this agent, there is no "existing route" to remove
 				if(!newAgentFlag) {
 					// This is wrong, as it will remove the route as of time now, not at the proper time
 					// GRIDsegments will fix this
-					theGRID.getMap().reduceRoadsWithAgents(tempAgent.getRoute(), theGRID.getTime());
+					this.theGRID.getMap().reduceRoadsWithAgents(tempAgent.getCurrentRoute(), this.theGRID.getTime());
 				}
 				
 				tempAgent.setRoute(tempRoute);
@@ -112,6 +111,8 @@ public class GRIDrequestListenerTCP extends Thread {
 				}
 				
 				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
+				
+				logWriter.log(Level.INFO, "theGrid time set to: " + this.theGRID.getTime());
 				
 				inputStream.close();
 				outputStream.close();

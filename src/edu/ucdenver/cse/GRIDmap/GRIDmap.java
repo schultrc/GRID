@@ -2,9 +2,11 @@ package edu.ucdenver.cse.GRIDmap;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Level;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDcommon.GRIDrouteSegment;
+import edu.ucdenver.cse.GRIDcommon.logWriter;
 
 
 public final class GRIDmap implements Iterable<String> {
@@ -171,26 +173,45 @@ public final class GRIDmap implements Iterable<String> {
 	}
 
 	public void updateRoadsWithAgents(GRIDroute theRoute, long time) {
+		
+		long previousSegmentEndTime = time;
+		long i;
+		
 		for (String ourRoad : theRoute.getRoads()) {
 			// Add vehicle count to the roads
-			for (Long i = 0L; i < this.getRoad(ourRoad).getTravelTime(); i++) {
+			for (i = 0L; i < this.getRoad(ourRoad).getTravelTime(); i++) {
 				// This isn't correct, but we aren't running matsim with a real
 				// now time
 				// Should have timeNow added to i
-				this.getRoad(ourRoad).addToWeight(i);
+				this.getRoad(ourRoad).addToWeight(i + previousSegmentEndTime);
+				
+				logWriter.log(Level.INFO, "weight on road: " + ourRoad +
+						                  "for i value: "    + i +
+						                  " at time: "       + (i+previousSegmentEndTime) +
+						                  " increased to: "  + this.getRoad(ourRoad).getWeightAtTime(i + previousSegmentEndTime));
 			}
+			
+			previousSegmentEndTime += (i - 1);
+			logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
 		}
 	}
 
 	public void reduceRoadsWithAgents(GRIDroute theRoute, long time) {
+		
+		long previousSegmentEndTime = time;
+		long i;
+		
 		for (String ourRoad : theRoute.getRoads()) {
 			// Remove vehicles from the roads
-			for (Long i = 0L; i < this.getRoad(ourRoad).getTravelTime(); i++) {
+			for (i = 0L; i < this.getRoad(ourRoad).getTravelTime(); i++) {
 				// This isn't correct, but we aren't running matsim with a real
 				// now time
 				// Should have timeNow added to i
-				this.getRoad(ourRoad).subFromWeight(i);
+				this.getRoad(ourRoad).subFromWeight(i + previousSegmentEndTime);
 			}
+			
+			previousSegmentEndTime += (i - 1);
+			logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
 		}
 	}
 	

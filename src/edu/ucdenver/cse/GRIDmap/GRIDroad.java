@@ -12,7 +12,8 @@ public class GRIDroad {
 	
 	// Each road is a one way
 	
-	private static final Double ourDefaultValue = (double) 1;
+	// If there are no cars, the weight should be 0
+	private static final Double ourDefaultValue = (double) 0;
 	private static final Double MAX_WEIGHT = 2000000.0;
 
 	private String Id   = "";
@@ -178,8 +179,7 @@ public class GRIDroad {
 	{ // vehiclesCurrentlyOnRoad
 		Double timeWeight = 0.0,
 			   capMinusActual = maxCapacity-this.getAvgVehicleCount(intervalStartTime);
-		GRIDutilityFunction calculator = new GRIDutilityFunction();
-
+		
 		/*System.out.println("\nmaxCAPACITY: "+capMinusActual+"\n");
 		System.out.println("\nAVG: "+this.getAvgVehicleCount(intervalStartTime)+"\n");
 		System.out.println("\nCAPACITY: "+capMinusActual+"\n");*/

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE network SYSTEM "../dtd/network_v1.dtd">
+<network>
+
+<!-- ====================================================================== -->
+
+	<nodes>
+		<node id="1"  x="0"    y="0" />
+		<node id="2"  x="1000" y="0" />
+		<node id="3"  x="2000" y="0" />
+		<node id="4"  x="3000" y="0" />
+		<node id="5"  x="4000" y="0" />
+		<node id="6"  x="0"    y="1000" />
+		<node id="7"  x="1000" y="1000" />
+		<node id="8"  x="2000" y="1000" />
+		<node id="9"  x="3000" y="1000" />
+		<node id="10" x="4000" y="1000" />
+		<node id="11" x="0"    y="2000" />
+		<node id="12" x="1000" y="2000" />
+		<node id="13" x="2000" y="2000" />
+		<node id="14" x="3000" y="2000" />
+		<node id="15" x="4000" y="2000" />
+		<node id="16" x="0"    y="3000" />
+		<node id="17" x="1000" y="3000" />
+		<node id="18" x="2000" y="3000" />
+		<node id="19" x="3000" y="3000" />
+		<node id="20" x="4000" y="3000" />
+		<node id="21" x="0"    y="4000" />
+		<node id="22" x="1000" y="4000" />
+		<node id="23" x="2000" y="4000" />
+		<node id="24" x="3000" y="4000" />
+		<node id="25" x="4000" y="4000" />
+	</nodes>	
+
+<!-- ====================================================================== -->
+
+	<links capperiod="01:00:00" effectivecellsize="7.5" effectivelanewidth="3.75">
+		<link id="1to2"   from="1"  to="2"  length="1000" freespeed="10.0" capacity="3600" permlanes="1.0" oneway="1" modes="car" />
+		<link id="1to6"   from="1"  to="6"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="2to1"   from="2"  to="1"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="2to3"   from="2"  to="3"  length="1000" freespeed="10.0" capacity="3600" permlanes="1.0" oneway="1" modes="car" />
+		<link id="2to7"   from="2"  to="7"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="3to2"   from="3"  to="2"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="3to4"   from="3"  to="4"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="3to8"   from="3"  to="8"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="4to3"   from="4"  to="3"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="4to5"   from="4"  to="5"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="4to9"   from="4"  to="9"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="5to4"   from="5"  to="4"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="5to10"  from="5"  to="10" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="6to1"   from="6"  to="1"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="6to7"   from="6"  to="7"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="6to11"  from="6"  to="11" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="7to2"   from="7"  to="2"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="7to6"   from="7"  to="6"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="7to8"   from="7"  to="8"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="7to12"  from="7"  to="12" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="8to3"   from="8"  to="3"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="8to7"   from="8"  to="7"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="8to9"   from="8"  to="9"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="8to13"  from="8"  to="13" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="9to4"   from="9"  to="4"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="9to8"   from="9"  to="8"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="9to10"  from="9"  to="10" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="9to14"  from="9"  to="14" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="10to5"  from="10" to="5"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="10to9"  from="10" to="9"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="10to15" from="10" to="15" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="11to6"  from="11" to="6"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="11to12" from="11" to="12" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="11to16" from="11" to="16" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="12to7"  from="12" to="7"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="12to11" from="12" to="11" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="12to13" from="12" to="13" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="12to17" from="12" to="17" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="13to8"  from="13" to="8"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="13to12" from="13" to="12" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="13to14" from="13" to="14" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="13to18" from="13" to="18" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="14to9"  from="14" to="9"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="14to13" from="14" to="13" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="14to15" from="14" to="15" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="14to19" from="14" to="19" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="15to10" from="15" to="10" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="15to14" from="15" to="14" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="15to20" from="15" to="20" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="16to11" from="16" to="11" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="16to17" from="16" to="17" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="16to21" from="16" to="21" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="17to12" from="17" to="12" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="17to16" from="17" to="16" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="17to18" from="17" to="18" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="17to22" from="17" to="22" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="18to13" from="18" to="13" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="18to17" from="18" to="17" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="18to19" from="18" to="19" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="18to23" from="18" to="23" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="19to14" from="19" to="14" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="19to18" from="19" to="18" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="19to20" from="19" to="20" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="19to24" from="19" to="24" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="20to15" from="20" to="15" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="20to19" from="20" to="19" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="20to25" from="20" to="25" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="21to16" from="21" to="16" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="21to22" from="21" to="22" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="22to17" from="22" to="17" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="22to21" from="22" to="21" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="22to23" from="22" to="23" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="23to18" from="23" to="18" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="23to22" from="23" to="22" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="23to24" from="23" to="24" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="24to19" from="24" to="19" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="24to23" from="24" to="23" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="24to25" from="24" to="25" length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="25to20" from="25" to="20" length="1000" freespeed="10.0" capacity="3600" permlanes="1.0" oneway="1" modes="car" />
+		<link id="25to24" from="25" to="24" length="1000" freespeed="10.0" capacity="3600" permlanes="1.0" oneway="1" modes="car" />
+	</links>
+
+<!-- ====================================================================== -->
+
+</network>
