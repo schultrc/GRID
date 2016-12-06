@@ -4,8 +4,8 @@ package edu.ucdenver.cse.GRIDcommon;
 
 public class GRIDagent {
     private String Id = "";
-    private GRIDroute newRoute;
-    private GRIDroute myRoute;
+    private GRIDroute newRoute;         // a new route that has been planned but not being followed, yet
+    private GRIDroute currentRoute;     // the route this agent *should* be following
     private GRIDroute actualRouteTaken; // add reset function, methods to add to this as we travel
     
     private Long x; private Long y; // Future Use for now 05/08
@@ -17,7 +17,7 @@ public class GRIDagent {
     private Long vehOccupancy;
     private Double vehSize;
     private double departureTime;
-    private boolean routeHasChanged = false;
+    private boolean routeHasChanged = false; // set to let the agent know it has a new route
     
     // These 2 values are for matsim integration only. Could be put into extended class
     private boolean simCalcFlag      = false;       // Is this one of OUR agents, so we can change its route
@@ -27,7 +27,7 @@ public class GRIDagent {
         //super();
 
         this.Id               = Id;
-        this.myRoute          = new GRIDroute();
+        this.currentRoute          = new GRIDroute();
         this.currentLink      = curLink;
         this.origin           = origin;
         this.destination      = destination;
@@ -43,7 +43,7 @@ public class GRIDagent {
         this.destination = destination;
 	}
 
-    public void setRoute(GRIDroute newPath){ myRoute = newPath;}
+    public void setRoute(GRIDroute newPath){ currentRoute = newPath;}
     
     public void setX(Long x) {
         this.x = x;
@@ -66,7 +66,7 @@ public class GRIDagent {
 	public void setNeedsDestinationFlag(boolean theFlag) { this.needsDestination = theFlag; } 
 
     public String getId(){return this.Id;}
-    public GRIDroute getRoute(){ return this.myRoute;}
+    public GRIDroute getCurrentRoute(){ return this.currentRoute;}
 	public void setNewRoute(GRIDroute newRoute) { this.newRoute = newRoute;	}
 	public GRIDroute getNewRoute() { return this.newRoute; }
     public String getCurrentLink(){ return this.currentLink; }

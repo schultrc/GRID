@@ -152,8 +152,6 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 			return false;
 		}
 
-		//double now = mobsim.getSimTimer().getTimeOfDay();
-		//Long startTime = System.currentTimeMillis();
 		GRIDagent tempGRIDagent = theAgents.get(agent.getId().toString());
 
 		if (weAreThere(tempGRIDagent)) {
@@ -161,7 +159,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		}
 		
 		// Keep the original so we can determine if it has changed
-		GRIDroute origGRIDroute = tempGRIDagent.getRoute();
+		GRIDroute origGRIDroute = tempGRIDagent.getCurrentRoute();
 
 		// contact the server for a new route
 		GRIDrequestSender theRequestSender = new GRIDrequestSender();
