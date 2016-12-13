@@ -2,7 +2,9 @@ package edu.ucdenver.cse.GRIDmap;
 
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
+import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDserver.GRIDutilityFunction;
 
 import java.util.LinkedList;
@@ -210,6 +212,8 @@ public class GRIDroad {
 	
 	public boolean setWeightAtTime(Long time, double capacity) {
 		if (this.vehiclesCurrentlyOnRoadAtTime.containsKey(time)) {
+			
+			// RCS Fix to log
 			System.out.println("ERROR: Time already has a value for: " +
 		                       this.Id + " at time: " +
 							   time.toString());	
@@ -232,21 +236,39 @@ public class GRIDroad {
 
 	private double getAvgVehicleCount(Long intervalStartTime){
 		int numberOfKeys = 0;
+		
 		Double avgVehicleCount = 0.0,
 			   timeOnLink = this.Length/this.getCurrentSpeed(),
 			   timeInterval = intervalStartTime + timeOnLink;
 
+		//logWriter.log(Level.INFO, "GRIDroad:getAvgVehicleCount() - " +
+		//                          " checking from: " + intervalStartTime +
+		//                          " to: " + timeInterval);
+		
+		
+		//logWriter.log(Level.INFO, "GRIDroad:getAvgVehicleCount() - " +
+		//		                  " hash is: \n" + this.vehiclesCurrentlyOnRoadAtTime.toString());
+		
 		for(Long i = intervalStartTime; i < timeInterval; i++)
 		{
 			if(this.vehiclesCurrentlyOnRoadAtTime.containsKey(i)) {
 				avgVehicleCount += this.vehiclesCurrentlyOnRoadAtTime.get(i);
 				numberOfKeys++;
+				
+				//logWriter.log(Level.INFO, "GRIDroad:getAvgVehicleCount() - " +
+				//                          " found weight: " + this.vehiclesCurrentlyOnRoadAtTime.get(i) +
+				//                          " at time: " + i);
 			}
 		}
 
 		if( numberOfKeys > 1 )
 			avgVehicleCount /= numberOfKeys;
 
+		//logWriter.log(Level.INFO, "GRIDroad:getAvgVehicleCount() - " +
+		//                          "Average vehicles on road: " + this.Id +
+		//		                  " at time: " + intervalStartTime +
+		//		                  " is: " + avgVehicleCount);
+		
 		return avgVehicleCount;
 	}
 

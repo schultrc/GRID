@@ -66,6 +66,8 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 	@Override
 	public void handleEvent(LinkEnterEvent event) {
 		
+		// RCS Here we should alert via msg that we have entered a new link (road)
+		
 		// If an agent enters a link, it will be there for the duration of:
 		// length / current speed
 		
