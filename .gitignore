@@ -2,4 +2,9 @@
 /output
 /bin
 /download
-
+.idea
+*.iml
+/JARs
+/classes
+config/dtd/
+*.log
