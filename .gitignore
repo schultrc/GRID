@@ -8,3 +8,6 @@
 /classes
 config/dtd/
 *.log
+/output*
+/bin*
+/download*

@@ -63,10 +63,11 @@ public class GRIDrequestListenerTCP extends Thread {
 					newAgentFlag = true;
 				}
 
-				logWriter.log(Level.INFO, "RequestListener - Agent to be replanned: " + tempAgent.toString());
+				logWriter.log(Level.INFO, "RequestListener - Agent to be replanned: " + tempAgent.toString() +
+						                  " at time: " + theGRID.getTime());
 
 				GRIDheapDynamicAlg theALG = new GRIDheapDynamicAlg(this.theGRID.getMap());
-				GRIDroute tempRoute = theALG.findPath(tempAgent, timeNow);
+				GRIDroute tempRoute = theALG.findPath(tempAgent, theGRID.getTime());
 				
 				if (tempRoute == null) {
 					logWriter.log(Level.WARNING, "RequestListener - ROUTE WAS NULL:");
@@ -111,8 +112,6 @@ public class GRIDrequestListenerTCP extends Thread {
 				}
 				
 				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
-				
-				logWriter.log(Level.INFO, "theGrid time set to: " + this.theGRID.getTime());
 				
 				inputStream.close();
 				outputStream.close();

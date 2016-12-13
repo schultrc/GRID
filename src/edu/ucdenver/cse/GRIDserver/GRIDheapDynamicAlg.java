@@ -17,8 +17,10 @@ import edu.ucdenver.cse.GRIDmap.GRIDnodeWtTmEm;
 import edu.ucdenver.cse.GRIDmap.GRIDroad;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
+import edu.ucdenver.cse.GRIDcommon.logWriter;
 
 import java.util.concurrent.*;
+import java.util.logging.Level;
 import java.util.*;
 
 public class GRIDheapDynamicAlg {
@@ -27,8 +29,8 @@ public class GRIDheapDynamicAlg {
     
     public GRIDheapDynamicAlg(GRIDmap thisMap) {
         //graph = thisMap;
-        graph = graphMiddleware(thisMap);
-        finalPath = new GRIDroute();
+        this.graph = graphMiddleware(thisMap);
+        this.finalPath = new GRIDroute();
     }
 
     public GRIDroute findPath(GRIDagent thisAgent, Long currentTime) {
@@ -38,7 +40,10 @@ public class GRIDheapDynamicAlg {
         GRIDnodeWtTmEm startNodeValues;
         ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
         ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
+
         Long thisTimeslice = currentTime;
+        //Long thisTimeslice = currentTime/1000;
+
         Long totalTravelTime = thisTimeslice;
         String agtFrom, agtTo;
 
@@ -92,6 +97,11 @@ public class GRIDheapDynamicAlg {
                 /* Compute the cost of the path from the source to this node,
                  * which is the cost of this node plus the cost of this edge.
                  */
+                
+              //  logWriter.log(Level.INFO, "GRIDheapDynamicAlg: findPath - " +
+              //  		                  " prior to calcWeight, time is: " + currentPathTotal.get(curr.getValue()).getNodeTmTotal());
+                
+                
                 tempNode = graph.calcWeight(curr.getValue(), arc.getKey(),
                         currentPathTotal.get(curr.getValue()).getNodeTmTotal());
 
@@ -131,6 +141,7 @@ public class GRIDheapDynamicAlg {
         finalPath.getIntersections().add(step);
         if(previousIntersections.get(step) == null)
         {
+        	// RCS log this
             System.out.println("\nI guess it's null, friend.");
             return errorRoute();
         }
@@ -155,7 +166,7 @@ public class GRIDheapDynamicAlg {
     }
     private GRIDmap graphMiddleware(GRIDmap myGraph) {
         Long startTime = System.nanoTime();
-
+        
         ArrayList<String> networkIntersections = new ArrayList<>(myGraph.getIntersections().keySet());
         ArrayList<GRIDroad> networkRoads = new ArrayList<>(myGraph.getRoads().values());
 
@@ -168,6 +179,8 @@ public class GRIDheapDynamicAlg {
         for(int i = 0; i < networkRoads.size(); i++)
         {
             //if(i+1 == networkRoads.size()){System.out.println("edges: "+(i+1));}
+        	
+        	//logWriter.log(Level.INFO, "Adding road: " + );
             myGraph.addEdge(networkRoads.get(i).getFrom(), networkRoads.get(i).getTo(), networkRoads.get(i).getLength());
         }
 

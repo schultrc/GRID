@@ -114,6 +114,10 @@ public final class GRIDmap implements Iterable<String> {
 		tempEmissions = tempRoad.getEmissionsWeightOverInterval(startTime);
         tempWeight = tempRoad.getTimeWeightOverInterval(startTime);
 
+        //logWriter.log(Level.INFO, "Weight for road: " + tempRoad.getId() + 
+        //		                  " from time: " + startTime +
+        //		                  " is: " + tempWeight);
+        
 		tempNode.setNodeEmissions(tempEmissions);
         tempNode.setNodeWtTotal(tempWeight);
         tempNode.setNodeTmTotal(tempTimeslice);
@@ -185,14 +189,14 @@ public final class GRIDmap implements Iterable<String> {
 				// Should have timeNow added to i
 				this.getRoad(ourRoad).addToWeight(i + previousSegmentEndTime);
 				
-				logWriter.log(Level.INFO, "weight on road: " + ourRoad +
-						                  "for i value: "    + i +
-						                  " at time: "       + (i+previousSegmentEndTime) +
-						                  " increased to: "  + this.getRoad(ourRoad).getWeightAtTime(i + previousSegmentEndTime));
+				//logWriter.log(Level.INFO, "weight on road: " + ourRoad +
+				//		                  "for i value: "    + i +
+				//		                  " at time: "       + (i+previousSegmentEndTime) +
+				//		                  " increased to: "  + this.getRoad(ourRoad).getWeightAtTime(i + previousSegmentEndTime));
 			}
 			
 			previousSegmentEndTime += (i - 1);
-			logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
+			//logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
 		}
 	}
 
@@ -211,7 +215,7 @@ public final class GRIDmap implements Iterable<String> {
 			}
 			
 			previousSegmentEndTime += (i - 1);
-			logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
+			//logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
 		}
 	}
 	
