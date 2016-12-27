@@ -93,16 +93,27 @@ public class GRIDroad {
 		this.currentSpeed = currentSpeed;
 	}
 	
-	public void calcCurrentSpeed(Long intervalStartTime) {
-		double carLengths = 0.0,
-			   speedModifier = 1.0;
+	// Not  currently used
+	//public void calcCurrentSpeed(Long intervalStartTime) {
+	//	double carLengths = 0.0,
+	//		   speedModifier = 1.0;
 
-		carLengths = this.getAvgVehicleCount(intervalStartTime)*4.5;
-		speedModifier = carLengths/this.getLength();
+	//	carLengths = this.getAvgVehicleCount(intervalStartTime)*4.5;
+	//	speedModifier = carLengths/this.getLength();
 
-		if(speedModifier > 0.8) {
-			this.currentSpeed = this.currentSpeed/3.0;
-		}
+	//	if(speedModifier > 0.8) {
+	//		this.currentSpeed = this.currentSpeed/3.0;
+	//	}
+	//}
+	
+	public void removeWeightAtTime(Long time) {
+		
+		//logWriter.log(Level.INFO, this.getClass().getName() + " size of roads is: " + 
+		//                         this.vehiclesCurrentlyOnRoadAtTime.size() + " at time: " + time +
+		//                          " on road: " + this.Id);
+
+		this.vehiclesCurrentlyOnRoadAtTime.remove(time);
+
 	}
 	
 	public void addToWeight(Long time) {
@@ -157,21 +168,22 @@ public class GRIDroad {
 		}
 	}
 	
-	public double getWeightAtTime(Long time) {
-		if (this.vehiclesCurrentlyOnRoadAtTime.containsKey(time) ) {
-			return this.vehiclesCurrentlyOnRoadAtTime.get(time) + this.getDefaultWeight();
-		}
+	// Not currently in use
+	//public double getWeightAtTime(Long time) {
+	//	if (this.vehiclesCurrentlyOnRoadAtTime.containsKey(time) ) {
+	//		return this.vehiclesCurrentlyOnRoadAtTime.get(time) + this.getDefaultWeight();
+	//	}
 		
-		return this.getDefaultWeight();
-	}
+	//	return this.getDefaultWeight();
+	//}
+	// Not currently in use
+	//public double getEmissionsAtTime(Long time) {
+	//	if (this.emissionsCurrentlyOnRoadAtTime.containsKey(time) ) {
+	//		return this.emissionsCurrentlyOnRoadAtTime.get(time) + this.getDefaultWeight();
+	//	}
 
-	public double getEmissionsAtTime(Long time) {
-		if (this.emissionsCurrentlyOnRoadAtTime.containsKey(time) ) {
-			return this.emissionsCurrentlyOnRoadAtTime.get(time) + this.getDefaultWeight();
-		}
-
-		return 0.0; // is there a default emissions level...?
-	}
+	//	return 0.0; // is there a default emissions level...?
+	//}
 	
 	/* so an agent arrives at link01 at time 0.0
 	*  the link is 1000 long and fspeed is 12/5, so 80s req'd to traverse link01
@@ -189,7 +201,7 @@ public class GRIDroad {
 		if(getCurrentSpeed() == 0)
 			return MAX_WEIGHT;
 
-		calcCurrentSpeed(intervalStartTime);
+		//calcCurrentSpeed(intervalStartTime);
 		
 		if(capMinusActual <= 0.0) {
 			timeWeight = this.Length/this.getCurrentSpeed();

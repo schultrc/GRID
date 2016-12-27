@@ -42,6 +42,7 @@ import edu.ucdenver.cse.GRIDserver.GRIDheapDynamicAlg;
 public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, MobsimAfterSimStepListener {
 
 	MATSIM_simEventHandler() {
+		
 	}
 
 	GRIDmap theMap;
@@ -137,7 +138,8 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 					// System.out.println("Replacing the route for agent: " +
 					// tempAgent.getId());
 					if (!doReplanning(mobsimAgents.get(tempAgent.getId()), mobsim, tempAgent.getCurrentLink())) {
-						System.out.println("Agent: " + tempAgent.getId() + " failed replanning \n\n\n");
+						logWriter.log(Level.WARNING, "Agent: " + tempAgent.getId() + 
+								                     " failed replanning at time: " + event.getSimulationTime());
 					}
 				}
 			}
@@ -230,22 +232,22 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		ArrayList<String> theRoute = newRoute.getRoads();
 		List<Id<Link>> mobsimLinks = new ArrayList<Id<Link>>();
 		
-		logWriter.log(Level.INFO, "NEW route is      " + newRoute.toString());
-		logWriter.log(Level.INFO, "Current index is: " + currentLinkIndex);
-		logWriter.log(Level.INFO, "Current Link is:  " + agent.getCurrentLinkId().toString());
+		//logWriter.log(Level.INFO, "NEW route is      " + newRoute.toString());
+		//logWriter.log(Level.INFO, "Current index is: " + currentLinkIndex);
+		//logWriter.log(Level.INFO, "Current Link is:  " + agent.getCurrentLinkId().toString());
 		
 		
 		// NetworkRoute demoRoute = (NetworkRoute) demoLeg.getRoute();
 
 		NetworkRoute demoNRoute = (NetworkRoute) demoLeg.getRoute();
 		
-		logWriter.log(Level.INFO, "Current route is: " + demoNRoute.toString());
+		//logWriter.log(Level.INFO, "Current route is: " + demoNRoute.toString());
 		
 		for (int i = 0; i < currentLinkIndex; i++) {
 			mobsimLinks.add(i, (Id<Link>) demoNRoute.getLinkIds().get(i));
 		}
 
-		logWriter.log(Level.INFO, "demoNRoute is: " + mobsimLinks.toString());
+		//logWriter.log(Level.INFO, "demoNRoute is: " + mobsimLinks.toString());
 
 		// for(String ourRoad:theRoute) {
 		for (int i = 0; i < theRoute.size(); ++i) {
@@ -255,12 +257,10 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 
 		demoNRoute.setLinkIds(demoLeg.getRoute().getStartLinkId(), mobsimLinks, demoLeg.getRoute().getEndLinkId());
 
-		//demoLeg.setRoute(netRoute);
 
-		// currentLeg.setRoute(netRoute);
-		logWriter.log(Level.INFO, WithinDayAgentUtils.getModifiableCurrentLeg(agent).toString());
-		logWriter.log(Level.INFO, WithinDayAgentUtils.getCurrentRouteLinkIdIndex(agent).toString());
-		logWriter.log(Level.INFO, "CurLeg 2: " + demoLeg.getRoute().toString());
+		//logWriter.log(Level.INFO, WithinDayAgentUtils.getModifiableCurrentLeg(agent).toString());
+		//logWriter.log(Level.INFO, WithinDayAgentUtils.getCurrentRouteLinkIdIndex(agent).toString());
+		//logWriter.log(Level.INFO, "CurLeg 2: " + demoLeg.getRoute().toString());
 
 		// Reset so the sim uses the new route
 		WithinDayAgentUtils.resetCaches(agent);
@@ -354,6 +354,11 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		GRIDtimeMsg theTimeMsg = new GRIDtimeMsg((long) event.getSimulationTime());
 
 		theRequestSender.sendRequest(theTimeMsg);
+		
+		//for(GRIDroad road : theMap.getRoads().values() ) {
+		//	road.removeWeightAtTime((long) event.getSimulationTime());
+		//}
+		
 		logWriter.log(Level.FINEST,
 				"**************************************************************\n" + " END of SIM Time Step: "
 						+ event.getSimulationTime() + "\n"

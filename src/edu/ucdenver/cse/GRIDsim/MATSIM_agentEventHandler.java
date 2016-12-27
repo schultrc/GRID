@@ -21,6 +21,9 @@ import edu.ucdenver.cse.GRIDmap.GRIDmap;
 public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeaveEventHandler, PersonArrivalEventHandler,
 		PersonDepartureEventHandler {
 
+	// What percent of the agents do we control?
+	int controlPercent; 
+	
 	// The list of agents we know about
 	ConcurrentHashMap<String, GRIDagent> ourAgents;
 	
@@ -30,6 +33,15 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 	double totalTravelTime = 0;
 	
 	Queue<String> agentsToReplan;
+
+	public MATSIM_agentEventHandler(int percent) {
+		if (percent > 100) {
+			logWriter.log(Level.WARNING, this.getClass() + 
+					"Percentage must be >= 0 and < 100");
+		}
+		
+		this.controlPercent = percent;
+	}
 	
 	// This should NEVER be called
 	public Queue<String> getAgentsToReplan() { return agentsToReplan; }
@@ -95,6 +107,7 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 	public void handleEvent(LinkLeaveEvent event) {
 
 		GRIDagent tempAgent = ourAgents.get(event.getPersonId().toString());
+		
 		if (tempAgent != null) {
 
 			// Check if this is OUR agent, and if so, add it to the replanning agents
@@ -147,9 +160,25 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 		
 		
 		// Is this going to be one of OUR agents?  change the % value to change how many we do. %5 = 20 % of all agents
-		boolean simFlag = ((Double.parseDouble(event.getPersonId().toString()) % 2) == 0);
-		simFlag = true;
+		boolean simFlag;
+		
+		double theId = (Double.parseDouble(event.getPersonId().toString()));
+		
+		int result = (int) (theId % 100);
+		
+		if(result < this.controlPercent) { 
+			simFlag = true;
+		}
+		
+		else {
+			simFlag = false;
+		}
+			
+		//simFlag = true;
 		//simFlag = false;
+		
+		logWriter.log(Level.INFO, this.getClass().getName() + " setting simFlag to: " +
+		                          simFlag + " for agent: " + theId);
 		
 		//String theOriginIntersection = ourMap.getRoad(event.getLinkId().toString()).getFrom();
 		
