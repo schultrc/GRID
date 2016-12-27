@@ -40,9 +40,14 @@ import org.matsim.core.router.TripRouterProviderImpl;
 import com.google.inject.Provider;
 
 import edu.ucdenver.cse.GRIDclient.GRIDclientCmdLine;
+import edu.ucdenver.cse.GRIDclient.GRIDrequest;
+import edu.ucdenver.cse.GRIDclient.GRIDrequestSender;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
+import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
 import edu.ucdenver.cse.GRIDmap.GRIDmapReader;
+import edu.ucdenver.cse.GRIDmessages.GRIDServerTerm;
+import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDutil.FileUtils;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 
@@ -158,7 +163,7 @@ public class GRIDsim {
 			// end WithinDayReplanning
 			
 			// Add our handler for Link Events			
-			MATSIM_agentEventHandler theAgentHandler = new MATSIM_agentEventHandler();
+			MATSIM_agentEventHandler theAgentHandler = new MATSIM_agentEventHandler(0);
 			theAgentHandler.setOurMap(ourMap);
 			theAgentHandler.setOurAgents(masterAgents);
 			theAgentHandler.setAgentsToReplan(agentsToReplan);
@@ -215,12 +220,22 @@ public class GRIDsim {
 		}
 		
 		System.out.println("\n\nTotal travel time was: " + totalTravelTime + " seconds");
+	    logWriter.log(Level.INFO, "Total travel time was: " + totalTravelTime + " seconds");
 		
 		Long stopTime = System.currentTimeMillis();
 		
 		Long timeToRun = (stopTime - startTime) / 1000;
 		System.out.println("\n it took: " + timeToRun + " seconds to run this sim");
+		logWriter.log(Level.INFO, "it took: " + timeToRun + " seconds to run this sim");
 		
+		// contact the server for a new route
+		GRIDrequestSender theRequestSender = new GRIDrequestSender();
+
+		GRIDrequest testReq = new GRIDServerTerm();
+
+		// Tell the server
+		theRequestSender.sendRequest(testReq);
+
 		System.out.println("\n\nWell, we got to the end. \n\n\n\n");	
 	}
 	
@@ -232,7 +247,7 @@ public class GRIDsim {
 		}
 
 		else {
-			outputDir = Paths.get("./output");
+			outputDir = Paths.get("./TEST_RUNS/");
 		}
 
 		if ((Files.exists(outputDir, LinkOption.NOFOLLOW_LINKS))) {

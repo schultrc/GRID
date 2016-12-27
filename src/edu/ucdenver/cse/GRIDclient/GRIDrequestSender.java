@@ -9,8 +9,7 @@ import java.util.logging.Level;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
-import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
-import edu.ucdenver.cse.GRIDmessages.GRIDtimeMsg;
+import edu.ucdenver.cse.GRIDmessages.*;
 
 public class GRIDrequestSender {
 
@@ -55,6 +54,12 @@ public class GRIDrequestSender {
 				// we don't expect anything back
 				return null;
 			}
+			
+			if (theRequest instanceof GRIDServerTerm) {
+				// we don't expect anything back
+				return null;
+			}
+			
 			inputStream.close();
 			outputStream.close();
 

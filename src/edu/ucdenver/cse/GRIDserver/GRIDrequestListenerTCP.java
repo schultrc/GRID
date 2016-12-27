@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmap.*;
+import edu.ucdenver.cse.GRIDmessages.GRIDServerTerm;
 import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDmessages.GRIDtimeMsg;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
@@ -22,10 +23,7 @@ public class GRIDrequestListenerTCP extends Thread {
 		this.theGRID   = grid;
 	}
 
-	public void run() {
-		//System.out.println("Inside listener");
-		
-		long timeNow = System.currentTimeMillis() / 1000;
+	public void run() {		
 		try {
 			inputStream  = new ObjectInputStream (theSocket.getInputStream());
 			outputStream = new ObjectOutputStream (theSocket.getOutputStream());
@@ -113,8 +111,22 @@ public class GRIDrequestListenerTCP extends Thread {
 				
 				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
 				
+				// need to reduce the map data
+				for(GRIDroad road : this.theGRID.getMap().getRoads().values() ) {
+					road.removeWeightAtTime(this.theGRID.getTime());
+				}
+				
+				
 				inputStream.close();
 				outputStream.close();
+			}
+			
+			else if (theRequest instanceof GRIDServerTerm) {
+				// Someone wants the server to shutdown
+				logWriter.log(Level.INFO, this.getClass().getName() + " TERM message recieved - " +
+				                          "shutting down at time: " + this.theGRID.getTime());
+				
+				System.exit(0);
 			}
 			
 			else {

@@ -11,3 +11,4 @@ config/dtd/
 /output*
 /bin*
 /download*
+/TEST_RUNS/*

@@ -98,7 +98,7 @@ public class GRIDserver extends Thread {
 		}
 
 		else {
-			outputDir = Paths.get("./output");
+			outputDir = Paths.get("../TEST_RUNS/output");
 		}
 
 		if ((Files.exists(outputDir, LinkOption.NOFOLLOW_LINKS))) {
