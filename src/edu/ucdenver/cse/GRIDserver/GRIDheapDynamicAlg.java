@@ -40,7 +40,7 @@ public class GRIDheapDynamicAlg {
         GRIDnodeWtTmEm startNodeValues;
         ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
         ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
-        
+
         Long thisTimeslice = currentTime;
         //Long thisTimeslice = currentTime/1000;
 

@@ -1,4 +1,13 @@
 *.class
+/output
+/bin
+/download
+.idea
+*.iml
+/JARs
+/classes
+config/dtd/
+*.log
 /output*
 /bin*
 /download*
