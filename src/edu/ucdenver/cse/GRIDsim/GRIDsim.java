@@ -57,6 +57,7 @@ public class GRIDsim {
 	private Path outputDir;
 	final ConcurrentHashMap<String, GRIDagent> masterAgents;
 	final Queue<String> agentsToReplan;
+	private int agentControlPercent;
 	
 	// The official map
 	private GRIDmap ourMap;
@@ -84,6 +85,9 @@ public class GRIDsim {
 		agentsToReplan = new LinkedList<String>();
 		
 		ourMap = null;
+		
+		// Default control is 100%
+		agentControlPercent = 100;
 	}
 	
 	private void simulate() {
@@ -100,6 +104,7 @@ public class GRIDsim {
 		}
 		
 		// Get the logger. Since this "should" be the first time, we can set the path
+		
 		logWriter.setOutputDir(outputDir);
 		logWriter.log(Level.INFO, "DOES THIS WORK???!!!");		
 				
@@ -127,7 +132,11 @@ public class GRIDsim {
 	    }
 	    
 	    logWriter.log(Level.INFO, "CONFIG FILE: " + configFile + " in use\n\n\n");
-			
+		
+	    if (theCmdLine.hasOption("AgtCtrl")) {
+	    	this.agentControlPercent = Integer.parseInt( theCmdLine.getOptionValue("AgtCtrl"));
+	    }
+	    
 	    Long startTime = System.currentTimeMillis();
 		logWriter.log(Level.INFO, "Starting SIM @" + startTime.toString());
 
@@ -163,7 +172,7 @@ public class GRIDsim {
 			// end WithinDayReplanning
 			
 			// Add our handler for Link Events			
-			MATSIM_agentEventHandler theAgentHandler = new MATSIM_agentEventHandler(0);
+			MATSIM_agentEventHandler theAgentHandler = new MATSIM_agentEventHandler(100);
 			theAgentHandler.setOurMap(ourMap);
 			theAgentHandler.setOurAgents(masterAgents);
 			theAgentHandler.setAgentsToReplan(agentsToReplan);
