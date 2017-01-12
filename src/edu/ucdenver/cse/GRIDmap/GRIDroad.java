@@ -185,10 +185,6 @@ public class GRIDroad {
 	//	return 0.0; // is there a default emissions level...?
 	//}
 	
-	/* so an agent arrives at link01 at time 0.0
-	*  the link is 1000 long and fspeed is 12/5, so 80s req'd to traverse link01
-	*  so we take all the weights from roadWeight[0] to roadWeight[79] and either AVG or MAX them
-	*  and that is the weight for that link*/
 	public double getTimeWeightOverInterval(Long intervalStartTime)
 	{ // vehiclesCurrentlyOnRoad
 		Double timeWeight = 0.0,
@@ -211,6 +207,14 @@ public class GRIDroad {
 		}
 		return timeWeight;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public double getEmissionsWeightOverInterval(Long intervalStartTime) {
 		Double emissionsWeight = 0.0,
@@ -249,38 +253,27 @@ public class GRIDroad {
 	private double getAvgVehicleCount(Long intervalStartTime){
 		int numberOfKeys = 0;
 		
-		Double avgVehicleCount = 0.0,
-			   timeOnLink = this.Length/this.getCurrentSpeed(),
-			   timeInterval = intervalStartTime + timeOnLink;
+		double avgVehicleCount = 0.0;
+		double timeOnLink = this.Length/this.getCurrentSpeed();
+		double timeInterval = intervalStartTime + timeOnLink;
 
-		//logWriter.log(Level.INFO, "GRIDroad:getAvgVehicleCount() - " +
-		//                          " checking from: " + intervalStartTime +
-		//                          " to: " + timeInterval);
-		
-		
-		//logWriter.log(Level.INFO, "GRIDroad:getAvgVehicleCount() - " +
-		//		                  " hash is: \n" + this.vehiclesCurrentlyOnRoadAtTime.toString());
-		
-		for(Long i = intervalStartTime; i < timeInterval; i++)
+		for(long i = intervalStartTime; i < timeInterval; i++)
 		{
 			if(this.vehiclesCurrentlyOnRoadAtTime.containsKey(i)) {
 				avgVehicleCount += this.vehiclesCurrentlyOnRoadAtTime.get(i);
 				numberOfKeys++;
-				
-				//logWriter.log(Level.INFO, "GRIDroad:getAvgVehicleCount() - " +
-				//                          " found weight: " + this.vehiclesCurrentlyOnRoadAtTime.get(i) +
-				//                          " at time: " + i);
 			}
 		}
 
 		if( numberOfKeys > 1 )
 			avgVehicleCount /= numberOfKeys;
-
-		//logWriter.log(Level.INFO, "GRIDroad:getAvgVehicleCount() - " +
-		//                          "Average vehicles on road: " + this.Id +
-		//		                  " at time: " + intervalStartTime +
-		//		                  " is: " + avgVehicleCount);
 		
+		// need to adjust to be based on 1 hr
+		
+		avgVehicleCount = avgVehicleCount*(3600/timeOnLink);
+		
+		logWriter.log(Level.INFO, this.getClass().getName() + " - " + 
+		                          " avgVehCount is: " + avgVehicleCount);
 		return avgVehicleCount;
 	}
 
