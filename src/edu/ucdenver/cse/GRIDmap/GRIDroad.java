@@ -185,10 +185,10 @@ public class GRIDroad {
 	//	return 0.0; // is there a default emissions level...?
 	//}
 	
-	public double getTimeWeightOverInterval(Long intervalStartTime)
+	public double getTimeWeightOverInterval(long intervalStartTime)
 	{ // vehiclesCurrentlyOnRoad
-		Double timeWeight = 0.0,
-			   capMinusActual = maxCapacity-this.getAvgVehicleCount(intervalStartTime);
+		double timeWeight = 0.0,
+			   capMinusActual = this.maxCapacity - this.getAvgVehicleCount(intervalStartTime);
 		
 		/*System.out.println("\nmaxCAPACITY: "+capMinusActual+"\n");
 		System.out.println("\nAVG: "+this.getAvgVehicleCount(intervalStartTime)+"\n");
@@ -207,12 +207,6 @@ public class GRIDroad {
 		}
 		return timeWeight;
 	}
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -250,14 +244,14 @@ public class GRIDroad {
 		
 		return theWeight; }
 
-	private double getAvgVehicleCount(Long intervalStartTime){
+	private double getAvgVehicleCount(long timeEnterRoad){
 		int numberOfKeys = 0;
 		
 		double avgVehicleCount = 0.0;
-		double timeOnLink = this.Length/this.getCurrentSpeed();
-		double timeInterval = intervalStartTime + timeOnLink;
+		double travelTime = this.Length/this.getCurrentSpeed();
+		double timeLeaveRoad = timeEnterRoad + travelTime;
 
-		for(long i = intervalStartTime; i < timeInterval; i++)
+		for(long i = timeEnterRoad; i < timeLeaveRoad; i++)
 		{
 			if(this.vehiclesCurrentlyOnRoadAtTime.containsKey(i)) {
 				avgVehicleCount += this.vehiclesCurrentlyOnRoadAtTime.get(i);
@@ -270,10 +264,10 @@ public class GRIDroad {
 		
 		// need to adjust to be based on 1 hr
 		
-		avgVehicleCount = avgVehicleCount*(3600/timeOnLink);
+		avgVehicleCount = avgVehicleCount*(3600/travelTime);
 		
-		logWriter.log(Level.INFO, this.getClass().getName() + " - " + 
-		                          " avgVehCount is: " + avgVehicleCount);
+		//logWriter.log(Level.INFO, this.getClass().getName() + " - " + 
+		//                          " avgVehCount is: " + avgVehicleCount);
 		return avgVehicleCount;
 	}
 

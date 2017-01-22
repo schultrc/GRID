@@ -106,6 +106,8 @@ public class GRIDsim {
 		// Get the logger. Since this "should" be the first time, we can set the path
 		
 		logWriter.setOutputDir(outputDir);
+		logWriter.setLogPrefix("SIM");
+		
 		logWriter.log(Level.INFO, "DOES THIS WORK???!!!");		
 				
 		double totalTravelTime = 0;
@@ -135,7 +137,16 @@ public class GRIDsim {
 		
 	    if (theCmdLine.hasOption("AgtCtrl")) {
 	    	this.agentControlPercent = Integer.parseInt( theCmdLine.getOptionValue("AgtCtrl"));
+	    	
+	    	if (this.agentControlPercent < 0 || this.agentControlPercent > 100) {
+	    		logWriter.log(Level.WARNING, this.getClass().getName() + " Input error - agent control " +
+	    	                                 "percentage out of range");
+	    		System.exit(1);
+	    	}
 	    }
+	    
+	    logWriter.log(Level.INFO, "Agent Control: " + this.agentControlPercent + " in use\n\n\n");
+
 	    
 	    Long startTime = System.currentTimeMillis();
 		logWriter.log(Level.INFO, "Starting SIM @" + startTime.toString());
@@ -172,7 +183,7 @@ public class GRIDsim {
 			// end WithinDayReplanning
 			
 			// Add our handler for Link Events			
-			MATSIM_agentEventHandler theAgentHandler = new MATSIM_agentEventHandler(100);
+			MATSIM_agentEventHandler theAgentHandler = new MATSIM_agentEventHandler(agentControlPercent);
 			theAgentHandler.setOurMap(ourMap);
 			theAgentHandler.setOurAgents(masterAgents);
 			theAgentHandler.setAgentsToReplan(agentsToReplan);
@@ -252,25 +263,25 @@ public class GRIDsim {
 		// Get the output dir first, so log messages go there
 		
 		if (theCmdLine.hasOption("output")) {
-			outputDir = Paths.get((String) theCmdLine.getOptionValue("output"));
+			this.outputDir = Paths.get((String) theCmdLine.getOptionValue("output"));
 		}
 
 		else {
-			outputDir = Paths.get("./TEST_RUNS/");
+			this.outputDir = Paths.get("./TEST_RUNS/");
 		}
 
-		if ((Files.exists(outputDir, LinkOption.NOFOLLOW_LINKS))) {
+		if ((Files.exists(this.outputDir, LinkOption.NOFOLLOW_LINKS))) {
 
-			if (Files.isDirectory(outputDir)) {
+			if (Files.isDirectory(this.outputDir)) {
 				// Do we want to clear it at this point? Add a cmd line flag
 			}
 		}
 
 		else {
 			// We need to create a new directory
-			System.out.println("Attempting to create: " + outputDir.toString());
+			System.out.println("Attempting to create: " + this.outputDir.toString());
 			try {
-				Files.createDirectories(outputDir);
+				Files.createDirectories(this.outputDir);
 			} 
 			
 			catch (IOException e) {
