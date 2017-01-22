@@ -188,7 +188,7 @@ public class GRIDroad {
 	public double getTimeWeightOverInterval(Long intervalStartTime)
 	{ // vehiclesCurrentlyOnRoad
 		Double timeWeight = 0.0,
-			   capMinusActual = maxCapacity-this.getAvgVehicleCount(intervalStartTime);
+			   capMinusActual = this.maxCapacity - this.getAvgVehicleCount(intervalStartTime);
 		
 		/*System.out.println("\nmaxCAPACITY: "+capMinusActual+"\n");
 		System.out.println("\nAVG: "+this.getAvgVehicleCount(intervalStartTime)+"\n");
@@ -255,9 +255,9 @@ public class GRIDroad {
 		
 		double avgVehicleCount = 0.0;
 		double timeOnLink = this.Length/this.getCurrentSpeed();
-		double timeInterval = intervalStartTime + timeOnLink;
+		double endTimeOnLink = intervalStartTime + timeOnLink;
 
-		for(long i = intervalStartTime; i < timeInterval; i++)
+		for(long i = intervalStartTime; i < endTimeOnLink; i++)
 		{
 			if(this.vehiclesCurrentlyOnRoadAtTime.containsKey(i)) {
 				avgVehicleCount += this.vehiclesCurrentlyOnRoadAtTime.get(i);
@@ -270,10 +270,10 @@ public class GRIDroad {
 		
 		// need to adjust to be based on 1 hr
 		
-		avgVehicleCount = avgVehicleCount*(3600/timeOnLink);
+		//avgVehicleCount = avgVehicleCount*(3600/timeOnLink);
 		
-		logWriter.log(Level.INFO, this.getClass().getName() + " - " + 
-		                          " avgVehCount is: " + avgVehicleCount);
+		//logWriter.log(Level.INFO, this.getClass().getName() + " - " + 
+		//                          " avgVehCount is: " + avgVehicleCount);
 		return avgVehicleCount;
 	}
 

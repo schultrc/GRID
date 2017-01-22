@@ -11,6 +11,7 @@ public class GRIDserverCmdLine {
 	public GRIDserverCmdLine(String[] args) {
 		this.theArgs = args;
 		this.theOptions = new Options();
+		
 		final Option mapOpt = Option.builder("map")
 				                    .argName("map file")
 				                    .hasArg(true)
@@ -28,15 +29,6 @@ public class GRIDserverCmdLine {
 				                     .build();
 
 		this.theOptions.addOption(portOpt);
-
-		final Option agentPercentOpt = Option.builder("ap")
-										  .argName("agentPercent")
-										  .hasArg(true)
-										  .required(false)
-										  .desc("Percentage of Agents we control")
-										  .build();
-
-		this.theOptions.addOption(agentPercentOpt);
 		
 		final Option outputDirOpt = Option.builder("output")
                                        .argName("Output Directory")

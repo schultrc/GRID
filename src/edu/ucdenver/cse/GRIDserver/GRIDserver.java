@@ -31,6 +31,7 @@ public class GRIDserver extends Thread {
 	public GRIDserver(String[] theArgs) {
 		GRIDserverCmdLine cmdLine = new GRIDserverCmdLine(theArgs);
 
+		// Move to init
 		try {
 			this.theCmdLine = cmdLine.parseArgs();
 		}
@@ -50,6 +51,7 @@ public class GRIDserver extends Thread {
 			System.exit(1);
 		}
 		logWriter.setOutputDir(outputDir);
+		logWriter.setLogPrefix("ROUTE_SERVER");
 
 		String mapFile = "";
 
