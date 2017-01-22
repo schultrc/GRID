@@ -185,9 +185,9 @@ public class GRIDroad {
 	//	return 0.0; // is there a default emissions level...?
 	//}
 	
-	public double getTimeWeightOverInterval(Long intervalStartTime)
+	public double getTimeWeightOverInterval(long intervalStartTime)
 	{ // vehiclesCurrentlyOnRoad
-		Double timeWeight = 0.0,
+		double timeWeight = 0.0,
 			   capMinusActual = this.maxCapacity - this.getAvgVehicleCount(intervalStartTime);
 		
 		/*System.out.println("\nmaxCAPACITY: "+capMinusActual+"\n");
@@ -244,7 +244,7 @@ public class GRIDroad {
 		
 		return theWeight; }
 
-	private double getAvgVehicleCount(Long timeEnterRoad){
+	private double getAvgVehicleCount(long timeEnterRoad){
 		int numberOfKeys = 0;
 		
 		double avgVehicleCount = 0.0;
