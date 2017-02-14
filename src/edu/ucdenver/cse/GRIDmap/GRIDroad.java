@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 import edu.ucdenver.cse.GRIDcommon.logWriter;
-import edu.ucdenver.cse.GRIDserver.GRIDutilityFunction;
+import edu.ucdenver.cse.GRIDweight.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class GRIDroad {
 	
 	// If there are no cars, the weight should be 0
 	private static final Double ourDefaultValue = (double) 0;
-	private static final Double MAX_WEIGHT = 2000000.0;
+	//private static final Double MAX_WEIGHT = 2000000.0;
 
 	private String Id   = "";
 	private String to   = "";
@@ -187,33 +187,24 @@ public class GRIDroad {
 	
 	public double getTimeWeightOverInterval(long intervalStartTime)
 	{ // vehiclesCurrentlyOnRoad
+
 		double timeWeight = 0.0,
 			   capMinusActual = this.maxCapacity - this.getAvgVehicleCount(intervalStartTime);
+
 		
 		/*System.out.println("\nmaxCAPACITY: "+capMinusActual+"\n");
 		System.out.println("\nAVG: "+this.getAvgVehicleCount(intervalStartTime)+"\n");
 		System.out.println("\nCAPACITY: "+capMinusActual+"\n");*/
-		
-		if(getCurrentSpeed() == 0)
-			return MAX_WEIGHT;
 
-		//calcCurrentSpeed(intervalStartTime);
-		
-		if(capMinusActual <= 0.0) {
-			timeWeight = this.Length/this.getCurrentSpeed();
-		}
-		else {
-			timeWeight = this.Length/(this.getCurrentSpeed()*capMinusActual);
-		}
+		timeWeight = calculator.calcTimeWeight(this.Length, this.getCurrentSpeed(), capMinusActual);
+
 		return timeWeight;
 	}
-	
-	
-	
+
 	public double getEmissionsWeightOverInterval(Long intervalStartTime) {
 		Double emissionsWeight = 0.0,
 			   avgEmissions = this.getAvgEmissions(intervalStartTime);
-		GRIDutilityFunction calculator = new GRIDutilityFunction();
+		GRIDweightEmissions calculator = new GRIDweightEmissions();
 
 		emissionsWeight += calculator.calcEmissions(this.getCurrentSpeed(),this.getLength()) + avgEmissions;
 
