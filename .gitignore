@@ -12,3 +12,4 @@ config/dtd/
 /bin*
 /download*
 /TEST_RUNS/*
+/META-INF

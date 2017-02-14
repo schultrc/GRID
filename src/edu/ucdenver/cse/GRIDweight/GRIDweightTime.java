@@ -1,6 +1,10 @@
 package edu.ucdenver.cse.GRIDweight;
 
-public class GRIDtime implements GRIDweight {
+public class GRIDweightTime implements GRIDweight {
+
+    public double calcWeight(double in, double out){
+        return 0.0;
+    }
 
     public double calcTimeWeight(double currentSpeed, double roadLength,
                                  double capMinusActual){

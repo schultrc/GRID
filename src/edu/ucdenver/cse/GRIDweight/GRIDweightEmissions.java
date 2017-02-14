@@ -2,7 +2,11 @@ package edu.ucdenver.cse.GRIDweight;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 
-public class GRIDemissions implements GRIDweight {
+public class GRIDweightEmissions implements GRIDweight {
+
+    public double calcWeight(double in, double out){
+        return 0.0;
+    }
 
     public double calcEmissions (Double currentSpeed, Double roadLength) {
         /* BEGIN test output */
@@ -19,14 +23,15 @@ public class GRIDemissions implements GRIDweight {
             //System.out.println("too slow");
             return (roadLength/idealSpeedLow + (idealSpeedLow-currentSpeed));
         }
-        if(currentSpeed > idealSpeedHigh){
+        else if(currentSpeed > idealSpeedHigh){
             //System.out.println("too fast");
             //return (roadLength/idealSpeedHigh + (currentSpeed-idealSpeedHigh));
             return Double.POSITIVE_INFINITY;
         }
-
-        //System.out.println("just right");
-        return roadLength/idealSpeedLow + currentSpeed-idealSpeedLow;
+        else{
+            //System.out.println("just right");
+            return roadLength/idealSpeedLow + currentSpeed-idealSpeedLow;
+        }
     }
 
     public GRIDroute resetEmissionsForAgent() {
