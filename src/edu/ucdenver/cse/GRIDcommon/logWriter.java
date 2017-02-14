@@ -19,6 +19,8 @@ public class logWriter {
 	private static Path outputDir;
 	private static boolean loggerInit;
 	
+	private static String filePrefix;
+	
 	private logWriter() throws IOException {
 	
 		String errFilePath;
@@ -28,15 +30,15 @@ public class logWriter {
 		
 		// If we have set the outputDir, do not append, overwrite
 		if (loggerInit) {
-			errFilePath = outputDir  + "/" + timeStamp + "_TEST_ERR.log";
-			infoFilePath = outputDir + "/" + timeStamp + "_TEST_INFO.log";
+			errFilePath = outputDir  + "/" + timeStamp + "_ERR_" + filePrefix + ".log";
+			infoFilePath = outputDir + "/" + timeStamp + "_INFO_" + filePrefix + ".log";
 			appendFlag = false;
 		}
 
 		// Otherwise, append so we always have the output
 		else {
-			errFilePath = "./"  + timeStamp + "_TEST_ERR.log";
-			infoFilePath = "./" + timeStamp + "_TEST_INFO.log";
+			errFilePath = "./"  + timeStamp + "_ERR_" + filePrefix + ".log";
+			infoFilePath = "./" + timeStamp + "_INFO_" + filePrefix + ".log";
 
 			appendFlag = true;
 		}
@@ -103,6 +105,10 @@ public class logWriter {
 	public static void setOutputDir(Path theDir) {
 		outputDir = theDir;
 		loggerInit = true;
+	}
+	
+	public static void setLogPrefix(String prefix) {
+		filePrefix = prefix;
 	}
 
 	public static void stop() {
