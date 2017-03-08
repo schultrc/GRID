@@ -42,7 +42,6 @@ public class GRIDheapDynamicAlg {
         ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
 
         Long thisTimeslice = currentTime;
-        //Long thisTimeslice = currentTime/1000;
 
         Long totalTravelTime = thisTimeslice;
         String agtFrom, agtTo;
@@ -54,7 +53,11 @@ public class GRIDheapDynamicAlg {
          */
         agtTo = graph.getRoad(thisAgent.getDestination()).getFrom();
 
-        //ConcurrentMap<String, GRIDroad> roads = graph.getRoads();
+        if (agtTo.equals(agtFrom)) {
+            return errorRoute();
+        }
+        
+        // Initialize the starting values
         startNodeValues = new GRIDnodeWtTmEm();
         startNodeValues.setNodeWtTotal(0.0);
         startNodeValues.setNodeTmTotal(thisTimeslice);
@@ -65,10 +68,7 @@ public class GRIDheapDynamicAlg {
         //System.out.println("agtFrom: "+agtFrom);
         //System.out.println("agtTo: "+agtTo);
 
-        if (agtTo.equals(agtFrom)) {
-        	
-            return errorRoute();
-        }
+        
 
         /* roadList creation--this will be fixed in the GRIDmap class by
          * combining operations of GRIDmap and the DirectedGraph class
@@ -102,6 +102,8 @@ public class GRIDheapDynamicAlg {
               //  		                  " prior to calcWeight, time is: " + currentPathTotal.get(curr.getValue()).getNodeTmTotal());
                 
                 
+                // RCS Integrate external classes here
+                
                 tempNode = graph.calcWeight(curr.getValue(), arc.getKey(),
                         currentPathTotal.get(curr.getValue()).getNodeTmTotal());
 
@@ -130,7 +132,7 @@ public class GRIDheapDynamicAlg {
             tempNode.setNodeTmTotal(curr.getTmTotal());
 
             /* this conditional statement is necessary to correct for not starting
-             * at the actual starting, i.e., from node for the startingh link; we
+             * at the actual starting, i.e., from node for the starting link; we
              * can look at correcting this...
              */
             if(curr.getValue().equals(agtTo)) totalTravelTime = curr.getTmTotal();
@@ -142,7 +144,7 @@ public class GRIDheapDynamicAlg {
         if(previousIntersections.get(step) == null)
         {
         	// RCS log this
-            System.out.println("\nI guess it's null, friend.");
+            logWriter.log(Level.WARNING, "I guess it's null, friend.");
             return errorRoute();
         }
 
@@ -154,9 +156,12 @@ public class GRIDheapDynamicAlg {
             finalPath.getIntersections().add(step);
         }
 
-        Collections.reverse(finalPath.getIntersections());
+        // RCS make an internal call that does this?
+        // Collections.reverse(finalPath.getIntersections());
 
-        finalPath.setCalculatedTravelTime(totalTravelTime);
+        // RCS make an internal call that calculates this?
+        //finalPath.setCalculatedTravelTime(totalTravelTime);
+        
         return finalPath;
     }
 

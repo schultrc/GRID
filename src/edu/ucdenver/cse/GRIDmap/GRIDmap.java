@@ -2,11 +2,8 @@ package edu.ucdenver.cse.GRIDmap;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.logging.Level;
-
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDcommon.GRIDrouteSegment;
-import edu.ucdenver.cse.GRIDcommon.logWriter;
 
 
 public final class GRIDmap implements Iterable<String> {
@@ -19,9 +16,9 @@ public final class GRIDmap implements Iterable<String> {
 	private ConcurrentMap<String, Long> intersectionList;
 
 	public GRIDmap() {
-		this.Intersections = new ConcurrentHashMap<String, GRIDintersection>();
-		this.Roads = new ConcurrentHashMap<String, GRIDroad >();
-		this.roadList = new ConcurrentHashMap<String, GRIDroad>();
+		this.Intersections    = new ConcurrentHashMap<String, GRIDintersection>();
+		this.Roads            = new ConcurrentHashMap<String, GRIDroad >();
+		this.roadList         = new ConcurrentHashMap<String, GRIDroad>();
 		this.intersectionList = new ConcurrentHashMap<>();
 	}
 	
@@ -50,6 +47,7 @@ public final class GRIDmap implements Iterable<String> {
     public void loadRoadList() {
 		this.Roads.forEach((item,value)->
                 roadList.put(value.getFrom()+value.getTo(),value));
+		
 		this.Intersections.forEach((item,value)->
 				intersectionList.put(value.getId(),0L));
     }
@@ -102,29 +100,6 @@ public final class GRIDmap implements Iterable<String> {
 		return this.Intersections.get(theIntersection);
 	}
 	
-	public GRIDnodeWtTmEm calcWeight(String startNode, String endNode, long startTime)
-    {
-    	double tempEmissions = 0.0;
-        double tempWeight = 0.0;
-        long tempTimeslice = 0L;
-        GRIDnodeWtTmEm tempNode = new GRIDnodeWtTmEm();
-		GRIDroad tempRoad = this.getRoadListItem(startNode+endNode);
-
-        tempTimeslice = tempRoad.getTravelTime();
-		tempEmissions = tempRoad.getEmissionsWeightOverInterval(startTime);
-        tempWeight = tempRoad.getTimeWeightOverInterval(startTime);
-
-        //logWriter.log(Level.INFO, "Weight for road: " + tempRoad.getId() + 
-        //		                  " from time: " + startTime +
-        //		                  " is: " + tempWeight);
-        
-		tempNode.setNodeEmissions(tempEmissions);
-        tempNode.setNodeWtTotal(tempWeight);
-        tempNode.setNodeTmTotal(tempTimeslice);
-
-        return tempNode;
-    }
-	
 	public String hasRoad(String from, String to) {
 		// determine if we have a road that goes from "from" to "to"
 		ArrayList<String> theWantedRoad = new ArrayList<>();
@@ -176,18 +151,15 @@ public final class GRIDmap implements Iterable<String> {
 		return pathBySegment;
 	}
 
-	public void updateRoadsWithAgents(GRIDroute theRoute, long time) {
-		
-		long previousSegmentEndTime = time;
+	public void updateMapWithAgents(GRIDroute theRoute, long previousSegmentEndTime) {
+
 		long i;
 		
-		for (String ourRoad : theRoute.getRoads()) {
+		for (GRIDrouteSegment theSegment : theRoute.getRouteSegments()) {
 			// Add vehicle count to the roads
-			for (i = 0L; i < this.getRoad(ourRoad).getTravelTime(); i++) {
-				// This isn't correct, but we aren't running matsim with a real
-				// now time
-				// Should have timeNow added to i
-				this.getRoad(ourRoad).addToWeight(i + previousSegmentEndTime);
+			for (i = 0L; i < theSegment.getTravelTime(); i++) {
+
+				this.getRoad(theSegment.getRoadID()).addAgentsToRoadAtTime(i + previousSegmentEndTime);
 				
 				//logWriter.log(Level.INFO, "weight on road: " + ourRoad +
 				//		                  "for i value: "    + i +
@@ -200,45 +172,24 @@ public final class GRIDmap implements Iterable<String> {
 		}
 	}
 
-	public void reduceRoadsWithAgents(GRIDroute theRoute, long time) {
-		
-		long previousSegmentEndTime = time;
+	// 
+	public void removeAgentsFromMap(GRIDroute theRoute, long previousSegmentEndTime) {
+
 		long i;
 		
-		for (String ourRoad : theRoute.getRoads()) {
+		for (GRIDrouteSegment theSegment : theRoute.getRouteSegments()) {
 			// Remove vehicles from the roads
-			for (i = 0L; i < this.getRoad(ourRoad).getTravelTime(); i++) {
+			for (i = 0L; i < theSegment.getTravelTime(); i++) {
 				// This isn't correct, but we aren't running matsim with a real
 				// now time
 				// Should have timeNow added to i
-				this.getRoad(ourRoad).subFromWeight(i + previousSegmentEndTime);
+				this.getRoad(theSegment.getRoadID()).subFromWeight(i + previousSegmentEndTime);
 			}
 			
 			previousSegmentEndTime += (i - 1);
 			//logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
 		}
 	}
-	
-	// These are for future use with route segments.
-	/*
-	public void addVehicleToRoads(ArrayList<GRIDrouteSegment> newRouteSegments, Long startTime) {
-		for (int i = 0; i < newRouteSegments.size(); ++i) {
-			for (Long atTime = startTime; atTime < newRouteSegments.get(i).getTimeAtRoadExit(); atTime++) {
-				this.Roads.get(newRouteSegments.get(i).getRoadID()).addToWeight(atTime);
-			}
-		}
-	}
-
-	public void removeVehicleFromRoads(ArrayList<GRIDrouteSegment> oldRouteSegments, Long startTime) {
-		for (int i = 0; i < oldRouteSegments.size(); ++i) {
-			for (Long atTime = startTime; atTime < oldRouteSegments.get(i).getTimeAtRoadExit(); atTime++) {
-				this.Roads.get(oldRouteSegments.get(i).getRoadID()).subFromWeight(atTime);
-			}
-		}
-	}
-
-	*/
-
 	
 	/*  *
 	* The following functions are transplanted from the DirectedGraph class.

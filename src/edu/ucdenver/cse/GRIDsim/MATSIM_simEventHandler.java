@@ -177,8 +177,9 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 			return false;
 		}
 
+		// RCS depending on if the new alg sends complete routes, fix them here
 		// Initially, routes only have intersections, so set the roads
-		newGRIDRoute.setRoads(theMap.getPathByRoad(newGRIDRoute.getIntersections()));
+		//newGRIDRoute.setRoads(theMap.getPathByRoad(newGRIDRoute.getIntersections()));
 
 		// Our destination is on a road, but our calcs are based on
 		// intersections.
@@ -188,12 +189,9 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		String destinationIntersection = theMap.getRoad(destinationRoad).getFrom();
 
 		// This can cause an out of bounds error. Check getRoads().size before accessing
-		String routeLastRoad = newGRIDRoute.getRoads().get(newGRIDRoute.getRoads().size() - 1);
+		String routeLastRoad = newGRIDRoute.getRouteSegments().get(newGRIDRoute.getRouteSegments().size()-1).getRoadID();
+		
 		if (!destinationIntersection.equals(theMap.getRoad(routeLastRoad).getFrom())) {
-
-		}
-
-		else {
 			// This is bad, our new route doesn't go to where our agent wants to
 			// go
 			logWriter.log(Level.WARNING, "ERROR: Cannot get to INT: " + destinationIntersection);
@@ -202,12 +200,9 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		}
 
 		// Compare the 2 routes
-		if (origGRIDroute.equalsIntersections(newGRIDRoute)) {
-
-			// This doesn't work, it never gets here.
-			// If it does, we don't have to make any map updates
+		if (origGRIDroute.compare(newGRIDRoute)) {
 			
-			System.out.println("Routes did not change for agent: " + agent.getId());
+			logWriter.log(Level.INFO, "Routes did not change for agent: " + agent.getId());
 			return false;
 		}
 
@@ -229,7 +224,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		Leg demoLeg = WithinDayAgentUtils.getModifiableCurrentLeg(agent);
 		int currentLinkIndex = WithinDayAgentUtils.getCurrentRouteLinkIdIndex(agent);
 		
-		ArrayList<String> theRoute = newRoute.getRoads();
+		ArrayList<String> routeRoadList = newRoute.getRoads();
 		List<Id<Link>> mobsimLinks = new ArrayList<Id<Link>>();
 		
 		//logWriter.log(Level.INFO, "NEW route is      " + newRoute.toString());
@@ -250,9 +245,9 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		//logWriter.log(Level.INFO, "demoNRoute is: " + mobsimLinks.toString());
 
 		// for(String ourRoad:theRoute) {
-		for (int i = 0; i < theRoute.size(); ++i) {
+		for (int i = 0; i < routeRoadList.size(); ++i) {
 			// Add the road to the list for mobsim
-			mobsimLinks.add(i + currentLinkIndex, Id.createLinkId(theRoute.get(i)));
+			mobsimLinks.add(i + currentLinkIndex, Id.createLinkId(routeRoadList.get(i)));
 		}
 
 		demoNRoute.setLinkIds(demoLeg.getRoute().getStartLinkId(), mobsimLinks, demoLeg.getRoute().getEndLinkId());

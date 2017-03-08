@@ -2,16 +2,15 @@ package edu.ucdenver.cse.GRIDmap;
 
 
 public class GRIDnodeWtTmEm {
-    private Double nodeWtTotal;
-    private Long nodeTmTotal;
-    private Double nodeEmissions;
+    private double nodeWtTotal;
+    private long nodeTmTotal;
+    private double nodeEmissions;
 
-    public void setNodeWtTotal(Double inWeight){ this.nodeWtTotal = inWeight; }
-    public void setNodeTmTotal(Long inTime){ this.nodeTmTotal = inTime; }
-    public void setNodeEmissions(Double inEmissions){ this.nodeEmissions = inEmissions; }
+    public void setNodeWtTotal(double inWeight){ this.nodeWtTotal = inWeight; }
+    public void setNodeTmTotal(long inTime){ this.nodeTmTotal = inTime; }
+    public void setNodeEmissions(double inEmissions){ this.nodeEmissions = inEmissions; }
     
-    public Double getNodeWtTotal(){ return this.nodeWtTotal; }
-    public Long getNodeTmTotal(){ return this.nodeTmTotal; }
-    public Double getNodeEmissions(){ return this.nodeEmissions; }
+    public double getNodeWtTotal(){ return this.nodeWtTotal; }
+    public long getNodeTmTotal(){ return this.nodeTmTotal; }
+    public double getNodeEmissions(){ return this.nodeEmissions; }
 }
-

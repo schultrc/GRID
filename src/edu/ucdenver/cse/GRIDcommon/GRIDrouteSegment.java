@@ -1,27 +1,79 @@
 package edu.ucdenver.cse.GRIDcommon;
 
+import edu.ucdenver.cse.GRIDcommon.logWriter;
+
+/* routeSegments are the individual pieces that make up a route. 
+ * 
+ * RCS DEFINE PARAMETERS AND PURPOSE
+ * 
+ * 
+ * 
+ */
+
 public class GRIDrouteSegment {
     private String road_ID;
-    private String intersection_ID;
-    private Long timeAtRoadExit;
-    private Double segmentEmissions;
+    
+    // RCS Maybe not needed?
+    private String startIntersection;
+    private String endIntersection;
+    
+    
+    private long timeAtRoadEntry;
+    private long timeAtRoadExit;
 
-    public GRIDrouteSegment() {}
-    public GRIDrouteSegment(String inputRoadID, Long exitTime, Double inputEmissions) {
-        this.road_ID = inputRoadID;
-        this.timeAtRoadExit = exitTime;
-        this.segmentEmissions = inputEmissions;
+    // Default constructor
+    public GRIDrouteSegment() {
+    	this.road_ID           = "NONE";
+    	this.startIntersection = "NONE";
+    	this.endIntersection   = "NONE";
+    	this.timeAtRoadEntry   = -1;
+    	this.timeAtRoadExit    = -1;
     }
+    
+    public GRIDrouteSegment(String inputRoadID, Long exitTime ) {
+        this.road_ID           = inputRoadID;
+        this.startIntersection = "NONE";
+        this.endIntersection   = "NONE";
+        this.timeAtRoadEntry   = -1;
+        this.timeAtRoadExit    = exitTime;
+    }
+    
+    // RCS Other constructors????
 
-    public String getRoadID() { return road_ID; }
-    public Long getTimeAtRoadExit() { return timeAtRoadExit; }
-    public Double getSegmentEmissions() { return this.segmentEmissions; }
+    public GRIDrouteSegment(String road_ID, String startIntersection, 
+    		                String endIntersection, long timeAtRoadEntry,
+			                long timeAtRoadExit) {
+    	
+		this.road_ID = road_ID;
+		this.startIntersection = startIntersection;
+		this.endIntersection = endIntersection;
+		this.timeAtRoadEntry = timeAtRoadEntry;
+		this.timeAtRoadExit = timeAtRoadExit;
+	}
+
+	public String getRoadID() { return road_ID; }
+    public long getTimeAtRoadExit() { return timeAtRoadExit; }
 
     public void setRoadID(String inputRoadID) { this.road_ID = inputRoadID; }
-    public void setTimeAtRoadExit(Long inputStartTime) { this.timeAtRoadExit = inputStartTime; }
-    public void setSegmentEmissions(Double inputEmissions) { this.segmentEmissions = inputEmissions; }
+    public void setTimeAtRoadExit(long inputStartTime) { this.timeAtRoadExit = inputStartTime; }
 
     public String toString() {
-        return this.road_ID+" (time at exit: "+this.timeAtRoadExit+"|emissions: "+this.segmentEmissions+")";
+        return this.road_ID + " (time at exit: "+this.timeAtRoadExit;
     }
+	public long getTimeAtRoadEntry() {
+		return timeAtRoadEntry;
+	}
+	public void setTimeAtRoadEntry(long timeAtRoadEntry) {
+		this.timeAtRoadEntry = timeAtRoadEntry;
+	}
+	
+	public long getTravelTime () {
+		if ((this.timeAtRoadEntry == -1) || (this.timeAtRoadExit == -1)) {
+			logWriter.log(java.util.logging.Level.WARNING, "Attempt to get travel time for " +
+		                  "route segment with uninitialized values");
+			return -1;
+		}
+		
+		return (this.timeAtRoadExit - this.timeAtRoadEntry);
+	}
 }
