@@ -1,6 +1,13 @@
 package edu.ucdenver.cse.GRIDmap;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+
+import edu.ucdenver.cse.GRIDcommon.logWriter;
+import edu.ucdenver.cse.GRIDweight.*;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class GRIDroad {
 
@@ -8,7 +15,7 @@ public class GRIDroad {
 
 	// If there are no cars, the weight should be 0
 	private static final Double ourDefaultValue = (double) 0;
-	
+
 	//private static final Double MAX_WEIGHT = 2000000.0;
 
 	private String Id = "";
