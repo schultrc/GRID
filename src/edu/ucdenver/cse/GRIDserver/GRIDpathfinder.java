@@ -103,6 +103,9 @@ public class GRIDpathfinder {
                 /* Compute the cost of the path from the source to this node,
                  * which is the cost of this node plus the cost of this edge.
                  */
+                
+                // RCS incorporate the new weighting classes here
+                
                 tempNode = graph.calcWeight(curr.getValue(), arc.getKey(),
                         currentPathTotal.get(curr.getValue()).getNodeTmTotal());
 
@@ -129,7 +132,10 @@ public class GRIDpathfinder {
 
                     /* BEGIN here is the new data structure for segments */
                     String tempString = graph.getRoadListItem(curr.getValue()+dest.getValue()).getId();
-                    GRIDrouteSegment tempSegment = new GRIDrouteSegment(tempString, tempTmTotal, tempEmissions);
+                    
+                    GRIDrouteSegment tempSegment = new GRIDrouteSegment(tempString, tempTmTotal);
+                    
+                    //GRIDrouteSegment tempSegment = new GRIDrouteSegment(tempString, tempTmTotal, tempEmissions);
                     finalRouteSegments.put(tempString, tempSegment);
                     /* END */
                 }
@@ -145,7 +151,9 @@ public class GRIDpathfinder {
              * at the actual starting, i.e., from node for the starting link; we
              * can look at correcting this...
              */
-            if(curr.getValue().equals(agtTo)) totalTravelTime = curr.getTmTotal();
+            if(curr.getValue().equals(agtTo)) {
+            	totalTravelTime = curr.getTmTotal();
+            }
         }
 
         /* BEGIN weight/time testing
@@ -161,7 +169,9 @@ public class GRIDpathfinder {
 
         String step = agtTo;
 
+        // RCS add the initial point (or in this case, the destination?)
         finalPath.getIntersections().add(step);
+        
         if(previousIntersections.get(step) == null)
         {
             System.out.println("\nI guess it's null, friend.");
@@ -173,17 +183,22 @@ public class GRIDpathfinder {
         while(previousIntersections.get(step)!= null)
         {
             step = previousIntersections.get(step);
-            finalPath.getIntersections().add(step);
+            finalPath.addSegmentByIntersection(step);
         }
 
-        Collections.reverse(finalPath.getIntersections());
+        // RCS make internal?
+        // Collections.reverse(finalPath.getIntersections());
 
         /* BEGIN build segment list */
         finalPath.setRouteSegments(graph.getPathBySegment(finalPath.getIntersections(), finalRouteSegments));
         /* END */
 
-        finalPath.setCalculatedTravelTime(totalTravelTime);
-        finalPath.setCalculatedEmissionsTotal();
+        // again, weight should be weight - but we may still need the total travel time. Internal function?
+        // finalPath.setCalculatedTravelTime(totalTravelTime);
+        
+        // RCS this should be weight agnostic
+        //finalPath.setCalculatedEmissionsTotal();
+        
         return finalPath;
     }
 

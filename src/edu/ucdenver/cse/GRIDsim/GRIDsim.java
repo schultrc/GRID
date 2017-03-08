@@ -39,15 +39,12 @@ import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripRouterProviderImpl;
 import com.google.inject.Provider;
 
-import edu.ucdenver.cse.GRIDclient.GRIDclientCmdLine;
 import edu.ucdenver.cse.GRIDclient.GRIDrequest;
 import edu.ucdenver.cse.GRIDclient.GRIDrequestSender;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
-import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
 import edu.ucdenver.cse.GRIDmap.GRIDmapReader;
 import edu.ucdenver.cse.GRIDmessages.GRIDServerTerm;
-import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDutil.FileUtils;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 

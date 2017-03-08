@@ -75,7 +75,8 @@ public class GRIDrequestListenerTCP extends Thread {
 					return;
 				}
 				
-				tempRoute.setRoads(this.theGRID.getMap().getPathByRoad(tempRoute.getIntersections()));
+				// RCS This is where we can convert what we get from the alg to a real route, if it isn't one
+				//tempRoute.setRoads(this.theGRID.getMap().getPathByRoad(tempRoute.getIntersections()));
 				logWriter.log(Level.INFO, "RequestListener - Route to be written = " + 
 				                           tempRoute.toString() +
 				                           " at GRID time: " + 
@@ -83,13 +84,13 @@ public class GRIDrequestListenerTCP extends Thread {
 
 				// need to update the map with the new agent's route
 				
-				this.theGRID.getMap().updateRoadsWithAgents(tempRoute, this.theGRID.getTime());
+				this.theGRID.getMap().updateMapWithAgents(tempRoute, this.theGRID.getTime());
 				
 				// If we just added this agent, there is no "existing route" to remove
 				if(!newAgentFlag) {
 					// This is wrong, as it will remove the route as of time now, not at the proper time
 					// GRIDsegments will fix this
-					this.theGRID.getMap().reduceRoadsWithAgents(tempAgent.getCurrentRoute(), this.theGRID.getTime());
+					this.theGRID.getMap().removeAgentsFromMap(tempAgent.getCurrentRoute(), this.theGRID.getTime());
 				}
 				
 				tempAgent.setRoute(tempRoute);
@@ -113,7 +114,7 @@ public class GRIDrequestListenerTCP extends Thread {
 				
 				// need to reduce the map data
 				for(GRIDroad road : this.theGRID.getMap().getRoads().values() ) {
-					road.removeWeightAtTime(this.theGRID.getTime());
+					road.removeAgentsFromRoadAtTime(this.theGRID.getTime());
 				}
 				
 				
