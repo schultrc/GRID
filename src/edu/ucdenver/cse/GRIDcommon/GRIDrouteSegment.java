@@ -46,10 +46,15 @@ public class GRIDrouteSegment {
     	
 		this.road_ID = road_ID;
 		this.startIntersection = startIntersection;
-		this.endIntersection = endIntersection;
-		this.timeAtRoadEntry = timeAtRoadEntry;
-		this.timeAtRoadExit = timeAtRoadExit;
+		this.endIntersection   = endIntersection;
+		this.timeAtRoadEntry   = timeAtRoadEntry;
+		this.timeAtRoadExit    = timeAtRoadExit;
 	}
+    
+    public GRIDrouteSegment(String startIntersection, String endIntersection) {
+    	this.startIntersection = startIntersection;
+		this.endIntersection   = endIntersection;
+    }
 
 	public String getRoadID() { return road_ID; }
     public long getTimeAtRoadExit() { return timeAtRoadExit; }

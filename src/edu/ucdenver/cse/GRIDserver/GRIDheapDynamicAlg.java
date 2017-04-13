@@ -13,7 +13,7 @@
 package edu.ucdenver.cse.GRIDserver;
 
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
-import edu.ucdenver.cse.GRIDmap.GRIDnodeWtTmEm;
+import edu.ucdenver.cse.GRIDmap.GRIDnode;
 import edu.ucdenver.cse.GRIDmap.GRIDroad;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
@@ -37,8 +37,8 @@ public class GRIDheapDynamicAlg {
         GRIDfibHeap pq = new GRIDfibHeap();
 
         Map<String, GRIDfibHeap.Entry> entries = new HashMap<>();
-        GRIDnodeWtTmEm startNodeValues;
-        ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
+        GRIDnode startNodeValues;
+        ConcurrentMap<String, GRIDnode> currentPathTotal = new ConcurrentHashMap<>();
         ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
 
         Long thisTimeslice = currentTime;
@@ -58,10 +58,10 @@ public class GRIDheapDynamicAlg {
         }
         
         // Initialize the starting values
-        startNodeValues = new GRIDnodeWtTmEm();
+        startNodeValues = new GRIDnode();
         startNodeValues.setNodeWtTotal(0.0);
-        startNodeValues.setNodeTmTotal(thisTimeslice);
-        GRIDnodeWtTmEm tempNode = startNodeValues;
+        startNodeValues.setNodeTimeTotal(thisTimeslice);
+        GRIDnode tempNode = startNodeValues;
 
         /* source/destination check
          */
@@ -105,7 +105,7 @@ public class GRIDheapDynamicAlg {
                 // RCS Integrate external classes here
                 
                 tempNode = graph.calcWeight(curr.getValue(), arc.getKey(),
-                        currentPathTotal.get(curr.getValue()).getNodeTmTotal());
+                        currentPathTotal.get(curr.getValue()).getNodeTimeTotal());
 
                 /* If the length of the best-known path from the source to
                  * this node is longer than this potential path cost, update
@@ -113,14 +113,14 @@ public class GRIDheapDynamicAlg {
                  */
                 GRIDfibHeap.Entry dest = entries.get(arc.getKey());
 
-                if ((tempNode.getNodeWtTotal()+curr.getWtTotal()) < dest.getWtTotal())
+                if ((tempNode.getNodeWeightTotal()+curr.getWtTotal()) < dest.getWtTotal())
                 {
-                    Long tempTime = currentPathTotal.get(curr.getValue()).getNodeTmTotal();
+                    Long tempTime = currentPathTotal.get(curr.getValue()).getNodeTimeTotal();
 
-                    tempNode.setNodeTmTotal(tempTime+tempNode.getNodeTmTotal());
-                    Long tempTmTotal = tempNode.getNodeTmTotal();
+                    tempNode.setNodeTimeTotal(tempTime+tempNode.getNodeTimeTotal());
+                    Long tempTmTotal = tempNode.getNodeTimeTotal();
 
-                    pq.decreaseKey(dest, 0D, (tempNode.getNodeWtTotal()+curr.getWtTotal()),tempTmTotal);
+                    pq.decreaseKey(dest, 0D, (tempNode.getNodeWeightTotal()+curr.getWtTotal()),tempTmTotal);
                     previousIntersections.put(dest.getValue(),curr.getValue());
                 }
             }
@@ -129,7 +129,7 @@ public class GRIDheapDynamicAlg {
              * have the shortest distance to it.
              */
             curr = pq.dequeueMin();
-            tempNode.setNodeTmTotal(curr.getTmTotal());
+            tempNode.setNodeTimeTotal(curr.getTmTotal());
 
             /* this conditional statement is necessary to correct for not starting
              * at the actual starting, i.e., from node for the starting link; we
