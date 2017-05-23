@@ -1,5 +1,8 @@
 package edu.ucdenver.cse.GRIDweight;
 
+import java.util.logging.Level;
+
+import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
 import edu.ucdenver.cse.GRIDmap.GRIDroad;
 
@@ -20,6 +23,8 @@ public class GRIDweightTime implements GRIDweight {
     	
     	if(road.equals(null)) {
     		// THIS IS BAD DO SOMETHING
+    		logWriter.log(Level.WARNING, "NULL ROAD FOUND, exiting");
+    		return MAX_WEIGHT;
     	}
     	
     	double currentSpeed = road.getCurrentSpeed();

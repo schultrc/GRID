@@ -62,7 +62,7 @@ public final class GRIDfibHeap {
         /**
          * Returns the weight total and time total, respectively, of this element.
          *
-         * @return The wight total/time total of this element.
+         * @return The weight total/time total of this element.
          */
         public double getWtTotal(){ return this.mWtTotal; }
         public long getTmTotal(){ return this.mTmTotal; }

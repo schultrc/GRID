@@ -28,22 +28,38 @@ import java.util.*;
 import java.util.ListIterator;
 
 public class GRIDpathfinder {
-    private static GRIDmap graph;
+    private GRIDmap ourMap;
+    private GRIDDirectedGraph graph;
+    
     private ConcurrentMap<String, GRIDnode> currentPathTotal;
     private ConcurrentHashMap<String, String> previousIntersections;
     private ConcurrentMap<String, GRIDrouteSegment> finalRouteSegments;
     private GRIDweight theWeighter;
 
-    public GRIDpathfinder(GRIDmap thisMap) {
-        graph = graphLoadEdges(thisMap);
+    public GRIDpathfinder(GRIDmap theMap) {
+    	this.ourMap = theMap;
+    	
+    	// RCS change to init the directed graph. MOVE TO INIT FUNCTION???
+        // RCS I "Think" This is taken care of in the map
+    	//graph = graphLoadEdges(theMap);
         
         currentPathTotal = new ConcurrentHashMap<String, GRIDnode>();
         previousIntersections = new ConcurrentHashMap<String, String>();
         finalRouteSegments = new ConcurrentHashMap<String, GRIDrouteSegment>();
         
+        graph = new GRIDDirectedGraph();
+        
+        // This is the class to change in order to use different weighting schemes
+        theWeighter = new GRIDweightTime(ourMap);
+        
         // This is where we change WHICH weighting scheme we are using. There has to be a better
         // way to change it other than hard coding
              
+    }
+    
+    public void init() {
+    	// Set things up here
+    	graph.loadEdges(ourMap);
     }
 
     public GRIDroute findPath(GRIDagent thisAgent, Long currentTime) {
@@ -58,14 +74,29 @@ public class GRIDpathfinder {
         /* END */
         Long thisTimeslice = currentTime/1000;
         Long totalTravelTime = thisTimeslice;
-        String agtFrom, agtTo;
+        String agtFrom; 
+        String agtTo;
+        String agtID;
 
         /* The agent is already on the link, so we need its endpoint
          */
-        agtFrom = graph.getRoad(thisAgent.getCurrentLink()).getTo();
+        
+        agtID = thisAgent.getId();
+        		     
+        // RCS Change to get from the directed graph
+        //agtFrom = graph.getRoad(thisAgent.getCurrentLink()).getTo();
+        String testRoadName = thisAgent.getCurrentLink();
+        GRIDroad testRoad = ourMap.getRoad(testRoadName);
+        String dummmmmm = testRoad.getTo();
+        
+        agtFrom = ourMap.getRoad(thisAgent.getCurrentLink()).getTo();
+        
         /* The agent will end somewhere on the final link, so we need to get to its "from end"
          */
-        agtTo = graph.getRoad(thisAgent.getDestination()).getFrom();
+
+        // RCS Change to get from the directed graph
+        //agtTo = graph.getRoad(thisAgent.getDestination()).getFrom();
+        agtTo = ourMap.getRoad(thisAgent.getDestination()).getFrom();
 
         startNodeValues = new GRIDnode();
         startNodeValues.setNodeWeighttTotal(0.0);
@@ -85,7 +116,8 @@ public class GRIDpathfinder {
 
         /* roadList creation--necessary for fibHeap mGraph data structure
          */
-        graph.initMap();;
+        // RCS is this already done in the map? Do we need to do it in the directed graph instead?
+        //graph.initMap();;
 
         // Replace the iterable part of GRIDmap
         
@@ -98,12 +130,17 @@ public class GRIDpathfinder {
          */
         GRIDfibHeap.Entry curr = pq.dequeueMin();
 
+        
+        
         while (!pq.isEmpty())
         {
             currentPathTotal.put(curr.getValue(), tempNode);
 
             // Update the priorities/weights of all of its edges.
-             
+            
+            GRIDrouteSegment tempSegment = null; 
+            String tempRoadID = "";
+            
             for (Map.Entry<String, Double> arc : graph.edgesFrom(curr.getValue()).entrySet()) {
                 if (currentPathTotal.containsKey(arc.getKey())) continue;
 
@@ -112,11 +149,11 @@ public class GRIDpathfinder {
                  */
                 
                 // RCS incorporate the new helper classes here
-                GRIDweight theWeight = new GRIDweightTime(graph);
+                // RCS this will need the map, not the graph
                 
                 double tempWeight;
                 
-                tempWeight = theWeight.calcWeight(curr.getValue(), 
+                tempWeight = theWeighter.calcWeight(curr.getValue(), 
                 		                          arc.getKey(),
                                                   currentPathTotal.get(curr.getValue()).getNodeTimeTotal());
                
@@ -147,22 +184,39 @@ public class GRIDpathfinder {
                     // RCS fix to get road ID
                     //String tempString = graph.getRoadListItem(curr.getValue()+dest.getValue()).getId();
                     
-                    String tempString = graph.getRoad(curr.getValue()+dest.getValue()).getId();
+                    //RCS changed 
+                    //String tempString = graph.getRoad(curr.getValue()+dest.getValue()).getId();
                     
-                    if (tempString.equals(null)) {
+                    // getRoad requires the road ID, not the combination of the start / end values
+                    tempRoadID = ourMap.hasRoad(curr.getValue(), dest.getValue()).getId();
+                    
+                    if (tempRoadID.equals(null)) {
                     	// THIS IS BAD
                     	logWriter.log(Level.WARNING, "ATTEMPT TO USE NULL ROAD ID");
                     	continue;
                     }
                     
-                    GRIDrouteSegment tempSegment = new GRIDrouteSegment(tempString, tempTmTotal);
+                    tempSegment = new GRIDrouteSegment();
+                    
+                    tempSegment.setRoad_ID(tempRoadID);
+                    tempSegment.setStartIntersection(curr.getValue());
+                    tempSegment.setEndIntersection(dest.getValue());
+                    tempSegment.setTimeAtRoadExit(tempTime);
+                    
+                   // finalRouteSegments.put(tempString, tempSegment);
                     
                     //GRIDrouteSegment tempSegment = new GRIDrouteSegment(tempString, tempTmTotal, tempEmissions);
-                    finalRouteSegments.put(tempString, tempSegment);
                     /* END */
                 }
             }
+            
+            if(tempSegment != null) {
+            	finalRouteSegments.put(tempRoadID, tempSegment);
+            }
+            
+           // 
 
+            
             /* Grab the current node.  The algorithm guarantees that we now
              * have the shortest distance to it.
              */
@@ -176,8 +230,8 @@ public class GRIDpathfinder {
             if(curr.getValue().equals(agtTo)) {
             	totalTravelTime = curr.getTmTotal();
             }
+        
         }
-
         // RCS remove this?
         
         /* BEGIN weight/time testing
@@ -189,6 +243,8 @@ public class GRIDpathfinder {
         //System.out.println("weight on 38347521_0 at 404: "+tempTestRoad.getWeightAtTime(404L));
         /* END weight/time testing */
 
+        // List, in order, of the intersections our route connects
+        
         List<String> theIntersections = new ArrayList<String>();
         
 
@@ -203,58 +259,68 @@ public class GRIDpathfinder {
 
         /* Create the final path from source to destination
          */
+        
+        // RCS we need to figure out how to do this with the routeSegments
         while(previousIntersections.get(step)!= null)
         {
             step = previousIntersections.get(step);
             theIntersections.add(step);
         }
 
-        GRIDroute finalPath = new GRIDroute();
+        GRIDroute finalRoute = new GRIDroute();
+        finalRoute.setAgent_ID(agtID);
 
         /* BEGIN build segment list */
         
         // Iterate over the list BACKWARDS
         
+        // RCS this won't be necessary if we fix the segments created above
         String startIntersection = theIntersections.get(theIntersections.size()-1);     
         GRIDrouteSegment tempSegment;
         
         ListIterator<String> iter = theIntersections.listIterator(theIntersections.size() -1);
         while(iter.hasPrevious()) {
-        	tempSegment = new GRIDrouteSegment(startIntersection, iter.previous());
-        	finalPath.addSegment(tempSegment);
+        	String destIntersection = iter.previous();
+        	String tempRoadID = ourMap.hasRoad(startIntersection, destIntersection).getId();
+        	
+        	tempSegment = new GRIDrouteSegment(startIntersection, destIntersection, tempRoadID);
+    	
+        	finalRoute.addSegment(tempSegment);
+        	startIntersection = tempSegment.getEndIntersection();
         }
-     
-        
-        return finalPath;
+             
+        return finalRoute;
     }
 
     protected Double getEdgeWeight(GRIDnode thisNode) {
         return thisNode.getNodeWeightTotal();
     }
 
-    private static GRIDmap graphLoadEdges(GRIDmap myGraph) {
-        Long startTime = System.nanoTime();
+    // RCS FIX THIS TO USE THE GRIDDirectedGraph code
+    //private static GRIDmap graphLoadEdges(GRIDmap myGraph) {
+ //   private static GRIDDirectedGraph graphLoadEdges(GRIDmap myGraph) { 
+  //  	Long startTime = System.nanoTime();
 
-        ArrayList<String> networkIntersections = new ArrayList<>(myGraph.getIntersections().keySet());
-        ArrayList<GRIDroad> networkRoads = new ArrayList<>(myGraph.getRoads().values());
+//        ArrayList<String> networkIntersections = new ArrayList<>(myGraph.getIntersections().keySet());
+ //       ArrayList<GRIDroad> networkRoads = new ArrayList<>(myGraph.getRoads().values());
 
-        for(int i = 0; i < networkIntersections.size(); i++)
-        {
-            myGraph.addNode(networkIntersections.get(i));
-        }
+//        for(int i = 0; i < networkIntersections.size(); i++)
+//        {
+//            myGraph.addNode(networkIntersections.get(i));
+//        }
 
-        for(int i = 0; i < networkRoads.size(); i++)
-        {
-            //if(i+1 == networkRoads.size()){System.out.println("edges: "+(i+1));}
-            myGraph.addEdge(networkRoads.get(i).getFrom(), networkRoads.get(i).getTo(), networkRoads.get(i).getLength());
-        }
+//        for(int i = 0; i < networkRoads.size(); i++)
+//        {
+//            //if(i+1 == networkRoads.size()){System.out.println("edges: "+(i+1));}
+//            myGraph.addEdge(networkRoads.get(i).getFrom(), networkRoads.get(i).getTo(), networkRoads.get(i).getLength());
+//        }
 
-        long stopTime = System.nanoTime();
-        long timeToRun = ((stopTime - startTime)/1000000);
+//        long stopTime = System.nanoTime();
+//        long timeToRun = ((stopTime - startTime)/1000000);
 
         //System.out.println(timeToRun/1000.0 + "s required for middleware\n");
-        return myGraph;
-    }
+//        return myGraph;
+//    }
 
 /* END GRIDpathfinder CLASS */
 }

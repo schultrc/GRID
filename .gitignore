@@ -13,3 +13,4 @@ config/dtd/
 /download*
 /TEST_RUNS/*
 /META-INF
+/ray_test_*
