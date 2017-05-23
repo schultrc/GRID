@@ -9,11 +9,10 @@ public class GRIDagent {
     private GRIDroute actualRouteTaken; // add reset function, methods to add to this as we travel
     
     private Long x; private Long y; // Future Use for now 05/08
-    private String currentLink;     // Future Use 05/08
+    private String currentLink;     	// The name of the road the agent is currently on 
     private String origin;
     private String destination;
     private Long fuelEconomy;
-    private Double emissions;
     private Long vehOccupancy;
     private Double vehSize;
     private double departureTime;
@@ -55,7 +54,7 @@ public class GRIDagent {
     public void setOrigin(String newOrigin){ this.origin = newOrigin; }
     public void setDestination(String newDest){ this.destination = newDest; }
     public void setFuelEconomy(Long newFuelEconomy){ this.fuelEconomy = newFuelEconomy; }
-    public void setEmissions(Double mewEmissions){ this.emissions = mewEmissions; }
+    public void setEmissions(Double mewEmissions){ }
     public void setVehOccupancy(Long vehOccupancy){ this.vehOccupancy = vehOccupancy; }
     public void setVehSize(Double vehSize){ this.vehSize = vehSize; }
 	public void setDepartureTime(Double newDepartureTime) { this.departureTime = newDepartureTime; }

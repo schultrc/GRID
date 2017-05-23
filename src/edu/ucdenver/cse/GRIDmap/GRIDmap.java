@@ -2,8 +2,11 @@ package edu.ucdenver.cse.GRIDmap;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Level;
+
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDcommon.GRIDrouteSegment;
+import edu.ucdenver.cse.GRIDcommon.logWriter;
 
 
 //public final class GRIDmap implements Iterable<String> {
@@ -93,9 +96,16 @@ public final class GRIDmap {
 		return true;			
 	}
 	
+
 	public GRIDroad getRoad(String theRoadID) {
+		// Old Break Point
+		
+		logWriter.log(Level.INFO, "Attempting to find road: " + theRoadID);
+		
 		return this.Roads.get(theRoadID);
+		//return roadList.get(theRoadID);
 	}
+	
 	public GRIDintersection getIntersection(String theIntersection) {
 		return this.Intersections.get(theIntersection);
 	}
@@ -106,8 +116,6 @@ public final class GRIDmap {
 		
 		return roadList.getOrDefault(from+to, null);
 	}
-
-	
 
 	public void updateMapWithAgents(GRIDroute theRoute, long previousSegmentEndTime) {
 

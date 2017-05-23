@@ -38,4 +38,10 @@ public class GRIDweightEmissions implements GRIDweight {
         GRIDroute newRoute = new GRIDroute();
         return newRoute;
     }
+
+	@Override
+	public double calcWeight(String fromNode, String toNode, long startTime) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

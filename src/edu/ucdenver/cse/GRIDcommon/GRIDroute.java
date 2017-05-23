@@ -1,6 +1,7 @@
 package edu.ucdenver.cse.GRIDcommon;
 
 import java.util.ArrayList;
+//import java.util.Collections;
 import java.io.Serializable;
 
 public class GRIDroute implements Serializable {	
@@ -9,13 +10,18 @@ public class GRIDroute implements Serializable {
 	 * an agent will take through the map
 	 */
 	private static final long serialVersionUID = 2L;
-	private Long agent_ID;
+	private String agent_ID;
 	
+	
+
 	private ArrayList<GRIDrouteSegment> RouteSegments;
 	
 	public GRIDroute() {
 		//Intersections = new ArrayList<String>(2);
 		//Roads = new ArrayList<String>(2);
+		
+		// Consider making this a syncronizedList to allow for multi-threading
+		// this.RouteSegments = (ArrayList<GRIDrouteSegment>) Collections.synchronizedList(new ArrayList<GRIDrouteSegment>());
 		this.RouteSegments = new ArrayList<GRIDrouteSegment>();
 	}
 	
@@ -32,14 +38,15 @@ public class GRIDroute implements Serializable {
 		// make sure this isn't the first segment in the route
 		
 		// use the previous segment's destination as the start for this segment
-		
-		
 	}
 	
-	
+	public void setAgent_ID(String agent_ID) {
+		this.agent_ID = agent_ID;
+	}
 	
 	//public ArrayList<String> getIntersections(){ return this.Intersections; }
-	public Long getAgent_ID(){ return this.agent_ID; }
+	public String getAgent_ID(){ return this.agent_ID; }
+	
 	//public ArrayList<String> getRoads() {return this.Roads; }
 	//public void setRoads(ArrayList<String> theRoads) { this.Roads = theRoads; }
 
@@ -54,7 +61,6 @@ public class GRIDroute implements Serializable {
 	public ArrayList<GRIDrouteSegment> getRouteSegments() { return this.RouteSegments; }
 	public void setRouteSegments(ArrayList<GRIDrouteSegment> theRouteSegments)
 								{ this.RouteSegments = theRouteSegments; }
-	
 	
 	public boolean compare(GRIDroute newRoute) {
 		if (this.RouteSegments.isEmpty() || newRoute.RouteSegments.isEmpty()) { return false; }

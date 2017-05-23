@@ -71,6 +71,7 @@ public class GRIDserver extends Thread {
 
 		// The official map
 		GRIDmap ourMap = masterMap.readMapFile(mapFile);
+		ourMap.initMap();
 
 		logWriter.log(Level.INFO, "CONFIG FILE: " + mapFile + " in use\n\n\n");
 		

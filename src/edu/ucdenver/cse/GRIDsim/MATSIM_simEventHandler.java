@@ -37,7 +37,6 @@ import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDmap.*;
 import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDmessages.GRIDtimeMsg;
-import edu.ucdenver.cse.GRIDserver.GRIDheapDynamicAlg;
 
 public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, MobsimAfterSimStepListener {
 
@@ -191,7 +190,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		// This can cause an out of bounds error. Check getRoads().size before accessing
 		String routeLastRoad = newGRIDRoute.getRouteSegments().get(newGRIDRoute.getRouteSegments().size()-1).getRoadID();
 		
-		if (!destinationIntersection.equals(theMap.getRoad(routeLastRoad).getFrom())) {
+		if (!destinationIntersection.equals(theMap.getRoad(routeLastRoad).getTo())) {
 			// This is bad, our new route doesn't go to where our agent wants to
 			// go
 			logWriter.log(Level.WARNING, "ERROR: Cannot get to INT: " + destinationIntersection);
