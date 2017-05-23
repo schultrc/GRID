@@ -1,13 +1,7 @@
 package edu.ucdenver.cse.GRIDmap;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-
 import edu.ucdenver.cse.GRIDcommon.logWriter;
-import edu.ucdenver.cse.GRIDweight.*;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class GRIDroad {
 
@@ -156,7 +150,7 @@ public class GRIDroad {
 	// Returns the average number of vehicles on this road between the 2 times provided
 	// Currently adjusted to a per hour rate
 	
-	private double getAvgVehicleCount(long timeEnterRoad, long timeLeaveRoad) {
+	public double getAvgVehicleCount(long timeEnterRoad, long timeLeaveRoad) {
 		int numberOfKeys = 0;
 
 		double avgVehicleCount = 0.0;
@@ -173,7 +167,6 @@ public class GRIDroad {
 			avgVehicleCount /= numberOfKeys;
 
 		// need to adjust to be based on 1 hr
-
 		avgVehicleCount = avgVehicleCount * (3600 / travelTime);
 
 		// logWriter.log(Level.INFO, this.getClass().getName() + " - " +

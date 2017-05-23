@@ -15,37 +15,42 @@ package edu.ucdenver.cse.GRIDserver;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDcommon.GRIDrouteSegment;
+import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmap.*;
+import edu.ucdenver.cse.GRIDweight.*;
+import edu.ucdenver.cse.GRIDcommon.logWriter;
+import java.util.logging.Level;
+
 
 import java.util.concurrent.*;
+
 import java.util.*;
+import java.util.ListIterator;
 
 public class GRIDpathfinder {
     private static GRIDmap graph;
-    private ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
-    private ConcurrentMap<String, GRIDrouteSegment> finalRouteSegments = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, GRIDnode> currentPathTotal;
+    private ConcurrentHashMap<String, String> previousIntersections;
+    private ConcurrentMap<String, GRIDrouteSegment> finalRouteSegments;
+    private GRIDweight theWeighter;
 
     public GRIDpathfinder(GRIDmap thisMap) {
         graph = graphLoadEdges(thisMap);
-    }
-
-    public static class GRIDgreenPathfinder extends GRIDpathfinder {
-
-        public GRIDgreenPathfinder(GRIDmap thisMap) {
-            super(thisMap);
-        };
-
-        public Double getEdgeWeight(GRIDnodeWtTmEm thisNode) {
-            return thisNode.getNodeEmissions()+thisNode.getNodeWtTotal();
-        }
+        
+        currentPathTotal = new ConcurrentHashMap<String, GRIDnode>();
+        previousIntersections = new ConcurrentHashMap<String, String>();
+        finalRouteSegments = new ConcurrentHashMap<String, GRIDrouteSegment>();
+        
+        // This is where we change WHICH weighting scheme we are using. There has to be a better
+        // way to change it other than hard coding
+             
     }
 
     public GRIDroute findPath(GRIDagent thisAgent, Long currentTime) {
         GRIDfibHeap pq = new GRIDfibHeap();
 
         Map<String, GRIDfibHeap.Entry> entries = new HashMap<>();
-        GRIDnodeWtTmEm startNodeValues;
+        GRIDnode startNodeValues;
         //ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
         //ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
         /* BEGIN here is the new data structure for segments */
@@ -62,10 +67,10 @@ public class GRIDpathfinder {
          */
         agtTo = graph.getRoad(thisAgent.getDestination()).getFrom();
 
-        startNodeValues = new GRIDnodeWtTmEm();
-        startNodeValues.setNodeWtTotal(0.0);
-        startNodeValues.setNodeTmTotal(thisTimeslice);
-        GRIDnodeWtTmEm tempNode = startNodeValues;
+        startNodeValues = new GRIDnode();
+        startNodeValues.setNodeWeighttTotal(0.0);
+        startNodeValues.setNodeTimeTotal(thisTimeslice);
+        GRIDnode tempNode = startNodeValues;
 
         /* source/destination check
          */
@@ -80,8 +85,10 @@ public class GRIDpathfinder {
 
         /* roadList creation--necessary for fibHeap mGraph data structure
          */
-        graph.loadRoadList();
+        graph.initMap();;
 
+        // Replace the iterable part of GRIDmap
+        
         for (String node : graph)
             entries.put(node, pq.enqueue(node, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0L));
 
@@ -95,8 +102,8 @@ public class GRIDpathfinder {
         {
             currentPathTotal.put(curr.getValue(), tempNode);
 
-            /* Update the priorities/weights of all of its edges.
-             */
+            // Update the priorities/weights of all of its edges.
+             
             for (Map.Entry<String, Double> arc : graph.edgesFrom(curr.getValue()).entrySet()) {
                 if (currentPathTotal.containsKey(arc.getKey())) continue;
 
@@ -104,11 +111,17 @@ public class GRIDpathfinder {
                  * which is the cost of this node plus the cost of this edge.
                  */
                 
-                // RCS incorporate the new weighting classes here
+                // RCS incorporate the new helper classes here
+                GRIDweight theWeight = new GRIDweightTime(graph);
                 
-                tempNode = graph.calcWeight(curr.getValue(), arc.getKey(),
-                        currentPathTotal.get(curr.getValue()).getNodeTmTotal());
-
+                double tempWeight;
+                
+                tempWeight = theWeight.calcWeight(curr.getValue(), 
+                		                          arc.getKey(),
+                                                  currentPathTotal.get(curr.getValue()).getNodeTimeTotal());
+               
+                tempNode.setNodeWeighttTotal(tempWeight);
+                
                 /* If the length of the best-known path from the source to
                  * this node is longer than this potential path cost, update
                  * the cost of the shortest path.
@@ -116,22 +129,31 @@ public class GRIDpathfinder {
                 GRIDfibHeap.Entry dest = entries.get(arc.getKey());
                 //Double newWeight = tempNode.getNodeWtTotal()+curr.getWtTotal();
                 /* BEGIN new code for different weight calculations*/
-                Double newWeight = getEdgeWeight(tempNode)+curr.getWtTotal();
+                double newWeight = getEdgeWeight(tempNode)+curr.getWtTotal();
                 /* END */
 
                 if (newWeight < dest.getWtTotal())
                 {
-                    Long tempTime = currentPathTotal.get(curr.getValue()).getNodeTmTotal();
+                    Long tempTime = currentPathTotal.get(curr.getValue()).getNodeTimeTotal();
 
-                    tempNode.setNodeTmTotal(tempTime+tempNode.getNodeTmTotal());
-                    Long tempTmTotal = tempNode.getNodeTmTotal();
-                    Double tempEmissions = tempNode.getNodeEmissions();
+                    tempNode.setNodeTimeTotal(tempTime+tempNode.getNodeTimeTotal());
+                    Long tempTmTotal = tempNode.getNodeTimeTotal();
+                    //Double tempEmissions = tempNode.getNodeEmissions();
 
                     pq.decreaseKey(dest, 0D, newWeight, tempTmTotal);
                     previousIntersections.put(dest.getValue(),curr.getValue());
 
                     /* BEGIN here is the new data structure for segments */
-                    String tempString = graph.getRoadListItem(curr.getValue()+dest.getValue()).getId();
+                    // RCS fix to get road ID
+                    //String tempString = graph.getRoadListItem(curr.getValue()+dest.getValue()).getId();
+                    
+                    String tempString = graph.getRoad(curr.getValue()+dest.getValue()).getId();
+                    
+                    if (tempString.equals(null)) {
+                    	// THIS IS BAD
+                    	logWriter.log(Level.WARNING, "ATTEMPT TO USE NULL ROAD ID");
+                    	continue;
+                    }
                     
                     GRIDrouteSegment tempSegment = new GRIDrouteSegment(tempString, tempTmTotal);
                     
@@ -145,7 +167,7 @@ public class GRIDpathfinder {
              * have the shortest distance to it.
              */
             curr = pq.dequeueMin();
-            tempNode.setNodeTmTotal(curr.getTmTotal());
+            tempNode.setNodeTimeTotal(curr.getTmTotal());
 
             /* this conditional statement is necessary to correct for not starting
              * at the actual starting, i.e., from node for the starting link; we
@@ -156,6 +178,8 @@ public class GRIDpathfinder {
             }
         }
 
+        // RCS remove this?
+        
         /* BEGIN weight/time testing
          * 38347489_0 (404)
          * 38347521_0 (404)
@@ -165,12 +189,11 @@ public class GRIDpathfinder {
         //System.out.println("weight on 38347521_0 at 404: "+tempTestRoad.getWeightAtTime(404L));
         /* END weight/time testing */
 
-        GRIDroute finalPath = new GRIDroute();
+        List<String> theIntersections = new ArrayList<String>();
+        
 
         String step = agtTo;
-
-        // RCS add the initial point (or in this case, the destination?)
-        finalPath.getIntersections().add(step);
+        theIntersections.add(step);
         
         if(previousIntersections.get(step) == null)
         {
@@ -183,27 +206,30 @@ public class GRIDpathfinder {
         while(previousIntersections.get(step)!= null)
         {
             step = previousIntersections.get(step);
-            finalPath.addSegmentByIntersection(step);
+            theIntersections.add(step);
         }
 
-        // RCS make internal?
-        // Collections.reverse(finalPath.getIntersections());
+        GRIDroute finalPath = new GRIDroute();
 
         /* BEGIN build segment list */
-        finalPath.setRouteSegments(graph.getPathBySegment(finalPath.getIntersections(), finalRouteSegments));
-        /* END */
-
-        // again, weight should be weight - but we may still need the total travel time. Internal function?
-        // finalPath.setCalculatedTravelTime(totalTravelTime);
         
-        // RCS this should be weight agnostic
-        //finalPath.setCalculatedEmissionsTotal();
+        // Iterate over the list BACKWARDS
+        
+        String startIntersection = theIntersections.get(theIntersections.size()-1);     
+        GRIDrouteSegment tempSegment;
+        
+        ListIterator<String> iter = theIntersections.listIterator(theIntersections.size() -1);
+        while(iter.hasPrevious()) {
+        	tempSegment = new GRIDrouteSegment(startIntersection, iter.previous());
+        	finalPath.addSegment(tempSegment);
+        }
+     
         
         return finalPath;
     }
 
-    protected Double getEdgeWeight(GRIDnodeWtTmEm thisNode) {
-        return thisNode.getNodeWtTotal();
+    protected Double getEdgeWeight(GRIDnode thisNode) {
+        return thisNode.getNodeWeightTotal();
     }
 
     private static GRIDmap graphLoadEdges(GRIDmap myGraph) {
@@ -214,7 +240,6 @@ public class GRIDpathfinder {
 
         for(int i = 0; i < networkIntersections.size(); i++)
         {
-            //if(i+1 == networkIntersections.size()){System.out.println("nodes: "+(i+1));}
             myGraph.addNode(networkIntersections.get(i));
         }
 

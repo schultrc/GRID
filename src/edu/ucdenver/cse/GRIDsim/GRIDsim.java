@@ -170,7 +170,7 @@ public class GRIDsim {
 			
 			// build our map from the data file
 			ourMap = masterMap.readMapFile(mapFile);
-			ourMap.initMap();
+			//ourMap.initMap();
 
 			// From WithinDayReplanning
 			Set<String> analyzedModes = new HashSet<String>();

@@ -23,6 +23,10 @@ public class GRIDroute implements Serializable {
 		this.RouteSegments = theRoute;
 	}
 	
+	public void addSegment(GRIDrouteSegment theSegment) {
+		this.RouteSegments.add(theSegment);
+	}
+	
 	// Add a new route segment with only the end intersection
 	public void addSegmentByIntersection(String newIntersection){
 		// make sure this isn't the first segment in the route
