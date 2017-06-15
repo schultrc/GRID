@@ -100,7 +100,7 @@ public final class GRIDmap {
 	public GRIDroad getRoad(String theRoadID) {
 		// Old Break Point
 		
-		logWriter.log(Level.INFO, "Attempting to find road: " + theRoadID);
+		//logWriter.log(Level.INFO, "Attempting to find road: " + theRoadID);
 		
 		return this.Roads.get(theRoadID);
 		//return roadList.get(theRoadID);

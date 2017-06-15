@@ -12,8 +12,6 @@ public class GRIDroute implements Serializable {
 	private static final long serialVersionUID = 2L;
 	private String agent_ID;
 	
-	
-
 	private ArrayList<GRIDrouteSegment> RouteSegments;
 	
 	public GRIDroute() {
@@ -31,6 +29,11 @@ public class GRIDroute implements Serializable {
 	
 	public void addSegment(GRIDrouteSegment theSegment) {
 		this.RouteSegments.add(theSegment);
+	}
+	
+	// Add route segments to the begining of the array, not the end
+	public void pushSegment(GRIDrouteSegment theSegment) {
+		this.RouteSegments.add(0, theSegment);
 	}
 	
 	// Add a new route segment with only the end intersection

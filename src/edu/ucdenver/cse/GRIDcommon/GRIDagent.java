@@ -6,6 +6,8 @@ public class GRIDagent {
     private String Id = "";
     private GRIDroute newRoute;         // a new route that has been planned but not being followed, yet
     private GRIDroute currentRoute;     // the route this agent *should* be following
+    
+    // RCS add this functionality to track where the agents ACTUALLY went
     private GRIDroute actualRouteTaken; // add reset function, methods to add to this as we travel
     
     private Long x; private Long y; // Future Use for now 05/08
