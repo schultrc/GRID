@@ -180,7 +180,7 @@ public class GRIDpathfinder {
                     pq.decreaseKey(dest, 0D, newWeight, tempTmTotal);
                    
                     // RCS I think we can remove this . . .
-                    previousIntersections.put(dest.getValue(),curr.getValue());
+                    //previousIntersections.put(dest.getValue(),curr.getValue());
 
                     /* BEGIN here is the new data structure for segments */
                     // RCS fix to get road ID
