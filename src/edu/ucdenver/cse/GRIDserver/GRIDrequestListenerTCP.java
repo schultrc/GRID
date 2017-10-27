@@ -71,7 +71,9 @@ public class GRIDrequestListenerTCP extends Thread {
 				GRIDroute tempRoute = theALG.findPath(tempAgent, theGRID.getTime());
 				
 				if (tempRoute == null) {
-					logWriter.log(Level.WARNING, "RequestListener - ROUTE WAS NULL:");
+					logWriter.log(Level.WARNING, "RequestListener - ROUTE WAS NULL for agent: " + tempAgent.getId());
+					
+					// We should do something here???
 					inputStream.close();
 					outputStream.close();
 

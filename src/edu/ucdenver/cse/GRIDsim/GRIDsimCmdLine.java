@@ -38,20 +38,20 @@ public class GRIDsimCmdLine {
 		this.theOptions.addOption(ipOption);	
 	
 		final Option outputDir = Option.builder("output")
-                .argName("Output Directory")
-                .hasArg(true)
-                .required(false)
-                .desc("Output Directory")
-                .build();
+                					   .argName("Output Directory")
+                					   .hasArg(true)
+                					   .required(false)
+                					   .desc("Output Directory")
+                					   .build();
 		
 		this.theOptions.addOption(outputDir);
 		
 		final Option agentCtrl = Option.builder("AgtCtrl")
-                .argName("Agent Control Percent")
-                .hasArg(true)
-                .required(false)
-                .desc("Agent Control Percent")
-                .build();
+									   .argName("Agent Control Percent")
+									   .hasArg(true)
+									   .required(false)
+									   .desc("Agent Control Percent")
+									   .build();
 		
 		this.theOptions.addOption(agentCtrl);
 	}

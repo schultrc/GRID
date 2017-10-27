@@ -103,12 +103,17 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		for (GRIDagent theGridAgent : theAgents.values()) {
 			if (theGridAgent.getNeedsDestination()) {
 
+				// RCS remove once fixed
+				logWriter.log(Level.INFO, "Agent: " + theGridAgent.getId() + " still needs its destination set!");
+				
 				theGridAgent.setDestination(mobsimAgents.get(theGridAgent.getId()).getDestinationLinkId().toString());
 				theGridAgent.setNeedsDestinationFlag(false);
 			}
 		}
 
 		// Map updates - Do we need anything else from the matsim map?
+		// RCS make this a configurable value, and also track it's time
+		
 		if (event.getSimulationTime() % 5 == 0) {
 
 			NetsimNetwork thesimNetwork = mobsim.getNetsimNetwork();
@@ -171,7 +176,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		GRIDroute newGRIDRoute = (GRIDroute) theRequestSender.sendRequest(testReq);
 
 		if (newGRIDRoute == null) {
-			logWriter.log(Level.WARNING, "simEventHandler - ROUTE FROM SERVER NULL");
+			logWriter.log(Level.WARNING, "simEventHandler - ROUTE FROM SERVER NULL - agent: " + agent.getId());
 
 			return false;
 		}
@@ -188,6 +193,11 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		String destinationIntersection = theMap.getRoad(destinationRoad).getFrom();
 
 		// This can cause an out of bounds error. Check getRoads().size before accessing
+		if (newGRIDRoute.getRouteSegments().size() < 1) {
+			logWriter.log(Level.WARNING, "ERROR: attempting to get the last road on a route with no segments");
+			return false;
+		}
+		
 		String routeLastRoad = newGRIDRoute.getRouteSegments().get(newGRIDRoute.getRouteSegments().size()-1).getRoadID();
 		
 		if (!destinationIntersection.equals(theMap.getRoad(routeLastRoad).getTo())) {
