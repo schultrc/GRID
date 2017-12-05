@@ -94,6 +94,8 @@ public class GRIDpathfinder {
 
         // RCS Change to get from the directed graph
         //agtTo = graph.getRoad(thisAgent.getDestination()).getFrom();
+        
+        // agentTo is the Intersection at the start of the final road
         agentTo = ourMap.getRoad(thisAgent.getDestination()).getFrom();
 
         startNodeValues = new GRIDnode();
@@ -140,11 +142,12 @@ public class GRIDpathfinder {
             currentPathTotal.put(curr.getValue(), tempNode);
 
             // Update the priorities/weights of all of its edges.
-            
-            
-            
+           
+            // step through every road leaving this intersection
             for (Map.Entry<String, Double> arc : graph.edgesFrom(curr.getValue()).entrySet()) {
-                if (currentPathTotal.containsKey(arc.getKey())) continue;
+                
+            	// skip this road if we've already visited it
+            	if (currentPathTotal.containsKey(arc.getKey())) continue;
 
                 /* Compute the cost of the path from the source to this node,
                  * which is the cost of this node plus the cost of this edge.
@@ -168,7 +171,10 @@ public class GRIDpathfinder {
                 /* BEGIN new code for different weight calculations*/
                 double newWeight = getEdgeWeight(tempNode)+curr.getWtTotal();
                 /* END */
-
+                
+                System.out.println("newWeight is: " + newWeight + " dest weight is: " + dest.getWtTotal() + "\n");
+                		
+                
                 if (newWeight < dest.getWtTotal())
                 {
                     Long tempTime = currentPathTotal.get(curr.getValue()).getNodeTimeTotal();
@@ -182,6 +188,7 @@ public class GRIDpathfinder {
                     // RCS I think we can remove this . . .
                     //previousIntersections.put(dest.getValue(),curr.getValue());
 
+                    System.out.println("We used to add: " + dest.getValue() + " and " + curr.getValue() + "\n");
                     /* BEGIN here is the new data structure for segments */
                     // RCS fix to get road ID
                     //String tempString = graph.getRoadListItem(curr.getValue()+dest.getValue()).getId();
@@ -211,77 +218,48 @@ public class GRIDpathfinder {
                     
                     //GRIDrouteSegment tempSegment = new GRIDrouteSegment(tempString, tempTmTotal, tempEmissions);
                     /* END */
+                
+		            if(tempSegment != null) {
+		            	// key these by their destination intersection, so we can build the route later
+		            	routeSegments.put(tempSegment.getEndIntersection(), tempSegment);
+		            	//routeSegmentsByStart.put(tempSegment.getStartIntersection(), tempSegment);
+		            	
+		            	logWriter.log(Level.INFO, "Adding route segment: " + tempSegment.getRoad_ID());
+		            	
+		                System.out.println("adding route segment: " + tempSegment.getRoad_ID() + "\n");            	
+		            }
                 }
             }
-            
-            if(tempSegment != null) {
-            	// key these by their destination intersection, so we can build the route later
-            	routeSegments.put(tempSegment.getRoad_ID(), tempSegment);
-            	//routeSegmentsByStart.put(tempSegment.getStartIntersection(), tempSegment);
-            	
-            	logWriter.log(Level.INFO, "Adding route segment: " + tempSegment.getRoad_ID());
-            	
-            	//finalRouteSegments.put(tempRoadID, tempSegment);
-            }
-
             /* Grab the current node.  The algorithm guarantees that we now
              * have the shortest distance to it.
              */
             curr = pq.dequeueMin();
             tempNode.setNodeTimeTotal(curr.getTmTotal());
 
+            System.out.println("grabbed: " + curr.getValue() + "\n");
+            
             /* this conditional statement is necessary to correct for not starting
              * at the actual starting, i.e., from node for the starting link; we
              * can look at correcting this...
              */
             if(curr.getValue().equals(agentTo)) {
             	totalTravelTime = curr.getTmTotal();
-            }
-        
+            }     
         }
-        // RCS remove this?
-        
-        /* BEGIN weight/time testing
-         * 38347489_0 (404)
-         * 38347521_0 (404)
-         * 1779115801223351743
-        */
-        //GRIDroad tempTestRoad = graph.getRoadListItem("1779115801223351743");
-        //System.out.println("weight on 38347521_0 at 404: "+tempTestRoad.getWeightAtTime(404L));
-        /* END weight/time testing */
-
-        // List, in order, of the intersections our route connects
-        
-        //List<String> theIntersections = new ArrayList<String>();
-        
-        // COPY THIS INTO SEGMENT LOGIC
-        
+         
         String destName = agentTo;
-        //theIntersections.add(destName);
-        
-        // RCS This is where shit breaks. We "should" be able to get to the dest, but  .. .
-//        if(previousIntersections.get(destName) == null)
-//        {
-//            System.out.println("\nI guess it's null, friend.");
-            
-//            System.out.println("Agent: " + agentID + " going from: " + agentFrom + " to: " + agentTo);
-            
-//            for(String intersection: previousIntersections.keySet()) {
-//            	System.out.println("Intersection: " + intersection +" goes with " + previousIntersections.get(intersection));
-//            }
-                        
-//            return genDummyRoute("Destination unreachable");
-//        }
 
-        // Build the route by finding the destination intersection in the hashmap of route segments
         
         ConcurrentHashMap<String, GRIDrouteSegment> routeSegmentsByStart = new ConcurrentHashMap<String, GRIDrouteSegment>();
-        ConcurrentHashMap<String, GRIDrouteSegment> routeSegmentsByEnd = new ConcurrentHashMap<String, GRIDrouteSegment>();
+//        ConcurrentHashMap<String, GRIDrouteSegment> routeSegmentsByEnd = new ConcurrentHashMap<String, GRIDrouteSegment>();
         // Now that we have all the segments, build the 2 lists so that we can find them easily
         
         for (Map.Entry<String, GRIDrouteSegment> theSegment : routeSegments.entrySet() ) {
+        	
+        	System.out.println("Adding segment: " + theSegment.getKey()+"\n");
+        	
         	routeSegmentsByStart.put(theSegment.getValue().getStartIntersection(), theSegment.getValue());
-        	routeSegmentsByEnd.put(theSegment.getValue().getEndIntersection(), theSegment.getValue());
+//        	routeSegmentsByEnd.put(theSegment.getValue().getEndIntersection(), theSegment.getValue());
         }
                                                       
       
@@ -289,60 +267,44 @@ public class GRIDpathfinder {
         finalRoute.setAgent_ID(agentID);
         
         // Start with the destination
-        tempSegment = (GRIDrouteSegment) routeSegmentsByStart.get(destName);
         
-        logWriter.log(Level.INFO, "Agent " + agentID + " is going to: " + agentTo + " so we are looking for: " + destName);
+        if(!routeSegments.containsKey(destName)){
+            logWriter.log(Level.INFO, "Agent " + agentID + " is going to: " + agentTo + " - but that doesn't exist in the returned list");
+            System.out.println("Agent " + agentID + " is going to: " + agentTo + " - but that doesn't exist in the returned list");
+        	return genDummyRoute("Destination unreachable");
+        }
+        	
+        tempSegment = (GRIDrouteSegment) routeSegments.get(destName);
         
         if( tempSegment == null) {
-        	logWriter.log(Level.WARNING, "Destination intersection not found in route 1!");
+        	logWriter.log(Level.WARNING, "Destination intersection not found in route 1! from was: " + agentFrom + " dest was: " + agentTo);
         	return genDummyRoute("Destination unreachable");
         }
         
+        // Put the final segment into the route
         finalRoute.pushSegment(tempSegment);
         
-        while(!routeSegmentsByStart.isEmpty()) {
-        	tempSegment = routeSegmentsByStart.get(tempSegment.getStartIntersection());
+        boolean routeComplete = false;
+        while(!routeComplete) {
+        	// there should be only one segment in the collection that ends at the start point of the first segment of the route
+        	String nextDest = tempSegment.getStartIntersection();
+        	
+        	tempSegment = (GRIDrouteSegment) routeSegments.get(nextDest);
         	
         	if( tempSegment == null) {
-            	logWriter.log(Level.WARNING, "Destination intersection not found in route 2!");
+            	logWriter.log(Level.WARNING, "Destination intersection not found in route 1!");
             	return genDummyRoute("Destination unreachable");
-        	}
-        	
-        	finalRoute.pushSegment(tempSegment);
-        	routeSegmentsByStart.remove(tempSegment.getStartIntersection());
-        	routeSegments.remove(tempSegment.getEndIntersection());
-        	logWriter.log(Level.INFO, "Added segment: " + tempSegment.getRoad_ID() + " to the route" );
-
+            }
+            
+            // Put the final segment into the route
+            finalRoute.pushSegment(tempSegment);
+            
+            if (tempSegment.getStartIntersection().equals(agentFrom)) {
+            	// This is the end case
+            	routeComplete = true;            	
+            }
         }
-      
-        // RCS we need to figure out how to do this with the routeSegments
-        //while(previousIntersections.get(destName)!= null)
-        //{
-        //    destName = previousIntersections.get(destName);
-        //    theIntersections.add(destName);
-        //}
-
-        
-
-        /* BEGIN build segment list */
-        
-        // Iterate over the list BACKWARDS
-        
-        // RCS this won't be necessary if we fix the segments created above
-//        String startIntersection = theIntersections.get(theIntersections.size()-1);     
-//        GRIDrouteSegment tempSegment1;
-        
-//        ListIterator<String> iter = theIntersections.listIterator(theIntersections.size() -1);
-//        while(iter.hasPrevious()) {
-//        	String destIntersection = iter.previous();
-//        	String tempRoadID = ourMap.hasRoad(startIntersection, destIntersection).getId();
-        	
-//        	tempSegment1 = new GRIDrouteSegment(startIntersection, destIntersection, tempRoadID);
-   	
-//        	finalRoute.addSegment(tempSegment1);
-//        	startIntersection = tempSegment1.getEndIntersection();
-//        }
-             
+          
         return finalRoute;
     }
 
@@ -358,6 +320,36 @@ public class GRIDpathfinder {
         return thisNode.getNodeWeightTotal();
     }
 
+    // RCS we need to figure out how to do this with the routeSegments
+    //while(previousIntersections.get(destName)!= null)
+    //{
+    //    destName = previousIntersections.get(destName);
+    //    theIntersections.add(destName);
+    //}
+
+    
+
+    /* BEGIN build segment list */
+    
+    // Iterate over the list BACKWARDS
+    
+    // RCS this won't be necessary if we fix the segments created above
+//    String startIntersection = theIntersections.get(theIntersections.size()-1);     
+//    GRIDrouteSegment tempSegment1;
+    
+//    ListIterator<String> iter = theIntersections.listIterator(theIntersections.size() -1);
+//    while(iter.hasPrevious()) {
+//    	String destIntersection = iter.previous();
+//    	String tempRoadID = ourMap.hasRoad(startIntersection, destIntersection).getId();
+    	
+//    	tempSegment1 = new GRIDrouteSegment(startIntersection, destIntersection, tempRoadID);
+	
+//    	finalRoute.addSegment(tempSegment1);
+//    	startIntersection = tempSegment1.getEndIntersection();
+//    }
+    
+    
+    
     // RCS FIX THIS TO USE THE GRIDDirectedGraph code
     //private static GRIDmap graphLoadEdges(GRIDmap myGraph) {
  //   private static GRIDDirectedGraph graphLoadEdges(GRIDmap myGraph) { 
@@ -384,6 +376,26 @@ public class GRIDpathfinder {
 //        return myGraph;
 //    }
 
+    
+    //theIntersections.add(destName);
+    
+    // RCS This is where shit breaks. We "should" be able to get to the dest, but  .. .
+//    if(previousIntersections.get(destName) == null)
+//    {
+//        System.out.println("\nI guess it's null, friend.");
+        
+//        System.out.println("Agent: " + agentID + " going from: " + agentFrom + " to: " + agentTo);
+        
+//        for(String intersection: previousIntersections.keySet()) {
+//        	System.out.println("Intersection: " + intersection +" goes with " + previousIntersections.get(intersection));
+//        }
+                    
+//        return genDummyRoute("Destination unreachable");
+//    }
+
+    // Build the route by finding the destination intersection in the hashmap of route segments
+    
+    
 /* END GRIDpathfinder CLASS */
 }
 
