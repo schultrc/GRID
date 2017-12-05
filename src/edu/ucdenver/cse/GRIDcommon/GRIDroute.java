@@ -31,7 +31,7 @@ public class GRIDroute implements Serializable {
 		this.RouteSegments.add(theSegment);
 	}
 	
-	// Add route segments to the begining of the array, not the end
+	// Add route segments to the beginning of the array, not the end
 	public void pushSegment(GRIDrouteSegment theSegment) {
 		this.RouteSegments.add(0, theSegment);
 	}
