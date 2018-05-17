@@ -45,9 +45,9 @@ public final class GRIDmap {
 	// This will create a searchable list of roads by combining the start and destination
 	// intersection names
 	
-	public void initMap() {		
+	public void initMap() {
 		this.Roads.forEach((item,value)->
-                roadList.put(value.getFrom()+value.getTo(),value));
+                roadList.put(value.getFrom()+"#"+value.getTo(),value));
 		
 		// RCS I don't think we need the intersections any more
 		//this.Intersections.forEach((item,value)->
@@ -113,8 +113,8 @@ public final class GRIDmap {
 	// determine if we have a road that goes from "from" to "to"
 	// IF the road exists, return it. If not, return null
 	public GRIDroad hasRoad(String from, String to) {
-		
-		return roadList.getOrDefault(from+to, null);
+
+		return roadList.getOrDefault(from+"#"+to, null);
 	}
 
 	public void updateMapWithAgents(GRIDroute theRoute, long previousSegmentEndTime) {

@@ -71,7 +71,7 @@ public class GRIDrequestListenerTCP extends Thread {
 				GRIDroute tempRoute = theALG.findPath(tempAgent, theGRID.getTime());
 				
 				if (tempRoute == null) {
-					logWriter.log(Level.WARNING, "RequestListener - ROUTE WAS NULL for agent: " + tempAgent.getId());
+					//logWriter.log(Level.WARNING, "RequestListener - ROUTE WAS NULL for agent: " + tempAgent.getId());
 					
 					// We should do something here???
 					inputStream.close();
@@ -82,7 +82,7 @@ public class GRIDrequestListenerTCP extends Thread {
 				
 				// RCS This is where we can convert what we get from the alg to a real route, if it isn't one
 				//tempRoute.setRoads(this.theGRID.getMap().getPathByRoad(tempRoute.getIntersections()));
-				logWriter.log(Level.INFO, "RequestListener - Route to be written = " + 
+				logWriter.log(Level.INFO, "RequestListener - Route to be written = " +
 				                           tempRoute.toString() +
 				                           " at GRID time: " + 
 				                           this.theGRID.getTime());

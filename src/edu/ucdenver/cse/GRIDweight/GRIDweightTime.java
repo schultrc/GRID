@@ -20,9 +20,11 @@ public class GRIDweightTime implements GRIDweight {
 
     	// calc currentSpeed
     	GRIDroad road = theMap.hasRoad(fromNode, toNode);
-    	
-    	if(road.equals(null)) {
+
+    	//if(road.equals(null)) {
+		if(road == null) {
     		// THIS IS BAD DO SOMETHING
+			System.out.println("GRIDwtTm--NULL ROAD FOUND, exiting...");
     		logWriter.log(Level.WARNING, "NULL ROAD FOUND, exiting");
     		return MAX_WEIGHT;
     	}

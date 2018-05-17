@@ -46,9 +46,9 @@ public class GRIDclientTest extends Thread {
 		}
 		
 		// Get the logger. Since this "should" be the first time, we can set the path
-		
-		logWriter.setOutputDir(outputDir);
-		logWriter.log(Level.INFO, "DOES THIS WORK???!!!");
+
+		//logWriter.setOutputDir(outputDir);
+		//logWriter.log(Level.INFO, "DOES THIS WORK???!!!");
 
 		
 		if (theCmdLine.hasOption("map")) {
@@ -63,7 +63,7 @@ public class GRIDclientTest extends Thread {
 		}
 
 		if (ourMapFile == "") {
-			logWriter.log(Level.WARNING, "You didn't choose a map file!!!");
+			//logWriter.log(Level.WARNING, "You didn't choose a map file!!!");
 			System.exit(0);
 		}
 
@@ -76,7 +76,7 @@ public class GRIDclientTest extends Thread {
 		// logWriter.log(Level.INFO, "CONFIG FILE: " + mapFile + " in
 		// use\n\n\n");
 
-		Long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 
 		int i = 0;
 
@@ -120,9 +120,9 @@ public class GRIDclientTest extends Thread {
 			i++;
 		}
 
-		Long stopTime = System.currentTimeMillis();
+		long stopTime = System.currentTimeMillis();
 
-		Long timeToRun = (stopTime - startTime) / 1000;
+		long timeToRun = (stopTime - startTime) / 1000;
 		System.out.println("\n it took: " + timeToRun + " seconds to run this sim");
 	}
 

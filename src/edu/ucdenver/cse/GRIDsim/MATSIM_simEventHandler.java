@@ -89,7 +89,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 	@Override
 	public void notifyMobsimBeforeSimStep(@SuppressWarnings("rawtypes") MobsimBeforeSimStepEvent event) {
 
-		logWriter.log(Level.INFO, "notifyMobsimBeforeSimStep " + event.toString() + " " + event.getSimulationTime());
+		//logWriter.log(Level.INFO, "notifyMobsimBeforeSimStep " + event.toString() + " " + event.getSimulationTime());
 
 		Netsim mobsim = (Netsim) event.getQueueSimulation();
 
@@ -104,7 +104,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 			if (theGridAgent.getNeedsDestination()) {
 
 				// RCS remove once fixed
-				logWriter.log(Level.INFO, "Agent: " + theGridAgent.getId() + " still needs its destination set!");
+				//logWriter.log(Level.INFO, "Agent: " + theGridAgent.getId() + " still needs its destination set!");
 				
 				theGridAgent.setDestination(mobsimAgents.get(theGridAgent.getId()).getDestinationLinkId().toString());
 				theGridAgent.setNeedsDestinationFlag(false);
@@ -135,7 +135,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 			// We can change this by sorting the list prior to removing
 			GRIDagent tempAgent = theAgents.get(agentsToReplan.remove());
 
-			if (tempAgent != null) {
+			/*if (tempAgent != null) {
 				// System.out.println("Found Agent to replan: " +
 				// tempAgent.getId());
 				if (mobsimAgents.containsKey(tempAgent.getId())) {
@@ -146,7 +146,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 								                     " failed replanning at time: " + event.getSimulationTime());
 					}
 				}
-			}
+			}*/
 		}
 	}
 
@@ -154,7 +154,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 
 		// Make sure MATSIM is happy
 		if (!checkMatsim(agent, mobsim)) {
-			logWriter.log(Level.WARNING, "MATSIM agent cannot be modified");
+			//logWriter.log(Level.WARNING, "MATSIM agent cannot be modified");
 			return false;
 		}
 
@@ -176,7 +176,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		GRIDroute newGRIDRoute = (GRIDroute) theRequestSender.sendRequest(testReq);
 
 		if (newGRIDRoute == null) {
-			logWriter.log(Level.WARNING, "simEventHandler - ROUTE FROM SERVER NULL - agent: " + agent.getId());
+			//logWriter.log(Level.WARNING, "simEventHandler - ROUTE FROM SERVER NULL - agent: " + agent.getId());
 
 			return false;
 		}
@@ -194,7 +194,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 
 		// This can cause an out of bounds error. Check getRoads().size before accessing
 		if (newGRIDRoute.getRouteSegments().size() < 1) {
-			logWriter.log(Level.WARNING, "ERROR: attempting to get the last road on a route with no segments");
+			//logWriter.log(Level.WARNING, "ERROR: attempting to get the last road on a route with no segments");
 			return false;
 		}
 		
@@ -203,15 +203,15 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		if (!destinationIntersection.equals(theMap.getRoad(routeLastRoad).getTo())) {
 			// This is bad, our new route doesn't go to where our agent wants to
 			// go
-			logWriter.log(Level.WARNING, "ERROR: Cannot get to INT: " + destinationIntersection);
+			//logWriter.log(Level.WARNING, "ERROR: Cannot get to INT: " + destinationIntersection);
 			System.out.println("CANT RE-ROUTE");
 			return false;
 		}
 
 		// Compare the 2 routes
 		if (origGRIDroute.compare(newGRIDRoute)) {
-			
-			logWriter.log(Level.INFO, "Routes did not change for agent: " + agent.getId());
+
+			//logWriter.log(Level.INFO, "Routes did not change for agent: " + agent.getId());
 			return false;
 		}
 
@@ -219,9 +219,9 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 			// Add the new route to our agent
 			tempGRIDagent.setNewRoute(newGRIDRoute);
 			
-			if (replaceRoute(agent, newGRIDRoute) ) {
+			/*if (replaceRoute(agent, newGRIDRoute) ) {
 				logWriter.log(Level.INFO, "Successfully replaced route for agent: " + agent.getId().toString());
-			}
+			}*/
 		}
 
 		tempGRIDagent.setRoute(tempGRIDagent.getNewRoute());
@@ -285,14 +285,14 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		}
 
 		if (!(WithinDayAgentUtils.getCurrentPlanElement(agent) instanceof Leg)) {
-			log.info("agent not on leg; aborting ... ");
+			//log.info("agent not on leg; aborting ... ");
 			System.out.println("NOT LEG");
 
 			return false;
 		}
 
 		if (!((Leg) WithinDayAgentUtils.getCurrentPlanElement(agent)).getMode().equals(TransportMode.car)) {
-			log.info("not a car leg; can only replan car legs; aborting ... ");
+			//log.info("not a car leg; can only replan car legs; aborting ... ");
 			System.out.println("NOT CAR");
 
 			return false;
@@ -306,8 +306,8 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		if (tempGRIDagent.getCurrentLink().equals(tempGRIDagent.getDestination())) {
 			// We must already be at our destination!
 
-			logWriter.log(Level.INFO,
-					"Agent " + tempGRIDagent.getId() + " has arrived at its destination" );
+			/*logWriter.log(Level.INFO,
+					"Agent " + tempGRIDagent.getId() + " has arrived at its destination" );*/
 
 			// Is this where we die in MATSIM (no route in plan) ?
 			return true;
@@ -363,10 +363,10 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 		//	road.removeWeightAtTime((long) event.getSimulationTime());
 		//}
 		
-		logWriter.log(Level.FINEST,
+		/*logWriter.log(Level.FINEST,
 				"**************************************************************\n" + " END of SIM Time Step: "
 						+ event.getSimulationTime() + "\n"
-						+ "**************************************************************\n\n");
+						+ "**************************************************************\n\n");*/
 	}
 }
 

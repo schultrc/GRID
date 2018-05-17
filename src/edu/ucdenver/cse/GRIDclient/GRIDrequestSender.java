@@ -24,12 +24,12 @@ public class GRIDrequestSender {
 
 			// Make this configurable
 			socket = new Socket("localHost", 9998);
-			logWriter.log(Level.INFO, "requestSender - Connected");
+			//logWriter.log(Level.INFO, "requestSender - Connected");
 
 			outputStream = new ObjectOutputStream(socket.getOutputStream());
 			inputStream = new ObjectInputStream(socket.getInputStream());
 
-			logWriter.log(Level.FINEST, "requestSender - Sending: " + theRequest.toString());
+			//logWriter.log(Level.FINEST, "requestSender - Sending: " + theRequest.toString());
 			// Send the route request
 			outputStream.writeObject(theRequest);
 			outputStream.flush();
@@ -40,10 +40,10 @@ public class GRIDrequestSender {
 				// Get the new route back
 				theReturnObj = inputStream.readObject();
 				
-				if(theReturnObj == null) {
+				/*if(theReturnObj == null) {
 					logWriter.log(Level.WARNING, "requestSender - Found null route");
 					
-				}
+				}*/
 				return theReturnObj;
 				//System.out.println("The new route is: " + ((GRIDroute) theReturnObj).toString());
 			}
@@ -67,7 +67,7 @@ public class GRIDrequestSender {
 
 		} catch (SocketException se) {
 			// se.printStackTrace();
-			logWriter.log(Level.WARNING,"requestSender - Socket Exception");
+			//logWriter.log(Level.WARNING,"requestSender - Socket Exception");
 			
 			//System.exit(1);
 

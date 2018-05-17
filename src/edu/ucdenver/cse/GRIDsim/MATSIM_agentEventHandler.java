@@ -143,9 +143,9 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 			totalTravelTime += travelTime;
 			ourAgents.remove(event.getPersonId().toString());
 			
-			logWriter.log(Level.INFO, "Agent: " + tempAgent.getId() +
+			/*logWriter.log(Level.INFO, "Agent: " + tempAgent.getId() +
 					      " departed at: "      + tempAgent.getDepartureTime() + 
-					      " and arrived at: "   + event.getTime());
+					      " and arrived at: "   + event.getTime());*/
 			
 		}
 		
@@ -177,8 +177,8 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 		//simFlag = true;
 		//simFlag = false;
 		
-		logWriter.log(Level.INFO, this.getClass().getName() + " setting simFlag to: " +
-		                          simFlag + " for agent: " + theId);
+		/*logWriter.log(Level.INFO, this.getClass().getName() + " setting simFlag to: " +
+		                          simFlag + " for agent: " + theId);*/
 		
 		//String theOriginIntersection = ourMap.getRoad(event.getLinkId().toString()).getFrom();
 		

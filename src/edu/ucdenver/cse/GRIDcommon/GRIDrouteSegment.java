@@ -113,8 +113,8 @@ public class GRIDrouteSegment implements Serializable{
 	
 	public long getTravelTime () {
 		if ((this.timeAtRoadEntry == -1) || (this.timeAtRoadExit == -1)) {
-			logWriter.log(java.util.logging.Level.WARNING, "Attempt to get travel time for " +
-		                  "route segment with uninitialized values");
+			/*logWriter.log(java.util.logging.Level.WARNING, "Attempt to get travel time for " +
+		                  "route segment with uninitialized values");*/
 			return -1;
 		}
 		

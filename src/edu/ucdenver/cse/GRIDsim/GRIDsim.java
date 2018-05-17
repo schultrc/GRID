@@ -150,18 +150,18 @@ public class GRIDsim {
 
 		try {
 			Config config = new Config();
-			
+
 			ConfigUtils.loadConfig(config, configFile);
-			
+
 			config.controler().setLastIteration(0);
 			config.controler().setOutputDirectory("./output");
-			
+
 			config.controler().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);
 
-			Scenario scenario = ScenarioUtils.loadScenario(config) ;
+            Scenario scenario = ScenarioUtils.loadScenario(config) ;
 
 			final Controler controler = new Controler( scenario ) ;
-			
+
 			// Uncomment if you want to select a different map than matsim is using
 			// String mapFile = GRIDutils.getConfigFile();
 			String mapFile = config.network().getInputFile();

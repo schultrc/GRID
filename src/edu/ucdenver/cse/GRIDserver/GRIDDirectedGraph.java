@@ -109,7 +109,7 @@ public class GRIDDirectedGraph implements Iterable<String> {
         ArrayList<String> networkIntersections = new ArrayList<>(myGraph.getIntersections().keySet());
         ArrayList<GRIDroad> networkRoads = new ArrayList<>(myGraph.getRoads().values());
 
-        // replace with better for loop
+        // replace with better for loop--how dare you criticize my loop!
         for(int i = 0; i < networkIntersections.size(); i++)
         {
             addNode(networkIntersections.get(i));
@@ -117,6 +117,8 @@ public class GRIDDirectedGraph implements Iterable<String> {
 
         for(int i = 0; i < networkRoads.size(); i++)
         {
+        	/*MFS REMOVE the system output line just below here*/
+        	//System.out.println(networkRoads.get(i) + "road " + (i+1));
             //if(i+1 == networkRoads.size()){System.out.println("edges: "+(i+1));}
             addEdge(networkRoads.get(i).getFrom(), networkRoads.get(i).getTo(), networkRoads.get(i).getLength());
         }

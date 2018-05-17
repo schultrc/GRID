@@ -50,8 +50,8 @@ public class GRIDserver extends Thread {
 			System.out.println("Error setting output path");
 			System.exit(1);
 		}
-		logWriter.setOutputDir(outputDir);
-		logWriter.setLogPrefix("ROUTE_SERVER");
+		/*logWriter.setOutputDir(outputDir);
+		logWriter.setLogPrefix("ROUTE_SERVER");*/
 
 		String mapFile = "";
 
@@ -72,8 +72,10 @@ public class GRIDserver extends Thread {
 		// The official map
 		GRIDmap ourMap = masterMap.readMapFile(mapFile);
 		ourMap.initMap();
+		// MFS remove next line...
 
-		logWriter.log(Level.INFO, "CONFIG FILE: " + mapFile + " in use\n\n\n");
+
+		//logWriter.log(Level.INFO, "CONFIG FILE: " + mapFile + " in use\n\n\n");
 		
 		if (theCmdLine.hasOption("sim")) {
 			theGRID = new GRIDworld(ourMap, 0L);

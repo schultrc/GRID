@@ -58,6 +58,8 @@ public class GRIDroute implements Serializable {
 
 		// RCS FIX THIS TO DO SOMETHING
 		// last segment end minus first segment start?
+
+
 		return travelTime;
 	}
 

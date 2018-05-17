@@ -24,7 +24,7 @@ public class GRIDworld {
 		this.theTime = startTime;
 		this.theMap = map;
 		
-		System.out.println("GRIDworld init with: " + startTime);
+		System.out.println("GRIDworld init with a start time of: " + startTime);
 	}
 
 	public GRIDmap getMap() {
