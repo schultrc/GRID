@@ -14,3 +14,9 @@ config/dtd/
 /TEST_RUNS/*
 /META-INF
 /ray_test_*
+GRID.jar
+GRIDsim.jar
+GRIDsim_old.jar
+data/RyeNetwork - Copy.xml
+data/RyePopulation_1000 - Copy.xml
+dependencies/javax/javax.inject-1_bkp.jar
