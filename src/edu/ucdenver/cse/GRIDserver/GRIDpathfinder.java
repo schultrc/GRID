@@ -32,7 +32,7 @@ public class GRIDpathfinder {
     static logWriter testLW;
 
     private GRIDmap ourMap;
-    private GRIDDirectedGraph graph;
+    //private GRIDDirectedGraph graph;
     
     private ConcurrentMap<String, GRIDnode> currentPathTotal;
     private ConcurrentHashMap<String, String> previousIntersections;
@@ -54,7 +54,7 @@ public class GRIDpathfinder {
         routeSegments = new ConcurrentHashMap<String, GRIDrouteSegment>();
 
         
-        graph = new GRIDDirectedGraph();
+        //graph = new GRIDDirectedGraph();
         
         // This is the class to change in order to use different weighting schemes
         theWeighter = new GRIDweightTime(ourMap);
@@ -67,7 +67,7 @@ public class GRIDpathfinder {
     public void init() {
     	// Set things up here
         System.out.println("is anything happening here...");
-    	graph.loadEdges(ourMap);
+    	ourMap.loadEdges(ourMap);
     }
 
     public GRIDroute findPath(GRIDagent thisAgent, Long currentTime) {
@@ -136,7 +136,7 @@ public class GRIDpathfinder {
 
         // Replace the iterable part of GRIDmap
         
-        for (String node : graph)
+        for (String node : ourMap)
             entries.put(node, pq.enqueue(node, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0L));
 
         pq.decreaseKey(entries.get(agentFrom), 0.0, 0.0, thisTimeslice);
@@ -156,7 +156,7 @@ public class GRIDpathfinder {
             // Update the priorities/weights of all of its edges.
            
             // step through every road leaving this intersection
-            for (Map.Entry<String, Double> arc : graph.edgesFrom(curr.getValue()).entrySet()) {
+            for (Map.Entry<String, Double> arc : ourMap.edgesFrom(curr.getValue()).entrySet()) {
                 
             	// skip this road if we've already visited it
             	if (currentPathTotal.containsKey(arc.getKey())) continue;

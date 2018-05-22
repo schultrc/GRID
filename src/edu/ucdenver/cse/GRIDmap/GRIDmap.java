@@ -9,22 +9,20 @@ import edu.ucdenver.cse.GRIDcommon.GRIDrouteSegment;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 
 
-//public final class GRIDmap implements Iterable<String> {
-public final class GRIDmap {
+public class GRIDmap implements Iterable<String> {
 
-//public class GRIDmap {
-	
-	
+	private Map<String, Map<String, Double>> mGraph;
 	private ConcurrentMap<String, GRIDintersection> Intersections;
 	private ConcurrentMap<String, GRIDroad> Roads;
 	private ConcurrentMap<String, GRIDroad> roadList;
-	//private ConcurrentMap<String, Long> intersectionList;
+	private ConcurrentMap<String, Long> intersectionList;
 
 	public GRIDmap() {
+		this.mGraph = new HashMap<String, Map<String, Double>>();
 		this.Intersections    = new ConcurrentHashMap<String, GRIDintersection>();
 		this.Roads            = new ConcurrentHashMap<String, GRIDroad >();
 		this.roadList         = new ConcurrentHashMap<String, GRIDroad>();
-		//this.intersectionList = new ConcurrentHashMap<>();
+		this.intersectionList = new ConcurrentHashMap<>();
 	}
 	
 	public ConcurrentMap<String, GRIDintersection> getIntersections() {
@@ -156,165 +154,93 @@ public final class GRIDmap {
 			//logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
 		}
 	}
-	
-	// RCS Not needed anymore? Maybe due to aux usage
-		//public ArrayList<String> getPathByRoad(ArrayList<String> pathByNode)
-		//{
-		//	// Turns a route made of intersections into a route made of roads
-		//	// Can also be used to find a single road based on start / end intersections
-		//	// Note: This will return a road, but not necessarily a specific road, in the
-		//	// cul-desac world where 2 or more roads have the same start / end intersections
-		//	ArrayList<String> pathByRoad = new ArrayList<>();
 
-		//	for(int i = 0; i < pathByNode.size()-1; i++)
-		//	{
-		//		GRIDroad tempRoad = this.getRoadListItem(pathByNode.get(i)+pathByNode.get(i+1));
-		//		pathByRoad.add(tempRoad.getId());
-		//	}
+	public GRIDmap.graphEdge getEdge(String start, String finish) // Map.Entry<String, Map.Entry<String, Double>>
+	{
+		GRIDmap.graphEdge temp = new GRIDmap.graphEdge();
+		mGraph.containsKey(start);
+		Map<String, Double> arcs = mGraph.get(start);
+		for(String key : arcs.keySet())
+		{
+			if(key == finish)
+			{
+				temp.setStart(start);
+				temp.setFinish(key);
+				temp.setWeight(arcs.get(key));
+				return temp;
+			}
+		}
+		return null;
+	}
 
-		//	return  pathByRoad;
-		//}
+	public boolean addNode(String node) {
+		/* If the node already exists, don't do anything. */
+		if (mGraph.containsKey(node))
+			return false;
 
-		//public ArrayList<GRIDrouteSegment> getPathBySegment(ArrayList<String> pathByNode,
-		//		ConcurrentMap<String, GRIDrouteSegment> finalRouteSegments) {
-		//	/*
-		//	 * Turns a route made of intersections into a route made of roads, then
-		//	 * into a path of segments
-		//	 */
-		//	ArrayList<String> pathByRoad = getPathByRoad(pathByNode);
-		//	ArrayList<GRIDrouteSegment> pathBySegment = new ArrayList<>();
+		/* Otherwise, add the node with an empty set of outgoing edges. */
+		mGraph.put(node, new HashMap<String, Double>());
+		return true;
+	}
 
-		//	for (String finalPathRoadID : pathByRoad) {
-		//		pathBySegment.add(finalRouteSegments.get(finalPathRoadID));
-		//	}
-
-		//	return pathBySegment;
-		//}
-	
-	
-	/*  *
-	* The following functions are transplanted from the DirectedGraph class.
-	* These need to be reviewed and cleaned up for better integration, i.e.,
-	* eliminating the need for the 'middleware' function and using only roads
-	* rather than pulling from the edge list as created by the original
-	* DirectedGraph class.
-	* * */
-
-//	private final Map<String, Map<String, Double>> mGraph = new HashMap<String, Map<String, Double>>();
-//	private final ConcurrentMap<String, Map<String, Double>> fibHeapGraph = new ConcurrentHashMap<String, Map<String, Double>>();
-	
-//	public class graphEdge{
-//        String start;
-//        String finish;
-//		Double weight;
-
-//		public void setStart(String val){start = val;}
-//		public void setFinish(String val){finish = val;}
-//		public void setWeight(Double val){weight = val;}
-
-//		@Override
-//		public String toString(){return "Edge [start: "+start+" end: "+finish+" weight: "+weight+"]";}
-//	}
-
-//	public graphEdge getEdge(String start, String finish) // Map.Entry<String, Map.Entry<String, Double>>
-//	{
-//		graphEdge temp = new graphEdge();
-//		mGraph.containsKey(start);
-//		Map<String, Double> arcs = mGraph.get(start);
-//		for(String key : arcs.keySet())
-//		{
-//			if(key == finish)
-//			{
-//				temp.setStart(start);
-//				temp.setFinish(key);
-//				temp.setWeight(arcs.get(key));
-//				return temp;
-//			}
-//		}
-//		return null;
-//	}
-
-	/**
-	 * Adds a new node to the graph.  If the node already exists, this
-	 * function is a no-op.
-	 *
-	 * @param node The node to add.
-	 * @return Whether or not the node was added.
-	 */
-//	public boolean addNode(String node) {
- //       /* If the node already exists, don't do anything. */
-//		if (fibHeapGraph.containsKey(node))
-//			return false;//
-
-        /* Otherwise, add the node with an empty set of outgoing edges. */
-//		fibHeapGraph.put(node, new HashMap<String, Double>());
-//		return true;
-//	}
-
-	/**
-	 * Given a start node, destination, and length, adds an arc from the
-	 * start node to the destination of the length.  If an arc already
-	 * existed, the length is updated to the specified value.  If either
-	 * endpoint does not exist in the graph, throws a NoSuchElementException.
-	 *
-	 * @param start The start node.
-	 * @param dest The destination node.
-	 * @param length The length of the edge.
-	 * @throws NoSuchElementException If either the start or destination nodes
-	 *                                do not exist.
-	 */
-//	public void addEdge(String start, String dest, double length) {
- //       /* Confirm both endpoints exist. */
-//		if (!fibHeapGraph.containsKey(start) || !fibHeapGraph.containsKey(dest))
-//			throw new NoSuchElementException("Both nodes must be in the graph.");
-
-        /* Add the edge. */
-//		fibHeapGraph.get(start).put(dest, length);
-//	}
-
-	// RCS not currently used
-	/**
-	 * Removes the edge from start to dest from the graph.  If the edge does
-	 * not exist, this operation is a no-op.  If either endpoint does not
-	 * exist, this throws a NoSuchElementException.
-	 *
-	 * @param start The start node.
-	 * @param dest The destination node.
-	 * @throws NoSuchElementException If either node is not in the graph.
-	 
-	public void removeEdge(String start, String dest) {
-        // Confirm both endpoints exist.
-		if (!fibHeapGraph.containsKey(start) || !fibHeapGraph.containsKey(dest))
+	public void addEdge(String start, String dest, double length) {
+		/* Confirm both endpoints exist. */
+		if (!mGraph.containsKey(start) || !mGraph.containsKey(dest))
 			throw new NoSuchElementException("Both nodes must be in the graph.");
 
-		fibHeapGraph.get(start).remove(dest);
+		/* Add the edge. */
+		mGraph.get(start).put(dest, length);
 	}
-    */ 
-    
-	/**
-	 * Given a node in the graph, returns an immutable view of the edges
-	 * leaving that node, as a map from endpoints to costs.
-	 *
-	 * @param node The node whose edges should be queried.
-	 * @return An immutable view of the edges leaving that node.
-	 * @throws NoSuchElementException If the node does not exist.
-	 */
-//    public Map<String, Double> edgesFrom(String node) {
- //       /* Check that the node exists. */
-//		Map<String, Double> arcs = fibHeapGraph.get(node);
-//		if (arcs == null)
-//			throw new NoSuchElementException("Source node does not exist.");
 
-//		return Collections.unmodifiableMap(arcs);
-//	}
+	public Map<String, Double> edgesFrom(String node) {
+		/* Check that the node exists. */
+		Map<String, Double> arcs = mGraph.get(node);
+		if (arcs == null)
+			throw new NoSuchElementException("Source node does not exist.");
 
-	/**
-	 * Returns an iterator that can traverse the nodes in the graph.
-	 *
-	 * @return An iterator that traverses the nodes in the graph.
-	 */
-//	public Iterator<String> iterator() {
-//		return fibHeapGraph.keySet().iterator();
-//	}
+		return Collections.unmodifiableMap(arcs);
+	}
+
+	public class graphEdge{
+		String start;
+		String finish;
+		Double weight;
+
+		public void setStart(String val){start = val;}
+		public void setFinish(String val){finish = val;}
+		public void setWeight(Double val){weight = val;}
+
+		@Override
+		public String toString(){return "Edge [start: "+start+" end: "+finish+" weight: "+weight+"]";}
+	}
+
+	public boolean loadEdges(GRIDmap myGraph) {
+		Long startTime = System.nanoTime();
+
+		ArrayList<String> networkIntersections = new ArrayList<>(myGraph.getIntersections().keySet());
+		ArrayList<GRIDroad> networkRoads = new ArrayList<>(myGraph.getRoads().values());
+
+		// replace with better for loop--how dare you criticize my loop!
+		for(int i = 0; i < networkIntersections.size(); i++)
+		{
+			addNode(networkIntersections.get(i));
+		}
+
+		for(int i = 0; i < networkRoads.size(); i++)
+		{
+			/*MFS REMOVE the system output line just below here*/
+			//System.out.println(networkRoads.get(i) + "road " + (i+1));
+			//if(i+1 == networkRoads.size()){System.out.println("edges: "+(i+1));}
+			addEdge(networkRoads.get(i).getFrom(), networkRoads.get(i).getTo(), networkRoads.get(i).getLength());
+		}
+
+		//return myGraph;
+
+		return true;
+	}
+
+	public Iterator<String> iterator() {
+		return mGraph.keySet().iterator();
+	}
 }
 
