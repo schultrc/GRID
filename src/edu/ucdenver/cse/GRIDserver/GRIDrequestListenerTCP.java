@@ -2,6 +2,10 @@ package edu.ucdenver.cse.GRIDserver;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.LinkOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
@@ -11,9 +15,12 @@ import edu.ucdenver.cse.GRIDmessages.GRIDServerTerm;
 import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDmessages.GRIDtimeMsg;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
+import org.apache.commons.cli.CommandLine;
 
 public class GRIDrequestListenerTCP extends Thread {
 	Socket theSocket = null;
+	private CommandLine theCmdLine;
+	private Path outputDir;
 	private GRIDworld theGRID = null;
 	ObjectInputStream  inputStream;
 	ObjectOutputStream outputStream;
@@ -29,10 +36,12 @@ public class GRIDrequestListenerTCP extends Thread {
 			outputStream = new ObjectOutputStream (theSocket.getOutputStream());
 
 			Object theRequest = inputStream.readObject();
-			
+
 			if (theRequest instanceof GRIDrouteRequest) {
-				//System.out.println("Route Request Received: " + (((GRIDrouteRequest)theRequest).toString()));
-				
+			//if (true) {
+				System.out.println("Route Request Received: " + (((GRIDrouteRequest)theRequest).toString()));
+				//System.out.println("\nTESTING TESTING TESTING\n");
+
 				// We need to know if we have to remove an old route or not
 				boolean newAgentFlag = false;
 				
@@ -112,7 +121,7 @@ public class GRIDrequestListenerTCP extends Thread {
 				if ((((GRIDtimeMsg) theRequest).getTheTime() % 1000) == 0) {
 				logWriter.log(Level.INFO, "RequestListener - GridTimeMsg received with time: " +
 						((GRIDtimeMsg) theRequest).getTheTime());
-				
+
 				}
 				
 				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
@@ -154,5 +163,40 @@ public class GRIDrequestListenerTCP extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	// move to utility
+	public Boolean setPath() {
+		// Get the output dir first, so log messages go there
+
+		if (theCmdLine.hasOption("output")) {
+			outputDir = Paths.get((String) theCmdLine.getOptionValue("output"));
+		}
+
+		else {
+			outputDir = Paths.get("./TEST_RUNSes/");
+		}
+
+		if ((Files.exists(outputDir, LinkOption.NOFOLLOW_LINKS))) {
+
+			if (Files.isDirectory(outputDir)) {
+				// Do we want to clear it at this point? Add a cmd line flag
+			}
+		}
+
+		else {
+			// We need to create a new directory
+			System.out.println("Attempting to create: " + outputDir.toString());
+			try {
+				Files.createDirectories(outputDir);
+			}
+
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return true;
 	}
 }

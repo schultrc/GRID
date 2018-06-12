@@ -32,6 +32,8 @@ public class GRIDroad {
 	// Max capacity is defined in vehicles per hour
 	private double maxCapacity;
 
+	public ConcurrentHashMap<Long, Double> getVehiclesCurrentlyOnRoadAtTime() { return vehiclesCurrentlyOnRoadAtTime; }
+
 	public double getMaxCapacity() {
 		return maxCapacity;
 	}

@@ -18,9 +18,7 @@ import edu.ucdenver.cse.GRIDcommon.GRIDrouteSegment;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmap.*;
 import edu.ucdenver.cse.GRIDweight.*;
-import edu.ucdenver.cse.GRIDcommon.logWriter;
 import java.util.logging.Level;
-
 
 import java.util.concurrent.*;
 
@@ -28,8 +26,6 @@ import java.util.*;
 import java.util.ListIterator;
 
 public class GRIDpathfinder {
-
-    static logWriter testLW;
 
     private GRIDmap ourMap;
     //private GRIDDirectedGraph graph;
@@ -61,6 +57,11 @@ public class GRIDpathfinder {
         
         // This is where we change WHICH weighting scheme we are using. There has to be a better
         // way to change it other than hard coding
+
+        /* BEGIN pathfinder access quick-check*/
+        System.out.println("\nTEST TEST TEST\n");
+        logWriter.log(Level.INFO, "\nTEST TEST TEST\n");
+        /* END */
 
     }
     
@@ -133,11 +134,12 @@ public class GRIDpathfinder {
          */
         // RCS is this already done in the map? Do we need to do it in the directed graph instead?
         //graph.initMap();;
+        //ourMap.initMap();
 
         // Replace the iterable part of GRIDmap
         
         for (String node : ourMap)
-            entries.put(node, pq.enqueue(node, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0L));
+            entries.put(node, pq.enqueue(node, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, currentTime));
 
         pq.decreaseKey(entries.get(agentFrom), 0.0, 0.0, thisTimeslice);
 
@@ -157,9 +159,15 @@ public class GRIDpathfinder {
            
             // step through every road leaving this intersection
             for (Map.Entry<String, Double> arc : ourMap.edgesFrom(curr.getValue()).entrySet()) {
-                
+
             	// skip this road if we've already visited it
             	if (currentPathTotal.containsKey(arc.getKey())) continue;
+
+                /* BEGIN testing for precog values */
+                System.out.println("Road: " + curr.getValue()+"to"+ arc.getKey());
+                String myTemp = curr.getValue()+"to"+ arc.getKey();
+                System.out.println("Values: "+ourMap.getRoad(myTemp).getVehiclesCurrentlyOnRoadAtTime());
+                /* END */
 
                 /* Compute the cost of the path from the source to this node,
                  * which is the cost of this node plus the cost of this edge.
@@ -171,10 +179,14 @@ public class GRIDpathfinder {
                 tempWeight = theWeighter.calcWeight(curr.getValue(), 
                 		                            arc.getKey(),
                                                     currentPathTotal.get(curr.getValue()).getNodeTimeTotal());
+
+                /* BEGIN code to check currentPathTotal values */
+                logWriter.log(Level.INFO, "Values: " + currentPathTotal.get(curr.getValue()).getNodeTimeTotal());
+                /* END */
                
                 tempNode.setNodeWeighttTotal(tempWeight);
                 // MFS including newTime here...replace with appropriate method later...
-                tempNode.setNodeTimeTotal(tempNode.getNodeTimeTotal()+(tempNode.getNodeTimeAtEntry()+100));
+                tempNode.setNodeTimeTotal(tempNode.getNodeTimeTotal()+(tempNode.getNodeTimeAtEntry()));
                 
                 /* If the length of the best-known path from the source to
                  * this node is longer than this potential path cost, update

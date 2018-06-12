@@ -158,15 +158,13 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 	@Override
 	public void handleEvent(PersonDepartureEvent event) {	
 		
-		
-		// Is this going to be one of OUR agents?  change the % value to change how many we do. %5 = 20 % of all agents
 		boolean simFlag;
 		
 		double theId = (Double.parseDouble(event.getPersonId().toString()));
 		
-		int result = (int) (theId % 100);
+		int result = (int) (theId % 1);
 		
-		if(result < this.controlPercent) { 
+		if(result < this.controlPercent) {
 			simFlag = true;
 		}
 		

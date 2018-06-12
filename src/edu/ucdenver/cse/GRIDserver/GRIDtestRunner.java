@@ -5,7 +5,6 @@ import edu.ucdenver.cse.GRIDmap.GRIDmapReader;
 import edu.ucdenver.cse.GRIDmap.GRIDroad;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
-import edu.ucdenver.cse.GRIDcommon.logWriter;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -14,8 +13,6 @@ import org.junit.Test;
 
 public class GRIDtestRunner{
 
-	static logWriter testLW;
-	
     private GRIDmapReader myReader = new GRIDmapReader();
     // SmallNetwork2 PuebloNetwork 5x5network RyeNetwork
     private GRIDmap myMap = myReader.readMapFile("data/5x5network.xml");
@@ -54,41 +51,12 @@ public class GRIDtestRunner{
         theALG.init();
         outRoute = theALG.findPath(testAgent001, 0L); // 0L
 
-        // testLW.log(Level.INFO, "is it all broken now?");
-
-        //ListIterator<String> pathIterator = outRoute.Intersections.listIterator();
-
-        /*assertNotNull(myMap);
-        assertNotNull(outRoute);
-        assertTrue(outRoute.Intersections.size() > 0);*/
-
-        //System.out.println("\nShortest path: "+myPathGreedy);
-        //System.out.println("\nShortest path: "+myPathDynamic);
-
-        //System.out.print("\nPath:\n");
-        //for (String intrx : outRoute.getIntersections())
-        //{
-        //    System.out.print(intrx);
-        //    if(!intrx.equals(testAgent001.getDestination()))
-        //        System.out.print(",");
-        //}
-        
-	    //ArrayList<String> tempPathList  = myMap.getPathByRoad(outRoute.getIntersections());
-
-        //System.out.print("\n\nPath by Link:\n");
-        //for (String path : tempPathList)
-        //{
-        //    System.out.print(path);
-        //    if(!tempPathList.isEmpty()
-        //       && !path.equals(tempPathList.get(tempPathList.size() - 1)))
-        //        System.out.print(",");
-       // }
-
-        logWriter.log(Level.INFO, "Route is: " + outRoute.toString());
+        //logWriter.log(Level.INFO, "Route is: " + outRoute.toString());
         //MFS remove following console output...
         System.out.println(outRoute.toString());
 
-        System.out.println("\n\nCalculated Travel Time: "+outRoute.getcalculatedTravelTime());
+        // This method does not currently do anything, i.e., returns 0
+        System.out.println("\n\nCalculated Travel Time: " + outRoute.getcalculatedTravelTime());
 
         long stopTime = System.nanoTime();
         long timeToRun = ((stopTime - startTime)/1000000);
