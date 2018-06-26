@@ -20,15 +20,15 @@ public final class GRIDfibHeap {
         private int     mDegree = 0;       // Number of children
         private boolean mIsMarked = false; // Whether this node is marked
 
-        private Entry mNext;   // Next and previous elements in the list
+        private Entry mNext;            // Next and previous elements in the list
         private Entry mPrev;
 
-        private Entry mParent; // Parent in the tree, if any.
+        private Entry mParent;         // Parent in the tree, if any.
 
-        private Entry mChild;  // Child node, if any.
+        private Entry mChild;          // Child node, if any.
 
-        private String      mElem;     // Element being stored here
-        private double mPriority; // Its priority
+        private String mElem;          // Element being stored here
+        private double mPriority;      // Its priority
 
         private double mWtTotal;
         private long mTmTotal;
@@ -90,9 +90,9 @@ public final class GRIDfibHeap {
         @Override
         public String toString(){return "[String: "+mElem+" Weight Total: "+mWtTotal+" Time Total: "+mTmTotal+"]";} // mWtTotal mPriority
     }
+    
     @Override
     public String toString(){return "\nEntry "+getmMin();}
-
 
     /* Pointer to the minimum element in the heap. */
     private Entry mMin = null;
@@ -367,6 +367,7 @@ public final class GRIDfibHeap {
      */
     public void decreaseKey(Entry entry, double newPriority, double newWtTotal, long newTmTotal) {
         checkPriority(newPriority);
+        
         //if (newPriority > entry.mPriority)
         if (newWtTotal > entry.mWtTotal)
             throw new IllegalArgumentException("New priority exceeds old.");

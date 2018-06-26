@@ -71,9 +71,14 @@ public class GRIDserver extends Thread {
 
 		// The official map
 		GRIDmap ourMap = masterMap.readMapFile(mapFile);
-		ourMap.initMap();
+		
+		// Setup the additional information needed to use this map as a SERVER map
+		if (!ourMap.setupMapAsServer()) {
+			logWriter.log(Level.WARNING, "Unable to setup map!");
+			System.exit(0);
+		}
 
-		logWriter.log(Level.INFO, "CONFIG FILE: " + mapFile + " in use\n\n\n");
+		logWriter.log(Level.INFO, "MAP FILE: " + mapFile + " in use\n\n\n");
 		
 		if (theCmdLine.hasOption("sim")) {
 			theGRID = new GRIDworld(ourMap, 0L);

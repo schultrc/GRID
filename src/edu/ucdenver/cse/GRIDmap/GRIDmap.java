@@ -18,7 +18,8 @@ public final class GRIDmap {
 	private ConcurrentMap<String, GRIDintersection> Intersections;
 	private ConcurrentMap<String, GRIDroad> Roads;
 	private ConcurrentMap<String, GRIDroad> roadList;
-	//private ConcurrentMap<String, Long> intersectionList;
+	
+		//private ConcurrentMap<String, Long> intersectionList;
 
 	public GRIDmap() {
 		this.Intersections    = new ConcurrentHashMap<String, GRIDintersection>();
@@ -31,6 +32,9 @@ public final class GRIDmap {
 		return Intersections;
 	}
 	
+	public Set<String> getIntersectionIDs() {
+		return Intersections.keySet();
+	}
 	public void setIntersections(ConcurrentMap<String, GRIDintersection> intersections) {
 		Intersections = intersections;
 	}
@@ -41,27 +45,11 @@ public final class GRIDmap {
 		Roads = roads;
 	}
   
-	// Once the map has been created and filled in, we need to do some final processing
-	// This will create a searchable list of roads by combining the start and destination
-	// intersection names
-	
-	public void initMap() {		
-		this.Roads.forEach((item,value)->
-                roadList.put(value.getFrom()+value.getTo(),value));
-		
-		// RCS I don't think we need the intersections any more
-		//this.Intersections.forEach((item,value)->
-		//		intersectionList.put(value.getId(),0L));
-    }
+    public ConcurrentMap<String, GRIDroad> getRoadList() { return this.roadList; }
 
-    //public ConcurrentMap<String, GRIDroad> getRoadList() { return this.roadList; }
-
-    //public GRIDroad getRoadListItem(String itemID) { return roadList.get(itemID); }
+    public GRIDroad getRoadListItem(String itemID) { return roadList.get(itemID); }
     
     //public Long getIntersectionListItem(String itemID) { return intersectionList.get(itemID); }
-	//public void setIntersectionListItemTimeAtExit(String itemID, Long exitTime) {
-		//GRIDintersection tempIntersection = new GRIDintersection();
-	//}
 	
 	@Override
 	public String toString() {
@@ -96,10 +84,7 @@ public final class GRIDmap {
 		return true;			
 	}
 	
-
 	public GRIDroad getRoad(String theRoadID) {
-		// Old Break Point
-		
 		//logWriter.log(Level.INFO, "Attempting to find road: " + theRoadID);
 		
 		return this.Roads.get(theRoadID);
@@ -113,10 +98,55 @@ public final class GRIDmap {
 	// determine if we have a road that goes from "from" to "to"
 	// IF the road exists, return it. If not, return null
 	public GRIDroad hasRoad(String from, String to) {
-		
-		return roadList.getOrDefault(from+to, null);
+		return roadList.getOrDefault(from + "#" + to, null);
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// The following section contains all the methods to use this map as a SERVER map
+	// This probably makes sense to move into a child class
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	// Master method to call all methods needed to set this map up as a SERVER map
+	public boolean setupMapAsServer() {
+		
+		// Search by intersection name
+		this.initMapSearchRoadsByIntersections();
+		
+		// Build the list of roads leaving an intersection
+		this.setupDestinations();
+
+		return true;
+	}
+	
+	// This will create a searchable mapping of the roads in the map
+	// this only needs to be called if the map needs to be rapidly searched by intersection names
+	private void initMapSearchRoadsByIntersections() {
+		
+		// We need a way to get the road from the names of the intersections it resides on
+		this.Roads.forEach((item,value)->
+                roadList.put(value.getFrom() + "#" + value.getTo(), value));
+		
+		// RCS I don't think we need the intersections any more
+		//this.Intersections.forEach((item,value)->
+		//		intersectionList.put(value.getId(),0L));
+    }
+
+	// Only call this if the current instance of this map is being used as a server map (fib heap)
+	private void setupDestinations() {
+		
+		for (GRIDroad theRoad : this.Roads.values()) {
+			// Verify the corresponding intersection exists
+			GRIDintersection tempIntersection = this.Intersections.get(theRoad.getFrom());
+			
+			if (tempIntersection == null) {
+				logWriter.log(Level.WARNING, "Unable to add destination to: " + theRoad.getId());
+			}
+			
+			tempIntersection.addDestination(theRoad.getTo(), theRoad.getLength());		
+		}
+	}
+	
+	// This will add the agents at the time they enter the road through the expected travel time
 	public void updateMapWithAgents(GRIDroute theRoute, long previousSegmentEndTime) {
 
 		long i;
@@ -138,7 +168,7 @@ public final class GRIDmap {
 		}
 	}
 
-	// 
+	// This will remove agents from the map starting at the entry time
 	public void removeAgentsFromMap(GRIDroute theRoute, long previousSegmentEndTime) {
 
 		long i;
@@ -156,6 +186,14 @@ public final class GRIDmap {
 			//logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
 		}
 	}
+
+	// Return the map of roads that leave the supplied intersection name
+	public Map<String, Double> reachableDestinations (String intersectionName) {
+		
+		return Collections.unmodifiableMap(this.Intersections.get(intersectionName).getIntersectionsFrom());
+	}
+}	
+	
 	
 	// RCS Not needed anymore? Maybe due to aux usage
 		//public ArrayList<String> getPathByRoad(ArrayList<String> pathByNode)
@@ -316,5 +354,9 @@ public final class GRIDmap {
 //	public Iterator<String> iterator() {
 //		return fibHeapGraph.keySet().iterator();
 //	}
-}
+	
+
+	// Return a Map of each of the roads that can be entered from the provided intersection name
+	// Map <String, Double> = name of destination road and it's length
+
 

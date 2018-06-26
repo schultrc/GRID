@@ -1,23 +1,34 @@
 package edu.ucdenver.cse.GRIDmap;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class GRIDintersection {
 	private String Id = "";
 	private double x;
 	private double y;
-	private Long timeAtExit;
+	
+	// Used only when part of a server map
+	private Map<String, Double> reachableDestinations;
+	
+	//RCS remove 
+	//private Long timeAtExit;
 	
     public GRIDintersection(String id, double x, double y) {
 		super();
 		Id = id;
 		this.x = x;
 		this.y = y;
-		this.timeAtExit = 0L;
+		// RCS remove
+		//this.timeAtExit = 0L;
 	}
 
 	public void setId(String id) { Id = id; }
 	public void setX(double x) { this.x = x; }
 	public void setY(double y) { this.y = y; }
-	public void setTimeAtExit(Long exitTime) { this.timeAtExit = exitTime; }
+	
+	// RCS remove
+	//public void setTimeAtExit(Long exitTime) { this.timeAtExit = exitTime; }
 
 	public String getId(){return Id;}
 
@@ -26,6 +37,26 @@ public class GRIDintersection {
 		return "GRIDintersection [Id=" + Id + ", x=" + x + ", y=" + y + "]";
 	}
 
+	// this method will be called by the map parser - and only when this intersection is part of a map
+	// being used in a server (fib heap) instance
+	// It will create a map of intersections that can be reached from this intersection and their associated
+	// distances
+	public void addDestination(String intersectionID, double length) {
+		if (this.reachableDestinations == null) {
+			this.reachableDestinations = new ConcurrentHashMap<String, Double>();
+		}
+		this.reachableDestinations.put(intersectionID, length);
+	}
+	
+	public Map<String, Double> getIntersectionsFrom() {
+		if (!(this.reachableDestinations == null)) {
+			return this.reachableDestinations;
+		}
+		
+		return null;
+	}
+	
+	// RCS remove
     /*@Override
     public int hashCode() {
         final int prime = 31;
