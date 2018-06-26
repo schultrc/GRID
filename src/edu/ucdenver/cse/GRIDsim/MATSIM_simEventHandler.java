@@ -135,7 +135,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 			// We can change this by sorting the list prior to removing
 			GRIDagent tempAgent = theAgents.get(agentsToReplan.remove());
 
-			/*if (tempAgent != null) {
+			if (tempAgent != null) {
 				// System.out.println("Found Agent to replan: " +
 				// tempAgent.getId());
 				if (mobsimAgents.containsKey(tempAgent.getId())) {
@@ -146,7 +146,7 @@ public class MATSIM_simEventHandler implements MobsimBeforeSimStepListener, Mobs
 								                     " failed replanning at time: " + event.getSimulationTime());
 					}
 				}
-			}*/
+			}
 		}
 	}
 

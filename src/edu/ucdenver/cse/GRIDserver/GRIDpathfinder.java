@@ -59,7 +59,7 @@ public class GRIDpathfinder {
         // way to change it other than hard coding
 
         /* BEGIN pathfinder access quick-check*/
-        System.out.println("\nTEST TEST TEST\n");
+        //System.out.println("\nTEST TEST TEST\n");
         logWriter.log(Level.INFO, "\nTEST TEST TEST\n");
         /* END */
 
@@ -67,7 +67,8 @@ public class GRIDpathfinder {
     
     public void init() {
     	// Set things up here
-        System.out.println("is anything happening here...");
+        logWriter.log(Level.INFO, "is anything happening here...");
+        //System.out.println("is anything happening here...");
     	ourMap.loadEdges(ourMap);
     }
 
@@ -164,9 +165,11 @@ public class GRIDpathfinder {
             	if (currentPathTotal.containsKey(arc.getKey())) continue;
 
                 /* BEGIN testing for precog values */
-                System.out.println("Road: " + curr.getValue()+"to"+ arc.getKey());
-                String myTemp = curr.getValue()+"to"+ arc.getKey();
-                System.out.println("Values: "+ourMap.getRoad(myTemp).getVehiclesCurrentlyOnRoadAtTime());
+                //logWriter.log(Level.INFO, "Road: " + curr.getValue()+"to"+ arc.getKey());
+                //System.out.println("Road: " + curr.getValue()+"to"+ arc.getKey());
+                //String myTemp = curr.getValue()+"to"+ arc.getKey();
+                //logWriter.log(Level.INFO, "Values: "+ourMap.getRoad(myTemp).getVehiclesCurrentlyOnRoadAtTime());
+                //System.out.println("Values: "+ourMap.getRoad(myTemp).getVehiclesCurrentlyOnRoadAtTime());
                 /* END */
 
                 /* Compute the cost of the path from the source to this node,
@@ -181,7 +184,7 @@ public class GRIDpathfinder {
                                                     currentPathTotal.get(curr.getValue()).getNodeTimeTotal());
 
                 /* BEGIN code to check currentPathTotal values */
-                logWriter.log(Level.INFO, "Values: " + currentPathTotal.get(curr.getValue()).getNodeTimeTotal());
+                //logWriter.log(Level.INFO, "Values: " + currentPathTotal.get(curr.getValue()).getNodeTimeTotal());
                 /* END */
                
                 tempNode.setNodeWeighttTotal(tempWeight);
@@ -196,9 +199,9 @@ public class GRIDpathfinder {
                 //Double newWeight = tempNode.getNodeWtTotal()+curr.getWtTotal();
                 /* BEGIN new code for different weight calculations*/
                 double newWeight = getEdgeWeight(tempNode)+curr.getWtTotal();
+                //logWriter.log(Level.INFO, "newWeight is: " + newWeight + " dest weight is: " + dest.getWtTotal() + "\n");
+                //System.out.println("newWeight is: " + newWeight + " dest weight is: " + dest.getWtTotal() + "\n");
                 /* END */
-                
-                System.out.println("newWeight is: " + newWeight + " dest weight is: " + dest.getWtTotal() + "\n");
 
                 if (newWeight < dest.getWtTotal())
                 {
@@ -218,7 +221,8 @@ public class GRIDpathfinder {
                     // RCS I think we can remove this . . .
                     //previousIntersections.put(dest.getValue(),curr.getValue());
 
-                    System.out.println("We used to add: " + dest.getValue() + " and " + curr.getValue() + "\n");
+                    //logWriter.log(Level.INFO, "We used to add: " + dest.getValue() + " and " + curr.getValue() + "\n");
+                    //System.out.println("We used to add: " + dest.getValue() + " and " + curr.getValue() + "\n");
                     /* BEGIN here is the new data structure for segments */
                     // RCS fix to get road ID
                     //String tempString = graph.getRoadListItem(curr.getValue()+dest.getValue()).getId();
@@ -246,10 +250,13 @@ public class GRIDpathfinder {
                     //MFS make addition to attempt to handle time at road entry here?
                     tempSegment.setTimeAtRoadExit(tempTime);
 
-                    //MFS sending to console the time on road--maybe...
-                    System.out.println("in:  "+tempNode.getNodeTimeAtEntry());
-                    System.out.println("out: "+tempSegment.getTimeAtRoadExit());
-                    System.out.println("time on road: "+(tempSegment.getTimeAtRoadExit()-tempNode.getNodeTimeAtEntry()));
+                    //MFS sending to log/console the time on road--maybe...
+                    //logWriter.log(Level.INFO, "in:  "+tempNode.getNodeTimeAtEntry());
+                    //System.out.println("in:  "+tempNode.getNodeTimeAtEntry());
+                    //logWriter.log(Level.INFO, "out: "+tempSegment.getTimeAtRoadExit());
+                    //System.out.println("out: "+tempSegment.getTimeAtRoadExit());
+                    //logWriter.log(Level.INFO, "time on road: "+(tempSegment.getTimeAtRoadExit()-tempNode.getNodeTimeAtEntry()));
+                    //System.out.println("time on road: "+(tempSegment.getTimeAtRoadExit()-tempNode.getNodeTimeAtEntry()));
 
                     //logWriter.log(Level.INFO, "added new segment for road: " + tempRoadID);
 
@@ -263,9 +270,7 @@ public class GRIDpathfinder {
 		            	routeSegments.put(tempSegment.getEndIntersection(), tempSegment);
 		            	//routeSegmentsByStart.put(tempSegment.getStartIntersection(), tempSegment);
 
-		            	//logWriter.log(Level.INFO, "Adding route segment: " + tempSegment.getRoad_ID());
-
-		                System.out.println("adding route segment: " + tempSegment.getRoad_ID() + "\n");
+		            	logWriter.log(Level.INFO, "Adding route segment: " + tempSegment.getRoad_ID());
 		            }
                 }
             }
@@ -275,7 +280,9 @@ public class GRIDpathfinder {
             curr = pq.dequeueMin();
             tempNode.setNodeTimeTotal(curr.getTmTotal());
 
-            System.out.println("grabbed: " + curr.getValue() + "\n");
+            // MFS log/console output for testing
+            //logWriter.log(Level.INFO, "grabbed: " + curr.getValue() + "\n");
+            //System.out.println("grabbed: " + curr.getValue() + "\n");
             
             /* this conditional statement is necessary to correct for not starting
              * at the actual starting, i.e., from node for the starting link; we
@@ -294,8 +301,10 @@ public class GRIDpathfinder {
         // Now that we have all the segments, build the 2 lists so that we can find them easily
         
         for (Map.Entry<String, GRIDrouteSegment> theSegment : routeSegments.entrySet() ) {
-        	
-        	System.out.println("Adding segment: " + theSegment.getKey()+" ("+theSegment.getValue()+")\n");
+
+            // MFS adding logging here for adding segment
+            //logWriter.log(Level.INFO, "Adding segment: " + theSegment.getKey()+" ("+theSegment.getValue()+")\n");
+        	//System.out.println("Adding segment: " + theSegment.getKey()+" ("+theSegment.getValue()+")\n");
         	
         	routeSegmentsByStart.put(theSegment.getValue().getStartIntersection(), theSegment.getValue());
 //        	routeSegmentsByEnd.put(theSegment.getValue().getEndIntersection(), theSegment.getValue());
@@ -308,15 +317,15 @@ public class GRIDpathfinder {
         // Start with the destination
         
         if(!routeSegments.containsKey(destName)){
-            //logWriter.log(Level.INFO, "Agent " + agentID + " is going to: " + agentTo + " - but that doesn't exist in the returned list");
-            System.out.println("Agent " + agentID + " is going to: " + agentTo + " - but that doesn't exist in the returned list");
+            logWriter.log(Level.INFO, "Agent " + agentID + " is going to: " + agentTo + " - but that doesn't exist in the returned list");
+            //System.out.println("Agent " + agentID + " is going to: " + agentTo + " - but that doesn't exist in the returned list");
         	return genDummyRoute("Destination unreachable");
         }
         	
         tempSegment = (GRIDrouteSegment) routeSegments.get(destName);
         
         if( tempSegment == null) {
-        	//logWriter.log(Level.WARNING, "Destination intersection not found in route 1! from was: " + agentFrom + " dest was: " + agentTo);
+        	logWriter.log(Level.WARNING, "Destination intersection not found in route 1! from was: " + agentFrom + " dest was: " + agentTo);
         	return genDummyRoute("Destination unreachable");
         }
         
@@ -331,7 +340,7 @@ public class GRIDpathfinder {
         	tempSegment = (GRIDrouteSegment) routeSegments.get(nextDest);
         	
         	if( tempSegment == null) {
-                //logWriter.log(Level.WARNING, "Destination intersection not found in route 1!");
+                logWriter.log(Level.WARNING, "Destination intersection not found in route 1!");
             	return genDummyRoute("Destination unreachable");
             }
             

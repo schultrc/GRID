@@ -38,9 +38,10 @@ public class GRIDrequestListenerTCP extends Thread {
 			Object theRequest = inputStream.readObject();
 
 			if (theRequest instanceof GRIDrouteRequest) {
-			//if (true) {
-				System.out.println("Route Request Received: " + (((GRIDrouteRequest)theRequest).toString()));
-				//System.out.println("\nTESTING TESTING TESTING\n");
+
+				// MFS log/console output for testing...
+				logWriter.log(Level.INFO, "Route Request Received: " + (((GRIDrouteRequest)theRequest).toString()));
+				//System.out.println("Route Request Received: " + (((GRIDrouteRequest)theRequest).toString()));
 
 				// We need to know if we have to remove an old route or not
 				boolean newAgentFlag = false;
