@@ -25,6 +25,7 @@ public class GRIDroad {
 	// Defined in km/hr
 	private double currentSpeed = -1;
 
+	// RCS is this miliseconds or seconds?????
 	// Use a long as the key, which represents miliseconds since midnight,
 	// January 1, 1970
 	private ConcurrentHashMap<Long, Double> vehiclesCurrentlyOnRoadAtTime = new ConcurrentHashMap<Long, Double>();
@@ -101,6 +102,7 @@ public class GRIDroad {
 		this.currentSpeed = currentSpeed;
 	}
 
+	// RCS remove
 	// Not currently used
 	// public void calcCurrentSpeed(Long intervalStartTime) {
 	// double carLengths = 0.0,

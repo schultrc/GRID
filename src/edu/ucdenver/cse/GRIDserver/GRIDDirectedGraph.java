@@ -44,7 +44,7 @@ public class GRIDDirectedGraph implements Iterable<String> {
 
 	//public GRIDroad getRoadListItem(String itemID) { return roadList.get(itemID); }
 
-	public graphEdge getEdge(String start, String finish) // Map.Entry<String, Map.Entry<String, Double>>
+/*	public graphEdge getEdge(String start, String finish) // Map.Entry<String, Map.Entry<String, Double>>
 	{
 		graphEdge temp = new graphEdge();
 		mGraph.containsKey(start);
@@ -61,6 +61,7 @@ public class GRIDDirectedGraph implements Iterable<String> {
 		}
 		return null;
 	}
+*/
 	
 	public boolean addNode(String node) {
         /* If the node already exists, don't do anything. */
@@ -104,7 +105,8 @@ public class GRIDDirectedGraph implements Iterable<String> {
 	}
 	
 	public boolean loadEdges(GRIDmap myGraph) { 
-    	Long startTime = System.nanoTime();
+    	// RCS remove
+		// Long startTime = System.nanoTime();
 
         ArrayList<String> networkIntersections = new ArrayList<>(myGraph.getIntersections().keySet());
         ArrayList<GRIDroad> networkRoads = new ArrayList<>(myGraph.getRoads().values());
