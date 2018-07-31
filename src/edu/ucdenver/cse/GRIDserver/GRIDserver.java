@@ -87,6 +87,27 @@ public class GRIDserver extends Thread {
 		else {
 			theGRID = new GRIDworld(ourMap, (System.currentTimeMillis()/1000) );
 		}
+
+		// MFS 073018 here is the argument for determining the weight type to use, e.g.,
+		// 0 is default time-based (no option required), 1 is emissions, 2 is some other
+		// weight type, etc.
+		int wtValue = 0;
+
+		if (theCmdLine.hasOption("weight")) {
+
+			try {
+				wtValue = Integer.parseInt(theCmdLine.getOptionValue("weight"));
+				System.out.println("Using weight option "+wtValue+".");
+			} catch (NumberFormatException e) {
+				System.err.println("ERROR: The weight argument must be an integer.\nExiting.");
+				System.exit(1);
+			}
+
+		}
+
+		else {
+		    System.out.println("Using default ("+wtValue+") time-based weight type.");
+        }
 	}
 
 	private void serve() {

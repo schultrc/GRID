@@ -48,6 +48,16 @@ public class GRIDserverCmdLine {
                                     .build();
 
 		this.theOptions.addOption(simOpt);
+
+		// MFS 073018 weight option for determining which weight type to use
+		final Option wtOpt = Option.builder("weight")
+									.argName("weight")
+								    .hasArg(true)
+									.required(false)
+									.desc("Weight Type")
+									.build();
+
+		this.theOptions.addOption(wtOpt);
 	}
 	
 	public CommandLine parseArgs() throws ParseException {
