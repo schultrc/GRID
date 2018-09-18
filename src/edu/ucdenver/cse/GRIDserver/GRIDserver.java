@@ -79,14 +79,6 @@ public class GRIDserver extends Thread {
 		}
 
 		logWriter.log(Level.INFO, "MAP FILE: " + mapFile + " in use\n\n\n");
-		
-		if (theCmdLine.hasOption("sim")) {
-			theGRID = new GRIDworld(ourMap, 0L);
-		}
-
-		else {
-			theGRID = new GRIDworld(ourMap, (System.currentTimeMillis()/1000) );
-		}
 
 		// MFS 073018 here is the argument for determining the weight type to use, e.g.,
 		// 0 is default time-based (no option required), 1 is emissions, 2 is some other
@@ -102,12 +94,19 @@ public class GRIDserver extends Thread {
 				System.err.println("ERROR: The weight argument must be an integer.\nExiting.");
 				System.exit(1);
 			}
-
 		}
 
 		else {
-		    System.out.println("Using default ("+wtValue+") time-based weight type.");
-        }
+			System.out.println("Using default ("+wtValue+") time-based weight type.");
+		}
+
+		if (theCmdLine.hasOption("sim")) {
+			theGRID = new GRIDworld(ourMap, 0L, wtValue);
+		}
+
+		else {
+			theGRID = new GRIDworld(ourMap, (System.currentTimeMillis()/1000), wtValue);
+		}
 	}
 
 	private void serve() {

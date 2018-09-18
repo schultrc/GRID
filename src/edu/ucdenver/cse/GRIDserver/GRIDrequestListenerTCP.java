@@ -64,7 +64,7 @@ public class GRIDrequestListenerTCP extends Thread {
 				logWriter.log(Level.INFO, "RequestListener - Agent to be replanned: " + tempAgent.toString() +
 						                  " at time: " + theGRID.getTime());
 
-				GRIDpathfinder theALG = new GRIDpathfinder(this.theGRID.getMap());
+				GRIDpathfinder theALG = new GRIDpathfinder(this.theGRID.getMap(), this.theGRID.getWeightType());
 				
 				theALG.init();
 				

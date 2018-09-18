@@ -29,14 +29,18 @@ import java.util.ListIterator;
 
 public class GRIDpathfinder {
     private GRIDmap ourMap;
+    private Integer ourWeightType;
     
     private ConcurrentMap<String, GRIDnode> currentPathTotal;
     private ConcurrentHashMap<String, GRIDrouteSegment> routeSegments;
 
     private GRIDweight theWeighter;
+    private GRIDcalcSpeed theSpeed;
 
-    public GRIDpathfinder(GRIDmap theMap) {
+    // MFS I modified the class to take a weight type to use from the command line
+    public GRIDpathfinder(GRIDmap theMap, Integer theWeightType) {
     	this.ourMap = theMap;
+    	this.ourWeightType = theWeightType;
     	
     	// RCS change to init the directed graph. MOVE TO INIT FUNCTION???
         // RCS I "Think" This is taken care of in the map
@@ -131,6 +135,7 @@ public class GRIDpathfinder {
         GRIDfibHeap.Entry currFibEntry = pq.dequeueMin();
                 
         double tempWeight;
+        GRIDroad tempRoad;
         GRIDrouteSegment tempSegment = null; 
         String tempRoadID = "";
         
@@ -156,10 +161,16 @@ public class GRIDpathfinder {
             	logWriter.log(Level.INFO, "Checking the weight from: " + currFibEntry.getValue() + 
             			                  " to: "                      + arc.getKey() +
             			                  " at time: "                 + currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());
-            	                          
-                tempWeight = theWeighter.calcWeight(currFibEntry.getValue(), 
+
+                tempRoad = ourMap.hasRoad(currFibEntry.getValue(),
+                                this.ourMap.getIntersection(arc.getKey()).getId());
+
+                tempWeight = theSpeed.calcSpeed(tempRoad,
+                             currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());
+
+                /*tempWeight = theWeighter.calcWeight(currFibEntry.getValue(),
                 		                            this.ourMap.getIntersection(arc.getKey()).getId(),
-                                                    currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());
+                                                    currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());*/
                
                 // RCS - Need to verify the time used above is the initialTime + timeToGetToThisNode
                 
@@ -245,7 +256,7 @@ public class GRIDpathfinder {
             currFibEntry = pq.dequeueMin();
             tempNode.setNodeTimeTotal(currFibEntry.getTmTotal());
 
-            System.out.println("grabbed: " + currFibEntry.getValue() + "\n");
+            //System.out.println("grabbed: " + currFibEntry.getValue() + "\n");
             
             /* this conditional statement is necessary to correct for not starting
              * at the actual starting, i.e., from node for the starting link; we
