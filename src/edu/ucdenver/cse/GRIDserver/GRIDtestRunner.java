@@ -18,7 +18,7 @@ public class GRIDtestRunner{
 	
     private GRIDmapReader myReader = new GRIDmapReader();
     // SmallNetwork2 PuebloNetwork 5x5network RyeNetwork
-    private GRIDmap myMap = myReader.readMapFile("data/PuebloNetwork.xml");
+    private GRIDmap myMap = myReader.readMapFile("data/5x5network.xml");
     //private GRIDmap networkMap = graphMiddleware(myMap);
     
     private GRIDagent testAgent001 = getTestAgent();
@@ -93,10 +93,10 @@ public class GRIDtestRunner{
     private GRIDagent getTestAgent()
     { // String Id, String newLink, String origin, String destination
         String agtID = "testAgent001",
-                currentLink = "106292026_0", // 40963664_0 106292026_0
-                currentIntrx = "1040921516", // 1040921516 // 2
-                destIntrx = "72823276_0";
-        // 864162469 - 1400447055 99282649_0_r [72823276_0 problem link]
+                currentLink = "1to2", // 40963664_0 106292026_0 1to2
+                currentIntrx = "2", // 1040921516 // 2 // 455935394
+                destIntrx = "24to25";
+        // 864162469 - 1400447055 99282649_0_r [72823276_0 problem link] 99282649_0 24to25
 
         GRIDagent myAgent = new GRIDagent(agtID,currentLink,currentIntrx,destIntrx, false, false);
 

@@ -1,12 +1,11 @@
 package edu.ucdenver.cse.GRIDweight;
 
 import edu.ucdenver.cse.GRIDcommon.GRIDroute;
+import edu.ucdenver.cse.GRIDmap.GRIDroad;
 
 public class GRIDweightEmissions implements GRIDweight {
 
-    public double calcWeight(double in, double out){
-        return 0.0;
-    }
+    public double calcWeight(double in, double out){ return 0.0; }
 
     public double calcEmissions (Double currentSpeed, Double roadLength) {
         /* BEGIN test output */
@@ -40,7 +39,7 @@ public class GRIDweightEmissions implements GRIDweight {
     }
 
 	@Override
-	public double calcWeight(String fromNode, String toNode, long startTime) {
+	public double calcWeight(GRIDroad road, long startTime) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

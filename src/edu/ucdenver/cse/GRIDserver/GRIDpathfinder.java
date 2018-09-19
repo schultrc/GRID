@@ -51,7 +51,8 @@ public class GRIDpathfinder {
         routeSegments = new ConcurrentHashMap<String, GRIDrouteSegment>();
 
         // This is the class to change in order to use different weighting schemes
-        theWeighter = new GRIDweightTime(ourMap);
+        theWeighter = new GRIDweightTime();
+        theSpeed = new GRIDcalcSpeed();
         
         // This is where we change WHICH weighting scheme we are using. There has to be a better
         // way to change it other than hard coding
@@ -165,12 +166,8 @@ public class GRIDpathfinder {
                 tempRoad = ourMap.hasRoad(currFibEntry.getValue(),
                                 this.ourMap.getIntersection(arc.getKey()).getId());
 
-                tempWeight = theSpeed.calcSpeed(tempRoad,
+                tempWeight = theWeighter.calcWeight(tempRoad,
                              currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());
-
-                /*tempWeight = theWeighter.calcWeight(currFibEntry.getValue(),
-                		                            this.ourMap.getIntersection(arc.getKey()).getId(),
-                                                    currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());*/
                
                 // RCS - Need to verify the time used above is the initialTime + timeToGetToThisNode
                 

@@ -1,6 +1,7 @@
 package edu.ucdenver.cse.GRIDweight;
 
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
+import edu.ucdenver.cse.GRIDmap.GRIDroad;
 
 public interface GRIDweight {
     public double idealSpeedLow = 15.8333;  // 15.8333 (~35 mph) to
@@ -8,6 +9,6 @@ public interface GRIDweight {
     public double MAX_WEIGHT = 2000000.0;
     
     // Must return the weight of traveling from the fromNode to the toNode, starting at time startTime
-    double calcWeight(String fromNode, String toNode, long startTime );
+    double calcWeight(GRIDroad road, long startTime );
     
 }
