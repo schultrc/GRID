@@ -8,13 +8,13 @@ import edu.ucdenver.cse.GRIDmap.GRIDroad;
 
 public class GRIDtime {
     //final GRIDmap theMap;
-    private double MAX_WEIGHT = 2000000.0;
+    private long MAX_WEIGHT = 2000000;
 
     /*public GRIDcalcSpeed(GRIDmap map) {
         this.theMap = map;
     }*/
 
-    public double updateEndTime(GRIDroad road, long startTime){
+    public long updateEndTime(GRIDroad road, long startTime){
 
         if(road.equals(null)) {
             // THIS IS BAD DO SOMETHING
@@ -32,6 +32,4 @@ public class GRIDtime {
 
         return startTime + travelTime;
     }
-
-    //public long getEndTime()
 }

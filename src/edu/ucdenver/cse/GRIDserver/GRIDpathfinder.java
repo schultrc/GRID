@@ -18,6 +18,7 @@ import edu.ucdenver.cse.GRIDcommon.GRIDrouteSegment;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmap.*;
 import edu.ucdenver.cse.GRIDweight.*;
+import edu.ucdenver.cse.GRIDtime.*;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 import java.util.logging.Level;
 
@@ -35,7 +36,7 @@ public class GRIDpathfinder {
     private ConcurrentHashMap<String, GRIDrouteSegment> routeSegments;
 
     private GRIDweight theWeighter;
-    private GRIDcalcSpeed theSpeed;
+    private GRIDtime theTime;
 
     // MFS I modified the class to take a weight type to use from the command line
     public GRIDpathfinder(GRIDmap theMap, Integer theWeightType) {
@@ -52,7 +53,7 @@ public class GRIDpathfinder {
 
         // This is the class to change in order to use different weighting schemes
         theWeighter = new GRIDweightTime();
-        theSpeed = new GRIDcalcSpeed();
+        theTime = new GRIDtime();
         
         // This is where we change WHICH weighting scheme we are using. There has to be a better
         // way to change it other than hard coding
@@ -136,6 +137,7 @@ public class GRIDpathfinder {
         GRIDfibHeap.Entry currFibEntry = pq.dequeueMin();
                 
         double tempWeight;
+        long tempTime;
         GRIDroad tempRoad;
         GRIDrouteSegment tempSegment = null; 
         String tempRoadID = "";
@@ -170,6 +172,8 @@ public class GRIDpathfinder {
                              currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());
                
                 // RCS - Need to verify the time used above is the initialTime + timeToGetToThisNode
+                /*tempTime = theTime.updateEndTime(tempRoad,
+                           currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());*/
                 
                 
                 tempNode.setNodeWeighttTotal(tempWeight);
@@ -189,7 +193,8 @@ public class GRIDpathfinder {
                 
                 if (newWeight < dest.getWtTotal())
                 {
-                    Long tempTime = currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal();
+                    tempTime = theTime.updateEndTime(tempRoad,
+                               currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());
 
                     logWriter.log(Level.INFO, "tempTime is: " + tempTime);
                     
@@ -202,7 +207,7 @@ public class GRIDpathfinder {
                     Long tempTmTotal = tempNode.getNodeTimeTotal();
                     //Double tempEmissions = tempNode.getNodeEmissions();
 
-                    pq.decreaseKey(dest, 0D, newWeight, tempTmTotal);
+                    pq.decreaseKey(dest, 0D, newWeight, tempTime); // tempTmTotal
                    
                     // RCS I think we can remove this . . .
                     //previousIntersections.put(dest.getValue(),curr.getValue());
