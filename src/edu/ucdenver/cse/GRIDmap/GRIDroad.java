@@ -72,7 +72,7 @@ public class GRIDroad {
 	@Override
 	public String toString() {
 		return "GRIDroad [Id=" + Id + ", to=" + to + ", from=" + from + ", Length=" + Length + ", maxSpeed=" + maxSpeed
-				+ ", currentSpeed=" + currentSpeed + ", roadCapacity=" + vehiclesCurrentlyOnRoadAtTime + "]";
+				+ ", currentSpeed=" + currentSpeed + ", Vehicles on Roade=" + vehiclesCurrentlyOnRoadAtTime + "]";
 	}
 
 	public double getLength() {

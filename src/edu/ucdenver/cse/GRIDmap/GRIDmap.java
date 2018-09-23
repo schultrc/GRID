@@ -71,6 +71,11 @@ public final class GRIDmap {
 		
 		return true;
 	}
+
+	// MFS this is a test function TEST TEST TEST
+	public void replaceRoad(GRIDroad replaceMe){
+		this.Roads.put(replaceMe.getId(), replaceMe);
+	}
 	
 	public boolean addIntersection(GRIDintersection addMe) {
 		if(this.Intersections.containsKey(addMe.getId())) {

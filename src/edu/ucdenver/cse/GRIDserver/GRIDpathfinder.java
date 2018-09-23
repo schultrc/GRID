@@ -188,7 +188,7 @@ public class GRIDpathfinder {
                 double newWeight = getEdgeWeight(tempNode)+currFibEntry.getWtTotal();
                 /* END */
                 
-                logWriter.log(Level.INFO, "newWeight is: " + newWeight + " dest weight is: " + dest.getWtTotal() );
+                //logWriter.log(Level.INFO, "newWeight is: " + newWeight + " dest weight is: " + dest.getWtTotal() );
                 		
                 
                 if (newWeight < dest.getWtTotal())
@@ -196,13 +196,13 @@ public class GRIDpathfinder {
                     tempTime = theTime.updateEndTime(tempRoad,
                                currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());
 
-                    logWriter.log(Level.INFO, "tempTime is: " + tempTime);
+                    //logWriter.log(Level.INFO, "tempTime is: " + tempTime);
                     
                     
                     //tempNode.setNodeTimeTotal(tempTime+tempNode.getNodeTimeTotal());
                     
                     //RCS remove
-                    logWriter.log(Level.INFO, "setting node time to: " + tempNode.getNodeTimeTotal() );
+                    //logWriter.log(Level.INFO, "setting node time to: " + tempNode.getNodeTimeTotal() );
 
                     Long tempTmTotal = tempNode.getNodeTimeTotal();
                     //Double tempEmissions = tempNode.getNodeEmissions();
@@ -222,12 +222,23 @@ public class GRIDpathfinder {
                     
                     // getRoad requires the road ID, not the combination of the start / end values
                     tempRoadID = ourMap.hasRoad(currFibEntry.getValue(), dest.getValue()).getId();
-                    
+
+                    // MFS BEGIN TEST stuff til END
                     if (tempRoadID.equals(null)) {
                     	// THIS IS BAD
                     	logWriter.log(Level.WARNING, "ATTEMPT TO USE NULL ROAD ID");
                     	continue;
                     }
+
+                    for(long i = tempTmTotal; i < tempTime; ++i){
+                        tempRoad.addAgentsToRoadAtTime(i);
+                    }
+
+                    ourMap.replaceRoad(tempRoad);
+
+                    if(tempTime > 85000)
+                        logWriter.log(Level.INFO, "(Road) "+tempRoad);
+                    // MFS END
                     
                     tempSegment = new GRIDrouteSegment();
                     
