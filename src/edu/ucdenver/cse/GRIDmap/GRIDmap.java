@@ -152,42 +152,45 @@ public final class GRIDmap {
 	}
 	
 	// This will add the agents at the time they enter the road through the expected travel time
-	public void updateMapWithAgents(GRIDroute theRoute, long previousSegmentEndTime) {
+	public void updateMapWithAgents(GRIDroute theRoute) {
 
 		long i;
 		
 		for (GRIDrouteSegment theSegment : theRoute.getRouteSegments()) {
 			// Add vehicle count to the roads
-			for (i = 0L; i < theSegment.getTravelTime(); i++) {
-
-				this.getRoad(theSegment.getRoadID()).addAgentsToRoadAtTime(i + previousSegmentEndTime);
-				
-				//logWriter.log(Level.INFO, "weight on road: " + ourRoad +
-				//		                  "for i value: "    + i +
-				//		                  " at time: "       + (i+previousSegmentEndTime) +
-				//		                  " increased to: "  + this.getRoad(ourRoad).getWeightAtTime(i + previousSegmentEndTime));
+			//for (i = 0L; i < theSegment.getTravelTime(); i++) {
+			for (i = theSegment.getTimeAtRoadEntry(); i < theSegment.getTimeAtRoadExit(); i++) {
+				//this.getRoad(theSegment.getRoadID()).addAgentsToRoadAtTime(i + previousSegmentEndTime);
+				this.getRoad(theSegment.getRoadID()).addAgentsToRoadAtTime(i);
+				//MFS
+				//logWriter.log(Level.INFO, "road (addition): " + this.getRoad(theSegment.getRoadID()));
 			}
 			
-			previousSegmentEndTime += (i - 1);
+			//previousSegmentEndTime += (i - 1);
 			//logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
 		}
 	}
 
 	// This will remove agents from the map starting at the entry time
-	public void removeAgentsFromMap(GRIDroute theRoute, long previousSegmentEndTime) {
+	public void removeAgentsFromMap(GRIDroute theRoute) {
 
 		long i;
 		
 		for (GRIDrouteSegment theSegment : theRoute.getRouteSegments()) {
 			// Remove vehicles from the roads
-			for (i = 0L; i < theSegment.getTravelTime(); i++) {
+			//for (i = 0L; i < theSegment.getTravelTime(); i++) {
+			for (i = theSegment.getTimeAtRoadEntry(); i < theSegment.getTimeAtRoadExit(); i++) {
 				// This isn't correct, but we aren't running matsim with a real
 				// now time
 				// Should have timeNow added to i
-				this.getRoad(theSegment.getRoadID()).subFromWeight(i + previousSegmentEndTime);
+			//	this.getRoad(theSegment.getRoadID()).subFromWeight(i + previousSegmentEndTime);
+				this.getRoad(theSegment.getRoadID()).subFromWeight(i);
+				// MFS
+				//logWriter.log(Level.INFO, "road (removal): " + this.getRoad(theSegment.getRoadID()));
+
 			}
 			
-			previousSegmentEndTime += (i - 1);
+			//previousSegmentEndTime += (i - 1);
 			//logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
 		}
 	}

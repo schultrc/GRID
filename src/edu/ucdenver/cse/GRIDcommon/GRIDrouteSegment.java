@@ -1,6 +1,7 @@
 package edu.ucdenver.cse.GRIDcommon;
 
 import java.io.Serializable;
+import java.util.logging.Level;
 
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 
@@ -118,7 +119,7 @@ public class GRIDrouteSegment implements Serializable{
 			logWriter.log(java.util.logging.Level.WARNING, "Time at exit for routeSegment: " + this.getRoad_ID() + " is: " + this.timeAtRoadExit);
 			return -1;
 		}
-		
+
 		return (this.timeAtRoadExit - this.timeAtRoadEntry);
 	}
 }

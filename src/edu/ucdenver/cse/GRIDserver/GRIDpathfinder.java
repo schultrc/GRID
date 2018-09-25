@@ -223,28 +223,19 @@ public class GRIDpathfinder {
                     // getRoad requires the road ID, not the combination of the start / end values
                     tempRoadID = ourMap.hasRoad(currFibEntry.getValue(), dest.getValue()).getId();
 
-                    // MFS BEGIN TEST stuff til END
                     if (tempRoadID.equals(null)) {
                     	// THIS IS BAD
                     	logWriter.log(Level.WARNING, "ATTEMPT TO USE NULL ROAD ID");
                     	continue;
                     }
-
-                    for(long i = tempTmTotal; i < tempTime; ++i){
-                        tempRoad.addAgentsToRoadAtTime(i);
-                    }
-
-                    ourMap.replaceRoad(tempRoad);
-
-                    if(tempTime > 85000)
-                        logWriter.log(Level.INFO, "(Road) "+tempRoad);
-                    // MFS END
                     
                     tempSegment = new GRIDrouteSegment();
                     
                     tempSegment.setRoad_ID(tempRoadID);
                     tempSegment.setStartIntersection(currFibEntry.getValue());
                     tempSegment.setEndIntersection(dest.getValue());
+                    //MFS
+                    tempSegment.setTimeAtRoadEntry(tempTmTotal);
                     tempSegment.setTimeAtRoadExit(tempTime);
                     
                     //logWriter.log(Level.INFO, "added new segment for road: " + tempRoadID);
@@ -338,6 +329,17 @@ public class GRIDpathfinder {
             	routeComplete = true;            	
             }
         }
+
+        // MFS BEGIN TEST stuff til END
+        /*for(long i = initialTime; i < tempTime; ++i){
+            tempRoad.addAgentsToRoadAtTime(i);
+        }
+
+        ourMap.replaceRoad(tempRoad);
+
+        //if(tempTime > 85000)
+        logWriter.log(Level.INFO, "(Road) "+tempRoad);*/
+        // MFS END
           
         return finalRoute;
     }

@@ -89,13 +89,13 @@ public class GRIDrequestListenerTCP extends Thread {
 
 				// need to update the map with the new agent's route
 				
-				this.theGRID.getMap().updateMapWithAgents(tempRoute, this.theGRID.getTime());
+				this.theGRID.getMap().updateMapWithAgents(tempRoute);
 				
 				// If we just added this agent, there is no "existing route" to remove
 				if(!newAgentFlag) {
 					// This is wrong, as it will remove the route as of time now, not at the proper time
 					// GRIDsegments will fix this
-					this.theGRID.getMap().removeAgentsFromMap(tempAgent.getCurrentRoute(), this.theGRID.getTime());
+					this.theGRID.getMap().removeAgentsFromMap(tempAgent.getCurrentRoute());
 				}
 				
 				tempAgent.setRoute(tempRoute);
