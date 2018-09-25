@@ -97,6 +97,13 @@ public class GRIDroad {
 		}
 		return this.currentSpeed;
 	}
+	
+	// return the estimated speed at a given time
+	public double getSpeedAtTime(long time) {
+		
+		// THIS IS A PLACE HOLDER - need to actually calculate the speed
+		return this.getCurrentSpeed();
+	}
 
 	public void setCurrentSpeed(double currentSpeed) {
 		this.currentSpeed = currentSpeed;
@@ -176,7 +183,12 @@ public class GRIDroad {
 		return avgVehicleCount;
 	}
 
+	// Get the time to traverse this road at "current" time / speed
 	public Long getTravelTime() {
 		return Math.round(this.Length / this.getCurrentSpeed());
+	}
+	
+	public long getTravelTime(long time) {
+		return Math.round(this.Length / this.getSpeedAtTime(time));
 	}
 }

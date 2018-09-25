@@ -30,7 +30,7 @@ import java.util.ListIterator;
 public class GRIDpathfinder {
     private GRIDmap ourMap;
     
-    private ConcurrentMap<String, GRIDnode> currentPathTotal;
+    private ConcurrentMap<String, GRIDnode> workingRoute;
     private ConcurrentHashMap<String, GRIDrouteSegment> routeSegments;
 
     private GRIDweight theWeighter;
@@ -43,7 +43,7 @@ public class GRIDpathfinder {
     	//graph = graphLoadEdges(theMap);
         
     	// What are these? ? ? ?
-        currentPathTotal = new ConcurrentHashMap<String, GRIDnode>();
+        workingRoute = new ConcurrentHashMap<String, GRIDnode>();
         routeSegments = new ConcurrentHashMap<String, GRIDrouteSegment>();
 
         // This is the class to change in order to use different weighting schemes
@@ -59,10 +59,11 @@ public class GRIDpathfinder {
     	//graph.loadEdges(ourMap);
     }
 
-    public GRIDroute findPath(GRIDagent thisAgent, Long currentTime) {
+    public GRIDroute findPath(GRIDagent thisAgent, long currentTime) {
         GRIDfibHeap pq = new GRIDfibHeap();
 
-        Map<String, GRIDfibHeap.Entry> entries = new HashMap<>();
+        // Keep a map of all of the fibHeap entries along with the intersectionID associated with them
+        Map<String, GRIDfibHeap.Entry> nodeList = new HashMap<>();
         GRIDnode startNodeValues;
         //ConcurrentMap<String, GRIDnodeWtTmEm> currentPathTotal = new ConcurrentHashMap<>();
         //ConcurrentHashMap<String, String> previousIntersections = new ConcurrentHashMap<>();
@@ -71,8 +72,6 @@ public class GRIDpathfinder {
         /* END */
         
         //Long thisTimeslice = currentTime/1000;
-        Long initialTime = currentTime;
-        Long totalTravelTime = initialTime;
         String agentFrom; 
         String agentTo;
         String agentID;
@@ -93,7 +92,7 @@ public class GRIDpathfinder {
 
         startNodeValues = new GRIDnode();
         startNodeValues.setNodeWeighttTotal(0.0);
-        startNodeValues.setNodeTimeTotal(initialTime);
+        startNodeValues.setNodeTimeTotal(currentTime);
         GRIDnode tempNode = startNodeValues;
 
         /* source/destination check
@@ -115,19 +114,16 @@ public class GRIDpathfinder {
         // RCS do we need to enqueue (initialize) with thisTimeSlice, not 0L ? ? ? ? ?
         Iterator<String> iter = ourMap.getIntersectionIDs().iterator();
         while (iter.hasNext()) {
-            String node = iter.next();
+            String intersectionID = iter.next();
             
             // enqueue each Node (intersection) into the fibHeap, and then keep a reference to it in entries
-        	entries.put(node, pq.enqueue(node, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0L));
+        	nodeList.put(intersectionID, pq.enqueue(intersectionID, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0L));
         }
         
         // Set the current location to be the first selected by the queue
-        pq.decreaseKey(entries.get(agentFrom), 0.0, 0.0, initialTime);
+        pq.decreaseKey(nodeList.get(agentFrom), 0.0, 0.0, currentTime);
 
-        /* prime the while loop with the start node, which is the starting min
-         */
-        
-        // RCS - at this call, we "should" be able to get the total time as well as weight to this node (int)
+        // prime the while loop with the start node, which is the starting min
         GRIDfibHeap.Entry currFibEntry = pq.dequeueMin();
                 
         double tempWeight;
@@ -136,41 +132,50 @@ public class GRIDpathfinder {
         
         while (!pq.isEmpty())
         {
-            currentPathTotal.put(currFibEntry.getValue(), tempNode);
-
-            // Update the priorities/weights of all of its edges.
+        	// save the previous node
+            workingRoute.put(currFibEntry.getValue(), tempNode);
+            
+            // create a new node
+            tempNode = new GRIDnode();
            
-            // step through every road leaving this intersection            
+            // step through every road leaving this intersection and 
+            // update the priorities/weights of all of its edges.           
             for (Map.Entry<String, Double> arc : ourMap.reachableDestinations(currFibEntry.getValue()).entrySet()) {
                 
             	// skip this road if we've already visited it
-            	if (currentPathTotal.containsKey(arc.getKey())) continue;
+            	if (workingRoute.containsKey(arc.getKey())) continue;
 
-                /* Compute the cost of the path from the source to this node,
-                 * which is the cost of this node plus the cost of this edge.
-                 */
+            	long arrivalTime = currFibEntry.getTmTotal();
+            	
+                GRIDroad tempRoad = ourMap.hasRoad(currFibEntry.getValue(), arc.getKey());
                 
-                // RCS incorporate the new helper classes here
-                // RCS this will need the map, not the graph
+                if (tempRoad.equals(null)) {
+                	logWriter.log(Level.WARNING, "Unable to find road from: " + currFibEntry.getValue()+
+                			                     " to: " + arc.getKey());
+                	continue;
+                }
                
             	logWriter.log(Level.INFO, "Checking the weight from: " + currFibEntry.getValue() + 
             			                  " to: "                      + arc.getKey() +
-            			                  " at time: "                 + currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());
-            	                          
+            			                  " at time: "                 + arrivalTime);
+            	                                   	
+            	// Get the weight from the current node to the proposed node
                 tempWeight = theWeighter.calcWeight(currFibEntry.getValue(), 
                 		                            this.ourMap.getIntersection(arc.getKey()).getId(),
-                                                    currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal());
-               
-                // RCS - Need to verify the time used above is the initialTime + timeToGetToThisNode
-                
-                
+                                                    arrivalTime);
+                              
+                System.out.println("tempNode is: " + tempNode.toString());
+                System.out.println("time is:" + currFibEntry.getValue());
+
+            	long traversalTime = tempRoad.getTravelTime(currFibEntry.getTmTotal());
+
                 tempNode.setNodeWeighttTotal(tempWeight);
                 
                 /* If the weight of the best-known path from the source to
                  * this node is longer than this potential path cost, update
                  * the cost of the shortest path.
                  */
-                GRIDfibHeap.Entry dest = entries.get(arc.getKey());
+                GRIDfibHeap.Entry dest = nodeList.get(arc.getKey());
                 //Double newWeight = tempNode.getNodeWtTotal()+curr.getWtTotal();
                 /* BEGIN new code for different weight calculations*/
                 double newWeight = getEdgeWeight(tempNode)+currFibEntry.getWtTotal();
@@ -178,10 +183,10 @@ public class GRIDpathfinder {
                 
                 logWriter.log(Level.INFO, "newWeight is: " + newWeight + " dest weight is: " + dest.getWtTotal() );
                 		
-                
+                // If we can get to dest for less than the previous best, we want to use this route
                 if (newWeight < dest.getWtTotal())
                 {
-                    Long tempTime = currentPathTotal.get(currFibEntry.getValue()).getNodeTimeTotal();
+                    Long tempTime = workingRoute.get(currFibEntry.getValue()).getNodeTimeTotal();
 
                     logWriter.log(Level.INFO, "tempTime is: " + tempTime);
                     
@@ -196,17 +201,6 @@ public class GRIDpathfinder {
 
                     pq.decreaseKey(dest, 0D, newWeight, tempTmTotal);
                    
-                    // RCS I think we can remove this . . .
-                    //previousIntersections.put(dest.getValue(),curr.getValue());
-                    
-                                        
-                    /* BEGIN here is the new data structure for segments */
-                    // RCS fix to get road ID
-                    //String tempString = graph.getRoadListItem(curr.getValue()+dest.getValue()).getId();
-                    
-                    //RCS changed 
-                    //String tempString = graph.getRoad(curr.getValue()+dest.getValue()).getId();
-                    
                     // getRoad requires the road ID, not the combination of the start / end values
                     tempRoadID = ourMap.hasRoad(currFibEntry.getValue(), dest.getValue()).getId();
                     
@@ -221,14 +215,8 @@ public class GRIDpathfinder {
                     tempSegment.setRoad_ID(tempRoadID);
                     tempSegment.setStartIntersection(currFibEntry.getValue());
                     tempSegment.setEndIntersection(dest.getValue());
+                    tempSegment.setTimeAtRoadEntry(tempTmTotal);
                     tempSegment.setTimeAtRoadExit(tempTime);
-                    
-                    //logWriter.log(Level.INFO, "added new segment for road: " + tempRoadID);
-                    
-                   // finalRouteSegments.put(tempString, tempSegment);
-                    
-                    //GRIDrouteSegment tempSegment = new GRIDrouteSegment(tempString, tempTmTotal, tempEmissions);
-                    /* END */
                 
 		            if(tempSegment != null) {
 		            	// key these by their destination intersection, so we can build the route later
@@ -236,8 +224,8 @@ public class GRIDpathfinder {
 		            	//routeSegmentsByStart.put(tempSegment.getStartIntersection(), tempSegment);
 		            	
 		            	//logWriter.log(Level.INFO, "Adding route segment: " + tempSegment.getRoad_ID());
-		            			            }
-                }
+		            }
+		        }
             }
             /* Grab the current node.  The algorithm guarantees that we now
              * have the shortest distance to it.
@@ -245,20 +233,16 @@ public class GRIDpathfinder {
             currFibEntry = pq.dequeueMin();
             tempNode.setNodeTimeTotal(currFibEntry.getTmTotal());
 
-            System.out.println("grabbed: " + currFibEntry.getValue() + "\n");
+            //System.out.println("grabbed: " + currFibEntry.getValue() + "\n");
             
             /* this conditional statement is necessary to correct for not starting
              * at the actual starting, i.e., from node for the starting link; we
              * can look at correcting this...
              */
             if(currFibEntry.getValue().equals(agentTo)) {
-            	totalTravelTime = currFibEntry.getTmTotal();
             }     
-        }
-         
-        String destName = agentTo;
-
-        
+        }  // while (!pq.isEmpty())
+                 
         ConcurrentHashMap<String, GRIDrouteSegment> routeSegmentsByStart = new ConcurrentHashMap<String, GRIDrouteSegment>();
 //        ConcurrentHashMap<String, GRIDrouteSegment> routeSegmentsByEnd = new ConcurrentHashMap<String, GRIDrouteSegment>();
         // Now that we have all the segments, build the 2 lists so that we can find them easily
@@ -271,20 +255,19 @@ public class GRIDpathfinder {
         	routeSegmentsByStart.put(theSegment.getValue().getStartIntersection(), theSegment.getValue());
 //        	routeSegmentsByEnd.put(theSegment.getValue().getEndIntersection(), theSegment.getValue());
         }
-                                                      
-      
+                                                           
         GRIDroute finalRoute = new GRIDroute();
         finalRoute.setAgent_ID(agentID);
         
         // Start with the destination
         
-        if(!routeSegments.containsKey(destName)){
+        if(!routeSegments.containsKey(agentTo)){
             logWriter.log(Level.INFO, "Agent " + agentID + " is going to: " + agentTo + " - but that doesn't exist in the returned list");
             System.out.println("Agent " + agentID + " is going to: " + agentTo + " - but that doesn't exist in the returned list");
         	return genDummyRoute("Destination unreachable");
         }
         	
-        tempSegment = (GRIDrouteSegment) routeSegments.get(destName);
+        tempSegment = (GRIDrouteSegment) routeSegments.get(agentTo);
         
         if( tempSegment == null) {
         	logWriter.log(Level.WARNING, "Destination intersection not found in route 1! from was: " + agentFrom + " dest was: " + agentTo);
