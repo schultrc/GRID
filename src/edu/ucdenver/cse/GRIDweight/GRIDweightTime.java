@@ -23,7 +23,7 @@ public class GRIDweightTime implements GRIDweight {
     	
     	if(road.equals(null)) {
     		// THIS IS BAD DO SOMETHING
-    		logWriter.log(Level.WARNING, "NULL ROAD FOUND, exiting");
+    		logWriter.log(Level.WARNING, "GRIDweightTime: NULL ROAD FOUND, exiting");
     		return MAX_WEIGHT;
     	}
     	

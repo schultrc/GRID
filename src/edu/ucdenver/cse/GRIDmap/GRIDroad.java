@@ -123,7 +123,7 @@ public class GRIDroad {
 	// }
 	// }
 
-	public void removeAgentsFromRoadAtTime(Long time) {
+	public void removeAgentsFromRoadAtTime(long time) {
 
 		// logWriter.log(Level.INFO, this.getClass().getName() + " size of roads
 		// is: " +
@@ -134,7 +134,8 @@ public class GRIDroad {
 
 	}
 
-	public void addAgentsToRoadAtTime(Long time) {
+	// RCS is there a better, batch type way of doing this?
+	public void addAgentsToRoadAtTime(long time) {
 		// If there is already an offset, add to it
 		if (this.vehiclesCurrentlyOnRoadAtTime.containsKey(time)) {
 			this.vehiclesCurrentlyOnRoadAtTime.replace(time, (this.vehiclesCurrentlyOnRoadAtTime.get(time) + 1));
@@ -143,7 +144,7 @@ public class GRIDroad {
 		}
 	}
 
-	public void subFromWeight(Long time) {
+	public void subFromWeight(long time) {
 		// If there is already an offset, add to it
 
 		if (this.vehiclesCurrentlyOnRoadAtTime.containsKey(time)) {
@@ -190,5 +191,13 @@ public class GRIDroad {
 	
 	public long getTravelTime(long time) {
 		return Math.round(this.Length / this.getSpeedAtTime(time));
+	}
+	
+	public double getWeightAtTime(long time) {
+		if (this.vehiclesCurrentlyOnRoadAtTime.containsKey(time)) {
+			return this.vehiclesCurrentlyOnRoadAtTime.get(time);
+		}
+		
+		return GRIDroad.ourDefaultValue;
 	}
 }

@@ -147,23 +147,22 @@ public final class GRIDmap {
 	}
 	
 	// This will add the agents at the time they enter the road through the expected travel time
-	public void updateMapWithAgents(GRIDroute theRoute, long previousSegmentEndTime) {
+	public void updateMapWithAgents(GRIDroute theRoute) {
 
 		long i;
 		
 		for (GRIDrouteSegment theSegment : theRoute.getRouteSegments()) {
 			// Add vehicle count to the roads
-			for (i = 0L; i < theSegment.getTravelTime(); i++) {
+			for (i = theSegment.getTimeAtRoadEntry(); i < theSegment.getTimeAtRoadExit(); i++) {
 
-				this.getRoad(theSegment.getRoadID()).addAgentsToRoadAtTime(i + previousSegmentEndTime);
+				this.getRoad(theSegment.getRoadID()).addAgentsToRoadAtTime(i);
 				
-				//logWriter.log(Level.INFO, "weight on road: " + ourRoad +
-				//		                  "for i value: "    + i +
-				//		                  " at time: "       + (i+previousSegmentEndTime) +
-				//		                  " increased to: "  + this.getRoad(ourRoad).getWeightAtTime(i + previousSegmentEndTime));
+				//logWriter.log(Level.INFO, "GRIDmap::updateMapWithAgents - " + 
+				//		"weight on road: " + theSegment.getRoadID() +
+				//		                  " at time: "       + (i) +
+				//		                  " increased to: "  + this.getRoad(theSegment.getRoadID()).getWeightAtTime(i));
 			}
 			
-			previousSegmentEndTime += (i - 1);
 			//logWriter.log(Level.INFO, "setting previousSegmentEndTime to: " + previousSegmentEndTime);
 		}
 	}
@@ -175,7 +174,7 @@ public final class GRIDmap {
 		
 		for (GRIDrouteSegment theSegment : theRoute.getRouteSegments()) {
 			// Remove vehicles from the roads
-			for (i = 0L; i < theSegment.getTravelTime(); i++) {
+			for (i = theSegment.getTimeAtRoadEntry(); i < theSegment.getTimeAtRoadExit(); i++) {
 				// This isn't correct, but we aren't running matsim with a real
 				// now time
 				// Should have timeNow added to i
@@ -188,9 +187,19 @@ public final class GRIDmap {
 	}
 
 	// Return the map of roads that leave the supplied intersection name
-	public Map<String, Double> reachableDestinations (String intersectionName) {
+	public List<String> reachableDestinations (String intersectionName) {
 		
-		return Collections.unmodifiableMap(this.Intersections.get(intersectionName).getIntersectionsFrom());
+		// RCS this bombs if nothing is reachable
+		List<String> intersectionsWeCanSee = this.Intersections.get(intersectionName).getIntersectionsFrom();
+		
+		// RCS remove
+		//System.out.printf("From: " + intersectionName + " we can get to: " + intersectionsWeCanSee.toString());
+		
+		if (intersectionsWeCanSee != null) {
+			return intersectionsWeCanSee;
+		}
+		
+		return null;
 	}
 }	
 	

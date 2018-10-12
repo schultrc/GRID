@@ -1,5 +1,7 @@
 package edu.ucdenver.cse.GRIDmap;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,7 +11,7 @@ public class GRIDintersection {
 	private double y;
 	
 	// Used only when part of a server map
-	private Map<String, Double> reachableDestinations;
+	private List<String> reachableDestinations;
 	
 	//RCS remove 
 	//private Long timeAtExit;
@@ -43,17 +45,13 @@ public class GRIDintersection {
 	// distances
 	public void addDestination(String intersectionID, double length) {
 		if (this.reachableDestinations == null) {
-			this.reachableDestinations = new ConcurrentHashMap<String, Double>();
+			this.reachableDestinations = new ArrayList<String>();
 		}
-		this.reachableDestinations.put(intersectionID, length);
+		this.reachableDestinations.add(intersectionID);
 	}
 	
-	public Map<String, Double> getIntersectionsFrom() {
-		if (!(this.reachableDestinations == null)) {
-			return this.reachableDestinations;
-		}
-		
-		return null;
+	public List<String> getIntersectionsFrom() {
+		return this.reachableDestinations;	
 	}
 	
 	// RCS remove
