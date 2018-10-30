@@ -296,32 +296,40 @@ public class GRIDpathfinder {
         // Put the final segment into the route
         finalRoute.pushSegment(tempSegment);
         
-        boolean routeComplete = false;
-        while(!routeComplete) {
-        	// there should be only one segment in the collection that ends at the start point of the first segment of the route
-        	String nextDest = tempSegment.getStartIntersection();
-        	
-        	tempSegment = (GRIDrouteSegment) routeSegments.get(nextDest);
-        	
-        	
-        	// RCS This MAY be the place where we are already at our route - I.E. we left from the start and the next int is 
-        	// the dest?? ? ?
-        	
-        	if( tempSegment == null) {
-            	logWriter.log(Level.WARNING, "GRIDpathfinder::findPath - Destination intersection not found in route for agent: " +
-        	                                 agentID + " from: " + agentFrom + " to: " + agentTo);
-            	return genDummyRoute("Destination unreachable");
-            }
-            
-            // Put the final segment into the route
-            finalRoute.pushSegment(tempSegment);
-            
-            if (tempSegment.getStartIntersection().equals(agentFrom)) {
-            	// This is the end case
-            	routeComplete = true;            	
-            }
+        // If this is the only segment needed for the route
+        if (tempSegment.getStartIntersection().equals(agentFrom)) {
+        	System.out.println("Agent " + agentID + " only has 1 leg in it's route" );
+        	logWriter.log(Level.INFO, "GRIDpathfinder::findPath - Agent " + agentID + " only has 1 leg in it's route" );
         }
-          
+        
+        else {
+	        boolean routeComplete = false;
+	        while(!routeComplete) {
+	        	// there should be only one segment in the collection that ends at the start point of the first segment of the route
+	        	
+	        	tempSegment = (GRIDrouteSegment) routeSegments.get(tempSegment.getStartIntersection());
+	        	
+	        	
+	        	// RCS This MAY be the place where we are already at our route - I.E. we left from the s
+	        	if( tempSegment == null) {
+	        		
+	        		
+	        		
+	            	logWriter.log(Level.WARNING, "GRIDpathfinder::findPath - Destination intersection not found in route for agent: " +
+	        	                                 agentID + " from: " + agentFrom + " to: " + agentTo);
+	            	return genDummyRoute("Destination unreachable");
+	            }
+	            
+	            // Put the final segment into the route
+	            finalRoute.pushSegment(tempSegment);
+	            
+	            if (tempSegment.getStartIntersection().equals(agentFrom)) {
+	            	// This is the end case
+	            	routeComplete = true;            	
+	            }
+	        }
+        }
+        
         logWriter.log(Level.INFO, "calculated route for agent: " + thisAgent +
         		                  " from: " + agentFrom + 
         		                  " to: " + agentTo + "is: " + finalRoute.toString());

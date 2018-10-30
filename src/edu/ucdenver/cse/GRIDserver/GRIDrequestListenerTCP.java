@@ -118,10 +118,11 @@ public class GRIDrequestListenerTCP extends Thread {
 				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
 				
 				// need to remove the values in the hashMap
-				for(GRIDroad road : this.theGRID.getMap().getRoads().values() ) {
-					road.removeAgentsFromRoadAtTime(this.theGRID.getTime());
+				if ((((GRIDtimeMsg) theRequest).getTheTime() % 1000) == 0) {
+					for(GRIDroad road : this.theGRID.getMap().getRoads().values() ) {
+						road.removeAgentsFromRoadAtTime(this.theGRID.getTime());
+					}
 				}
-				
 				
 				inputStream.close();
 				outputStream.close();
