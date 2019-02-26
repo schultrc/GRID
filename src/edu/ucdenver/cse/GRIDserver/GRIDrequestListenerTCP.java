@@ -17,10 +17,16 @@ public class GRIDrequestListenerTCP extends Thread {
 	private GRIDworld theGRID = null;
 	ObjectInputStream  inputStream;
 	ObjectOutputStream outputStream;
+	String weightType;
+	boolean weAreTiming;
 	
-	public GRIDrequestListenerTCP( Socket client, GRIDworld grid){
+	public GRIDrequestListenerTCP( Socket client, GRIDworld grid, String weightType){
 		this.theSocket = client;
 		this.theGRID   = grid;
+		this.weightType = weightType;
+		
+		// change this value to time various methods
+		weAreTiming = true;
 	}
 
 	public void run() {		
@@ -64,11 +70,23 @@ public class GRIDrequestListenerTCP extends Thread {
 				logWriter.log(Level.INFO, "RequestListener - Agent to be replanned: " + tempAgent.toString() +
 						                  " at time: " + theGRID.getTime());
 
-				GRIDpathfinder theALG = new GRIDpathfinder(this.theGRID.getMap());
+				GRIDpathfinder theALG = new GRIDpathfinder(this.theGRID.getMap(), this.weightType);
 				
 				theALG.init();
+				GRIDroute tempRoute;
 				
-				GRIDroute tempRoute = theALG.findPath(tempAgent, theGRID.getTime());
+				if (weAreTiming) {
+					long startTime = System.nanoTime();
+					tempRoute = theALG.findPath(tempAgent, theGRID.getTime());
+					long endTime = System.nanoTime();
+
+					long duration = (endTime - startTime);
+					
+					logWriter.log(Level.INFO, "Calculating the route took: " + duration + " nanoseconds");
+				}
+				else {
+					tempRoute = theALG.findPath(tempAgent, theGRID.getTime());
+				}
 				
 				if (tempRoute == null) {
 					logWriter.log(Level.WARNING, "RequestListener - ROUTE WAS NULL for agent: " + tempAgent.getId());
@@ -88,14 +106,36 @@ public class GRIDrequestListenerTCP extends Thread {
 				                           this.theGRID.getTime());
 
 				// need to update the map with the new agent's route
-				
-				this.theGRID.getMap().updateMapWithAgents(tempRoute);
+				if (weAreTiming) {
+					long startTime = System.nanoTime();
+					this.theGRID.getMap().updateMapWithAgents(tempRoute);
+					long endTime = System.nanoTime();
+
+					long duration = (endTime - startTime);
+					
+					logWriter.log(Level.INFO, "Adding agents to the route took: " + duration + " nanoseconds");
+				}
+				else {
+					this.theGRID.getMap().updateMapWithAgents(tempRoute);
+				}
 				
 				// If we just added this agent, there is no "existing route" to remove
 				if(!newRouteFlag) {
 					// This is wrong, as it will remove the route as of time now, not at the proper time
 					// GRIDsegments will fix this
-					this.theGRID.getMap().removeAgentsFromMap(tempAgent.getCurrentRoute(), this.theGRID.getTime());
+					if (weAreTiming) {
+						long startTime = System.nanoTime();
+						this.theGRID.getMap().removeAgentsFromMap(tempAgent.getCurrentRoute(), this.theGRID.getTime());
+						long endTime = System.nanoTime();
+
+						long duration = (endTime - startTime);
+						
+						logWriter.log(Level.INFO, "removing agents from the map took: " + duration + " nanoseconds");
+					}
+					else {
+						this.theGRID.getMap().removeAgentsFromMap(tempAgent.getCurrentRoute(), this.theGRID.getTime());
+					}
+					
 				}
 				
 				tempAgent.setRoute(tempRoute);
@@ -108,12 +148,11 @@ public class GRIDrequestListenerTCP extends Thread {
 			}
 			
 			else if (theRequest instanceof GRIDtimeMsg) {
-				// Only log every so often
-				if ((((GRIDtimeMsg) theRequest).getTheTime() % 1000) == 0) {
-				logWriter.log(Level.INFO, "RequestListener - GridTimeMsg received with time: " +
-						((GRIDtimeMsg) theRequest).getTheTime());
-				
-				}
+//				if ((((GRIDtimeMsg) theRequest).getTheTime() % 1000) == 0) {
+//				logWriter.log(Level.INFO, "RequestListener - GridTimeMsg received with time: " +
+//						((GRIDtimeMsg) theRequest).getTheTime());
+//				
+//				}
 				
 				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
 				
@@ -122,6 +161,9 @@ public class GRIDrequestListenerTCP extends Thread {
 					for(GRIDroad road : this.theGRID.getMap().getRoads().values() ) {
 						road.removeAgentsFromRoadAtTime(this.theGRID.getTime());
 					}
+					// Only log every so often
+					logWriter.log(Level.INFO, "RequestListener - GridTimeMsg received with time: " +
+							((GRIDtimeMsg) theRequest).getTheTime());
 				}
 				
 				inputStream.close();
@@ -133,6 +175,8 @@ public class GRIDrequestListenerTCP extends Thread {
 				logWriter.log(Level.INFO, this.getClass().getName() + " TERM message recieved - " +
 				                          "shutting down at time: " + this.theGRID.getTime());
 				
+				inputStream.close();
+				outputStream.close();
 				System.exit(0);
 			}
 			

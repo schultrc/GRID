@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import edu.ucdenver.cse.GRIDcommon.*;
 
+// This class is a holder for the current state of the server system. 
+
 public class GRIDworld {
 	private GRIDmap theMap;
 	private Long theTime;
