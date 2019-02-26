@@ -40,7 +40,7 @@ public class GRIDtestRunner{
     	Long startTime = System.nanoTime();
 
         //GRIDheapAlg greedy = new GRIDheapAlg();
-    	GRIDpathfinder theALG = new GRIDpathfinder(myMap);
+    	GRIDpathfinder theALG = new GRIDpathfinder(myMap, "BPR");
         //GRIDheapDynamicAlg dyna = new GRIDheapDynamicAlg(myMap); //
         //myPathGreedy = greedy.shortestPath(networkMap,"1040921516","864162469");
 

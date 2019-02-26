@@ -18,6 +18,7 @@ public class GRIDserver extends Thread {
 	private CommandLine theCmdLine;
 	private Path outputDir;
 	GRIDworld theGRID;
+	String weightType;
 
 	public static void main(String[] args) {
 		GRIDserver theServer = new GRIDserver(args);
@@ -62,7 +63,7 @@ public class GRIDserver extends Thread {
 		}
 
 		// Load our version of the map first
-		GRIDmapReader masterMap = new GRIDmapReader();
+		GRIDmapReader masterMapReader = new GRIDmapReader();
 
 		if (mapFile == "") {
 			logWriter.log(Level.WARNING, "You didn't choose a map file!!!");
@@ -70,7 +71,7 @@ public class GRIDserver extends Thread {
 		}
 
 		// The official map
-		GRIDmap ourMap = masterMap.readMapFile(mapFile);
+		GRIDmap ourMap = masterMapReader.readMapFile(mapFile);
 		
 		// Setup the additional information needed to use this map as a SERVER map
 		if (!ourMap.setupMapAsServer()) {
@@ -87,13 +88,22 @@ public class GRIDserver extends Thread {
 		else {
 			theGRID = new GRIDworld(ourMap, (System.currentTimeMillis()/1000) );
 		}
+		
+		// get / set the weight class in use
+		if (theCmdLine.hasOption("weightType")) {
+			this.weightType = theCmdLine.getOptionValue("weightType");
+		}
+
+		else {
+		    this.weightType = "BPR";
+		}
 	}
 
 	private void serve() {
 
 		// Setup the connection for the clients.
 		GRIDserverConnection myConnection;
-		myConnection = new GRIDserverConnectionTCPSocket(theGRID);
+		myConnection = new GRIDserverConnectionTCPSocket(theGRID, this.weightType);
 		myConnection.run();
 	}
 
