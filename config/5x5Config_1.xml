@@ -2,7 +2,7 @@
 <!DOCTYPE config SYSTEM "../dtd/config_v2.dtd">
 <config>
 	<module name="network">
-		<param name="inputNetworkFile" value="../data/5x5Network.xml"/>
+		<param name="inputNetworkFile" value="../data/5x5Network_mod.xml"/>
 	</module>
 
 	<module name="plans">

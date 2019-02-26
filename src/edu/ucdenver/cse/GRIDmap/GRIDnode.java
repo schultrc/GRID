@@ -14,4 +14,8 @@ public class GRIDnode {
     public double getNodeWeightTotal(){ return this.nodeWeightTotal; }
     public long getNodeTimeTotal(){ return this.nodeTimeTotal; }
     
+    public String toString() {
+    	
+    	return "node weight: " + this.nodeWeightTotal + " node time: " + this.nodeTimeTotal; 
+    }
 }

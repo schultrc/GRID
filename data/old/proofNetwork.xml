@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE network SYSTEM "../dtd/network_v1.dtd">
+<network>
+
+<!-- ====================================================================== -->
+
+	<nodes>
+		<node id="0"  x="0"    y="0" />
+		<node id="1"  x="0"    y="0" />
+		<node id="2"  x="1000" y="0" />
+		<node id="3"  x="2000" y="0" />
+		<node id="4"  x="3000" y="0" />
+		<node id="5"  x="4000" y="0" />
+		<node id="6"  x="4000"    y="1000" />
+		<node id="7"  x="4000"    y="1000" />
+	</nodes>	
+
+<!-- ====================================================================== -->
+
+	<links capperiod="01:00:00" effectivecellsize="7.5" effectivelanewidth="3.75">
+		<link id="dumb"           from="0"  to="1"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="starttoshort1"  from="1"  to="2"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="short1toshort2" from="2"  to="3"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="short2toshort3" from="3"  to="4"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="short3toend"    from="4"  to="5"  length="1000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="starttolong1"   from="1"  to="6"  length="3000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="long1toend"     from="6"  to="5"  length="3000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+		<link id="endtowork"      from="5"  to="7"  length="3000" freespeed="10.0" capacity="120" permlanes="1.0" oneway="1" modes="car" />
+	</links>
+
+<!-- ====================================================================== -->
+
+</network>

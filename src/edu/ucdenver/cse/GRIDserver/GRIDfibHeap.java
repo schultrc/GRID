@@ -31,6 +31,8 @@ public final class GRIDfibHeap {
         private double mPriority;      // Its priority
 
         private double mWtTotal;
+        
+        // This is for our use only, not used by djykstra / fibHeap
         private long mTmTotal;
 
         /**

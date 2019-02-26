@@ -34,7 +34,7 @@ public class GRIDrequestListenerTCP extends Thread {
 				//System.out.println("Route Request Received: " + (((GRIDrouteRequest)theRequest).toString()));
 				
 				// We need to know if we have to remove an old route or not
-				boolean newAgentFlag = false;
+				boolean newRouteFlag = false;
 				
 				GRIDagent tempAgent;
 				
@@ -58,7 +58,7 @@ public class GRIDrequestListenerTCP extends Thread {
 					
 					this.theGRID.getMasterAgents().put(((GRIDrouteRequest) theRequest).getAgentID(), tempAgent);
 					
-					newAgentFlag = true;
+					newRouteFlag = true;
 				}
 
 				logWriter.log(Level.INFO, "RequestListener - Agent to be replanned: " + tempAgent.toString() +
@@ -89,10 +89,10 @@ public class GRIDrequestListenerTCP extends Thread {
 
 				// need to update the map with the new agent's route
 				
-				this.theGRID.getMap().updateMapWithAgents(tempRoute, this.theGRID.getTime());
+				this.theGRID.getMap().updateMapWithAgents(tempRoute);
 				
 				// If we just added this agent, there is no "existing route" to remove
-				if(!newAgentFlag) {
+				if(!newRouteFlag) {
 					// This is wrong, as it will remove the route as of time now, not at the proper time
 					// GRIDsegments will fix this
 					this.theGRID.getMap().removeAgentsFromMap(tempAgent.getCurrentRoute(), this.theGRID.getTime());
@@ -117,11 +117,12 @@ public class GRIDrequestListenerTCP extends Thread {
 				
 				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
 				
-				// need to reduce the map data
-				for(GRIDroad road : this.theGRID.getMap().getRoads().values() ) {
-					road.removeAgentsFromRoadAtTime(this.theGRID.getTime());
+				// need to remove the values in the hashMap
+				if ((((GRIDtimeMsg) theRequest).getTheTime() % 1000) == 0) {
+					for(GRIDroad road : this.theGRID.getMap().getRoads().values() ) {
+						road.removeAgentsFromRoadAtTime(this.theGRID.getTime());
+					}
 				}
-				
 				
 				inputStream.close();
 				outputStream.close();

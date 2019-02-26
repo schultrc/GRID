@@ -2,11 +2,11 @@
 <!DOCTYPE config SYSTEM "http://www.matsim.org/files/dtd/config_v2.dtd">
 <config>
 	<module name="network">
-		<param name="inputNetworkFile" value="./data/PuebloNetwork.xml"/>
+		<param name="inputNetworkFile" value="../data/PuebloNetwork.xml"/>
 	</module>
 
 	<module name="plans">
-		<param name="inputPlansFile" value="./data/PuebloPopulation_10000.xml"/>
+		<param name="inputPlansFile" value="../data/PuebloPopulation_10000.xml"/>
 	</module>
 
 	<module name="controler">

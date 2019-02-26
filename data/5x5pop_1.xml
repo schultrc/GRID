@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE population SYSTEM "http://www.matsim.org/files/dtd/population_v5.dtd">
+<!DOCTYPE population SYSTEM "../dtd/population_v5.dtd">
 
 <population>
 
@@ -13,7 +13,7 @@
 			<act type="w" link="24to25" end_time="07:24:53" />
 			<leg mode="car">
 			</leg>
-			<act type="h" link="2to1" end_time="08:52:51" />
+			<act type="h" link="2to1"/>
 			<leg mode="car">
 			</leg>
 		</plan>
