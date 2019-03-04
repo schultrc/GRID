@@ -56,7 +56,7 @@ public class GRIDserverCmdLine {
                                        .desc("weight type")
                                        .build();
 
-this.theOptions.addOption(simOpt);
+		this.theOptions.addOption(weightOpt);
 	}
 	
 	public CommandLine parseArgs() throws ParseException {

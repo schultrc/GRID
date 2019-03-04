@@ -38,14 +38,15 @@ public class GRIDserver extends Thread {
 		}
 
 		catch (ParseException e) {
-			System.out.println("This is bad: " + e.toString());
+			System.out.println("GRIDserver: This is bad: " + e.toString());
 		}
 	}
 
 	private void init() {
 
 		System.out.println("It's not hard--you just gotta use finesse!");
-		
+		System.out.println("GRIDserver");
+
 		if (!setPath()) {
 			// This sucks, we can't even log it
 			System.out.println("Error setting output path");
@@ -66,7 +67,7 @@ public class GRIDserver extends Thread {
 		GRIDmapReader masterMapReader = new GRIDmapReader();
 
 		if (mapFile == "") {
-			logWriter.log(Level.WARNING, "You didn't choose a map file!!!");
+			logWriter.log(Level.WARNING, "GRIDserver: You didn't choose a map file!!!");
 			System.exit(0);
 		}
 
@@ -75,11 +76,11 @@ public class GRIDserver extends Thread {
 		
 		// Setup the additional information needed to use this map as a SERVER map
 		if (!ourMap.setupMapAsServer()) {
-			logWriter.log(Level.WARNING, "Unable to setup map!");
+			logWriter.log(Level.WARNING, "GRIDserver: Unable to setup map!");
 			System.exit(0);
 		}
 
-		logWriter.log(Level.INFO, "MAP FILE: " + mapFile + " in use\n\n\n");
+		logWriter.log(Level.INFO, "GRIDserver: MAP FILE: " + mapFile + " in use\n\n\n");
 		
 		if (theCmdLine.hasOption("sim")) {
 			theGRID = new GRIDworld(ourMap, 0L);
@@ -94,9 +95,13 @@ public class GRIDserver extends Thread {
 			this.weightType = theCmdLine.getOptionValue("weightType");
 		}
 
+		// The "default" for now will be timeweightavg
 		else {
-		    this.weightType = "BPR";
+		    this.weightType = "DEFAULT";
 		}
+		
+		System.out.println("Using weighter: " + this.weightType);
+		logWriter.log(Level.INFO, "GRIDserver: Using weighter: " + this.weightType);
 	}
 
 	private void serve() {
