@@ -91,9 +91,10 @@ public class GRIDsim {
 		
 		/* This is the primary simulation. It will run the sim (currently matsim) making requests of the 
 		 * GRIDserver as needed to determine routes
-		 */		
+		 */	
 		System.out.println("It's not hard--you just gotta use finesse!");
-		
+		System.out.println("SIMULATION");
+
 		if (!setPath()) {
 			// This sucks, we can't even log it
 			System.out.println("Error setting output path");
@@ -104,9 +105,7 @@ public class GRIDsim {
 		
 		logWriter.setOutputDir(outputDir);
 		logWriter.setLogPrefix("SIM");
-		
-		logWriter.log(Level.INFO, "DOES THIS WORK???!!!");		
-				
+						
 		double totalTravelTime = 0;
 				
 		// Load our version of the map first
@@ -118,7 +117,7 @@ public class GRIDsim {
 		if (theCmdLine.hasOption("config")) {
 
 			configFile = (String) theCmdLine.getOptionValue("config");
-			System.out.println("The mapfile from the cmdLine: " + configFile);
+			System.out.println("GRIDsim:simulate() The mapfile from the cmdLine: " + configFile);
 		}
 		
 		else {
@@ -126,27 +125,27 @@ public class GRIDsim {
 		}
 	        
 	    if (configFile == "") {
-	    	logWriter.log(Level.WARNING, "You didn't choose a config file!!!");
+	    	logWriter.log(Level.WARNING, "GRIDsim:simulate() You didn't choose a config file!!!");
 	    	System.exit(0);
 	    }
 	    
-	    logWriter.log(Level.INFO, "CONFIG FILE: " + configFile + " in use\n\n\n");
+	    logWriter.log(Level.INFO, "GRIDsim:simulate() CONFIG FILE: " + configFile + " in use\n\n\n");
 		
 	    if (theCmdLine.hasOption("AgtCtrl")) {
 	    	this.agentControlPercent = Integer.parseInt( theCmdLine.getOptionValue("AgtCtrl"));
 	    	
 	    	if (this.agentControlPercent < 0 || this.agentControlPercent > 100) {
-	    		logWriter.log(Level.WARNING, this.getClass().getName() + " Input error - agent control " +
+	    		logWriter.log(Level.WARNING, "GRIDsim:simulate() Input error - agent control " +
 	    	                                 "percentage out of range");
 	    		System.exit(1);
 	    	}
 	    }
 	    
-	    logWriter.log(Level.INFO, "Agent Control: " + this.agentControlPercent + " in use\n\n\n");
+	    logWriter.log(Level.INFO, "GRIDsim:simulate() Agent Control: " + this.agentControlPercent + " in use\n\n\n");
 
 	    
 	    Long startTime = System.currentTimeMillis();
-		logWriter.log(Level.INFO, "Starting SIM @" + startTime.toString());
+		logWriter.log(Level.INFO, "GRIDsim:simulate() Starting SIM @" + startTime.toString());
 
 		try {
 			Config config = new Config();
@@ -166,7 +165,7 @@ public class GRIDsim {
 			// String mapFile = GRIDutils.getConfigFile();
 			String mapFile = config.network().getInputFile();
 
-			System.out.println("File Chosen: " + mapFile);
+			System.out.println("GRIDsim:simulate() File Chosen: " + mapFile);
 			
 			// build our map from the data file
 			ourMap = masterMap.readMapFile(mapFile);
