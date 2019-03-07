@@ -89,7 +89,7 @@ public class GRIDroute implements Serializable {
 	}
 	
 	public String toString() {
-		String theRouteStr = "Route: ";
+		String theRouteStr = "";//"Route: ";
 		
 		for(GRIDrouteSegment segment:this.RouteSegments ) {
 			theRouteStr += " " + segment.toString();

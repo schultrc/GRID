@@ -16,7 +16,7 @@ public class StartToDestinationLocation
 		return start;
 	}
 	
-	public String getDectinationLocation()
+	public String getDestinationLocation()
 	{
 		return destination;
 	}

@@ -298,7 +298,7 @@ public class GRIDpathfinder {
         
         // If this is the only segment needed for the route
         if (tempSegment.getStartIntersection().equals(agentFrom)) {
-        	System.out.println("Agent " + agentID + " only has 1 leg in it's route" );
+        	//System.out.println("Agent " + agentID + " only has 1 leg in it's route" );
         	logWriter.log(Level.INFO, "GRIDpathfinder::findPath - Agent " + agentID + " only has 1 leg in it's route" );
         }
         

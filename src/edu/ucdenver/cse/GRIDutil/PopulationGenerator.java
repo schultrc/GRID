@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
+
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.network.Link;
@@ -24,19 +27,49 @@ import org.matsim.core.scenario.ScenarioUtils;
 import edu.ucdenver.cse.GRIDmap.*;
 
 public class PopulationGenerator {
+    private CommandLine theCmdLine;
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+        PopulationGenerator thePopGen = new PopulationGenerator(args);
+
+        thePopGen.generatePopulation();
+    }
+
+    public PopulationGenerator(String[] theArgs) {
+
+        PopulationGeneratorCmdLine cmdLine = new PopulationGeneratorCmdLine(theArgs);
+
+        try {
+            this.theCmdLine = cmdLine.parseArgs();
+        }
+
+        catch (ParseException e) {
+            System.out.println("This is bad: " + e.toString());
+        }
+    }
+
+    private void generatePopulation() {
 
 		// Load the map that we are generating FROM
 		GRIDmap myMap;
 		// Load our version of the map first
 		GRIDmapReader masterMap = new GRIDmapReader();
-		
-		String mapFile = FileUtils.getXmlFile();
+
+		// this is the city map file for the sim
+		String mapFile;
+
+		if(theCmdLine.hasOption("mapfile")) {
+			mapFile = (String) theCmdLine.getOptionValue("mapfile");
+		}
+
+		else{
+			mapFile = FileUtils.getXmlFile();
+
+		}
+
 		myMap = masterMap.readMapFile(mapFile);
 		
-		//Drivers distribution on road
+		// Drivers distribution on road
 		// Define hour here so we can change the range of hours used
 		double [] hour = {2.33, 2.33, 2.33, 2.33, 2.33, 2.33, 3.68, 6.00, 7.68, 6.68, 5.33, 4.33, 4.00, 3.68, 4.33, 5.68, 7.33, 5.63, 5.00, 4.68, 4.00, 3.33, 2.33, 2.33};
 		DriversDistributionOnRoad distribution = new DriversDistributionOnRoad(hour);
@@ -92,14 +125,14 @@ public class PopulationGenerator {
         }
         else if (randomize_type == 2)//full randomization
         {
-        	
+        	System.out.println("this is a test");
             work_area = "./data/DenverNetwork.xml"; //home and work area should be the same
             home_area = work_area;
             trips = rndLoc.generateHomeToWorkLocations(work_area, home_area, drivers, randomize_type);
         }
         else
         {
-            System.out.println("Please chose:\n1 for outside to downtown population generation,\n2 for full randomization");
+            System.out.println("Please choose:\n1 for outside to downtown population generation,\n2 for full randomization");
             
         }       
         
@@ -127,13 +160,13 @@ public class PopulationGenerator {
 			
 			
 			Id<Link> homeLinkId = Id.createLinkId(trips.get(idSeed).getStartLocation());
+
 			Activity activity1 = populationFactory.createActivityFromLinkId("h", homeLinkId);
-
 			activity1.setEndTime(times.get(idSeed)%86400);
-
 			plan.addActivity(activity1);
 			plan.addLeg(populationFactory.createLeg("car"));
-			Id<Link> workLinkId = Id.createLinkId(trips.get(idSeed).getDectinationLocation());
+
+			Id<Link> workLinkId = Id.createLinkId(trips.get(idSeed).getDestinationLocation());
 
 			Activity activity2 = populationFactory.createActivityFromLinkId("w", workLinkId);
 			activity2.setEndTime((times.get(idSeed)+distribution.generateRandom(0, 28800, rnd))%86400);
@@ -141,14 +174,24 @@ public class PopulationGenerator {
 			plan.addLeg(populationFactory.createLeg("car"));
 
 			Activity activity3 = populationFactory.createActivityFromLinkId("h", homeLinkId);
-			activity3.setEndTime((activity2.getEndTime()+distribution.generateRandom(0, 28800, rnd))%86400);
+			//activity3.setEndTime((activity2.getEndTime()+distribution.generateRandom(0, 28800, rnd))%86400);
 			plan.addActivity(activity3);
 			plan.addLeg(populationFactory.createLeg("car"));
 		}
 
 		MatsimWriter popWriter = new PopulationWriter(population, network);
-				
-		String popFileName = FileUtils.chooseFile();
+
+		// this is the output file for the population XML file
+		String popFileName;
+
+		if(theCmdLine.hasOption("popfile")) {
+			popFileName = (String) theCmdLine.getOptionValue("popfile");
+		}
+
+		else{
+			popFileName = FileUtils.chooseFile();
+		}
+
 		//String popFileName = "./data/tempPopulation.xml";
 		
 		if (popFileName != "") {
