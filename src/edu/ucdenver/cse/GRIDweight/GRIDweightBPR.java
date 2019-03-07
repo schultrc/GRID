@@ -6,11 +6,12 @@ import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
 import edu.ucdenver.cse.GRIDmap.GRIDroad;
 
-public class GRIDweightTimeAvg implements GRIDweight{
+// Based on the Franke-Wolfe algorithm (1956)
 
+public class GRIDweightBPR implements GRIDweight{
 	final GRIDmap theMap;
     
-	public GRIDweightTimeAvg(GRIDmap map) {
+	public GRIDweightBPR(GRIDmap map) {
 		this.theMap = map;
 	}
 
@@ -35,20 +36,18 @@ public class GRIDweightTimeAvg implements GRIDweight{
     	long travelTime = (long) (road.getLength()/currentSpeed);
     	
     	double vehOnRoad = road.getAvgVehicleCount(startTime, (startTime + travelTime));
-        
-    	//if(vehOnRoad <= (road.getMaxCapacity() / 2)) {
-        if(vehOnRoad <= (road.getMaxCapacity() / 1.25)) {
-
-        	//logWriter.log(Level.INFO, "GRIDweightTimeAvg: returning default weight for road: " + road.getId() +
-        	//                          " vehOnRoad was: " + vehOnRoad);
-            return (road.getLength()/currentSpeed);
-        }
-        else {
-        	//logWriter.log(Level.INFO, "GRIDweightTimeAvg: returning mod weight for " + road.getId() + 
-        	//		                  " vehOnRoad was: " + vehOnRoad +
-        	//		                  " road max cap was: " + road.getMaxCapacity());
-
-            return (road.getLength()/(currentSpeed) * 1.1);
-        }
+    	
+    	double maxCapacity = road.getMaxCapacity();
+          
+    	double curCapacity;
+    	double curCapQuart;
+    	
+    	curCapacity = vehOnRoad / maxCapacity;
+    	
+    	curCapQuart = Math.pow(curCapacity, 4);
+    	    	
+    	double congestion = (travelTime * (1 + 0.15 * curCapQuart));
+    	
+    	return congestion;
 	}
 }

@@ -147,7 +147,7 @@ public class GRIDroad {
 		
 		removeOldTraffic(time);
 		
-		logWriter.log(Level.INFO,  " size of roads went from: " +
+		logWriter.log(Level.FINEST,  " size of roads went from: " +
 				 size + " to: " + this.newVehiclesOnRoadAtTime.size() + " at time: " + time +
 				 " on road: " + this.Id);
 	}

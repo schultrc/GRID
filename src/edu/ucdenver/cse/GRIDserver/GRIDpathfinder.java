@@ -35,7 +35,7 @@ public class GRIDpathfinder {
 
     private GRIDweight theWeighter;
 
-    public GRIDpathfinder(GRIDmap theMap) {
+    public GRIDpathfinder(GRIDmap theMap, String weightType) {
     	this.ourMap = theMap;
     	
     	// RCS change to init the directed graph. MOVE TO INIT FUNCTION???
@@ -47,8 +47,14 @@ public class GRIDpathfinder {
     	visitedIntersections = new Vector<String>(theMap.getIntersectionIDs().size());
         routeSegments = new ConcurrentHashMap<String, GRIDrouteSegment>();
 
-        // This is the class to change in order to use different weighting schemes
-        theWeighter = new GRIDweightTimeAvg(ourMap);
+        if (weightType.equalsIgnoreCase("BPR")) {
+        	theWeighter = new GRIDweightBPR(ourMap);
+        }
+        
+        else {
+        	// If no valid weighting class is selected, use the default:
+        	theWeighter = new GRIDweightTimeAvg(ourMap);
+        }
         
         // This is where we change WHICH weighting scheme we are using. There has to be a better
         // way to change it other than hard coding
