@@ -14,14 +14,14 @@ import org.junit.Test;
 
 public class GRIDtestRunner{
 
-	static logWriter testLW;
-	
+    static logWriter testLW;
+
     private GRIDmapReader myReader = new GRIDmapReader();
-    // SmallNetwork2 PuebloNetwork 5x5network RyeNetwork
-    private GRIDmap myMap = myReader.readMapFile("data/PuebloNetwork.xml");
+    // SmallNetwork2 PuebloNetwork 5x5network RyeNetwork 5x5network_12cap
+    private GRIDmap myMap = new GRIDmap();//myReader.readMapFile("data/5x5network_12cap.xml");
     //private GRIDmap networkMap = graphMiddleware(myMap);
-    
-    private GRIDagent testAgent001 = getTestAgent();
+
+    private GRIDagent testAgent001;// = getTestAgent();
     //private GRIDintersection from = new GRIDintersection("test",1d,2d);
     //private GRIDintersection to = new GRIDintersection("test",1d,2d);
 
@@ -29,27 +29,32 @@ public class GRIDtestRunner{
     public void runTest()
     { // Pueblo start to finish 34.97s
 
-        
+
+        this.myMap = myReader.readMapFile("data/AlamosaNetwork.xml");
+        myMap.setupMapAsServer();
+        this.testAgent001 = getTestAgent();
+
+        //System.out.println("Intersections2: "+myMap.getIntersections());
 
         testLW.log(Level.INFO, "this is another nother test");
 
-	    System.out.println("\nStarting test. . .");
+        System.out.println("\nStarting test. . .");
         // Pueblo start to finish 34.97s
         // from.setId("1040921516"); // from.setId("01"); // 1040921516 // 2
         // to.setId("864162469");   // to.setId("10"); // 864162469 // 50
-    	Long startTime = System.nanoTime();
+        Long startTime = System.nanoTime();
 
         //GRIDheapAlg greedy = new GRIDheapAlg();
-    	GRIDpathfinder theALG = new GRIDpathfinder(myMap, "BPR");
+        GRIDpathfinder theALG = new GRIDpathfinder(myMap, "BPR");
         //GRIDheapDynamicAlg dyna = new GRIDheapDynamicAlg(myMap); //
         //myPathGreedy = greedy.shortestPath(networkMap,"1040921516","864162469");
 
         //GRIDselfishAlg test001 = new GRIDselfishAlg(testAgent001, networkMap, 0L); // GRIDpathrecalc GRIDselfishAlg
         //GRIDpathrecalc test001 = new GRIDpathrecalc(testAgent001, networkMap, 0L); // GRIDpathrecalc GRIDselfishAlg
-        GRIDroute outRoute = new GRIDroute();
+        //GRIDroute outRoute = new GRIDroute();
         /*GRIDpathrecalc test001 = new GRIDpathrecalc(testAgent001, networkMap, 0L); // GRIDpathrecalc GRIDselfishAlg
         outRoute = test001.findPath();*/
-        outRoute = theALG.findPath(testAgent001, 0L);
+        GRIDroute outRoute = theALG.findPath(testAgent001, 0L);
 
         //ListIterator<String> pathIterator = outRoute.Intersections.listIterator();
 
@@ -67,8 +72,8 @@ public class GRIDtestRunner{
         //    if(!intrx.equals(testAgent001.getDestination()))
         //        System.out.print(",");
         //}
-        
-	    //ArrayList<String> tempPathList  = myMap.getPathByRoad(outRoute.getIntersections());
+
+        //ArrayList<String> tempPathList  = myMap.getPathByRoad(outRoute.getIntersections());
 
         //System.out.print("\n\nPath by Link:\n");
         //for (String path : tempPathList)
@@ -77,15 +82,23 @@ public class GRIDtestRunner{
         //    if(!tempPathList.isEmpty()
         //       && !path.equals(tempPathList.get(tempPathList.size() - 1)))
         //        System.out.print(",");
-       // }
+        // }
 
-        logWriter.log(Level.INFO, "Route is: " + outRoute.toString());
-        
-        System.out.println("\n\nCalculated Travel Time: "+outRoute.getcalculatedTravelTime());
+        if(outRoute.getAgent_ID() != "Destination unreachable"){
+            logWriter.log(Level.INFO, "Route is: " + outRoute.toString());
+
+            System.out.println("Route is: " + testAgent001.getOrigin() + outRoute.toString()
+                    +" "+testAgent001.getDestination());
+
+            System.out.println("\n\nCalculated Travel Time: "+outRoute.getcalculatedTravelTime());
+        }
+        else{
+            System.out.println("Destination Unreachable");
+        }
 
         long stopTime = System.nanoTime();
         long timeToRun = ((stopTime - startTime)/1000000);
-        
+
         System.out.print("\nTook " + timeToRun/1000.0 + " Seconds");
         System.out.print("\n\nAnd we're done.\n");
     }
@@ -93,9 +106,9 @@ public class GRIDtestRunner{
     private GRIDagent getTestAgent()
     { // String Id, String newLink, String origin, String destination
         String agtID = "testAgent001",
-                currentLink = "106292026_0", // 40963664_0 106292026_0
-                currentIntrx = "1040921516", // 1040921516 // 2
-                destIntrx = "72823276_0";
+                currentLink = "401538273_2_r", // 40963664_0 106292026_0 1to2 17005466_7_r
+                currentIntrx = "401538273_2_r", // 1040921516 // 1to2
+                destIntrx = "17005466_7_r"; // 72823276_0 99to99 24to25 401538273_2_r
         // 864162469 - 1400447055 99282649_0_r [72823276_0 problem link]
 
         GRIDagent myAgent = new GRIDagent(agtID,currentLink,currentIntrx,destIntrx, false, false);
