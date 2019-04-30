@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.logging.Level;
 
-import edu.ucdenver.cse.GRIDcommon.GRIDroute;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmessages.*;
 
@@ -33,8 +32,6 @@ public class GRIDrequestSender {
 			// Send the route request
 			outputStream.writeObject(theRequest);
 			outputStream.flush();
-
-			//System.out.println("request sent");
 
 			if (theRequest instanceof GRIDrouteRequest) {
 				// Get the new route back

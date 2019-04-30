@@ -24,6 +24,5 @@ public class StartToDestinationLocation
 	public String toString()
 	{
 		return "FROM: " + start.toString() + "       TO: " + destination.toString();
-	}
-	
+	}	
 }

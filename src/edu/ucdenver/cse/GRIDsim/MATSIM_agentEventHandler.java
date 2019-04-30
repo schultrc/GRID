@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
 import org.matsim.api.core.v01.events.LinkEnterEvent;
-
 import org.matsim.api.core.v01.events.LinkLeaveEvent;
 import org.matsim.api.core.v01.events.PersonArrivalEvent;
 import org.matsim.api.core.v01.events.PersonDepartureEvent;
@@ -14,6 +13,7 @@ import org.matsim.api.core.v01.events.handler.LinkEnterEventHandler;
 import org.matsim.api.core.v01.events.handler.LinkLeaveEventHandler;
 import org.matsim.api.core.v01.events.handler.PersonArrivalEventHandler;
 import org.matsim.api.core.v01.events.handler.PersonDepartureEventHandler;
+
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
@@ -77,27 +77,7 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 	@SuppressWarnings("deprecation")
 	@Override
 	public void handleEvent(LinkEnterEvent event) {
-		
-		// RCS Here we should alert via msg that we have entered a new link (road)
-		
-		// If an agent enters a link, it will be there for the duration of:
-		// length / current speed
-		
-		//double timeToTransit = (ourMap.getRoad(event.getLinkId().toString()).getLength() /
-		//		                ourMap.getRoad(event.getLinkId().toString()).getCurrentSpeed());
-        
-		//System.out.println("Time to transit link: " + event.getLinkId().toString() +
-		//		           " is currently: " + timeToTransit);
-		
-		// So, from now (sim now) until sim now + timeToTransit, this Agent will be on this link
-		// lets add to the weight of this link so we know this road is busier
-		
-		//for (int i = 0; i < timeToTransit; ++i) {
-		//	ourMap.getRoad(event.getLinkId().toString()).addToWeight((long) (event.getTime() + i));
-			//System.out.println("adding to link: " + event.getLinkId() +
-			//		           " at time: " + (event.getTime() + i) );
-					
-		//}
+			
 		// Tell our agent where it is
 		ourAgents.get(event.getPersonId().toString()).setLink(event.getLinkId().toString());
 	}
@@ -133,13 +113,6 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 			double departureTime = tempAgent.getDepartureTime();			
 			double travelTime = event.getTime() - departureTime;
 
-			//System.out.println("Agent: " + tempAgent.getId() +
-			//		           " took: " + travelTime +
-			//		           " seconds to arrive at: " +
-			//		           event.getLinkId() + " from: " +
-			//		           tempAgent.getOrigin()
-			//		           );
-			
 			totalTravelTime += travelTime;
 			ourAgents.remove(event.getPersonId().toString());
 			
@@ -171,15 +144,9 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 		else {
 			simFlag = false;
 		}
-			
-		//simFlag = true;
-		//simFlag = false;
 		
 		logWriter.log(Level.INFO, this.getClass().getName() + " setting simFlag to: " +
 		                          simFlag + " for agent: " + theId);
-		
-		//String theOriginIntersection = ourMap.getRoad(event.getLinkId().toString()).getFrom();
-		
 		
 		GRIDagent newAgent = new GRIDagent(event.getPersonId().toString(),
 										   event.getLinkId().toString(),
@@ -192,14 +159,3 @@ public class MATSIM_agentEventHandler implements LinkEnterEventHandler, LinkLeav
 	}
 }
 
-
-
-/*System.out.println("Agent: " + event.getPersonId().toString() +
-" departed on link: " + event.getLegMode().toString() +
-" at time: " + event.getTime() );
-
-for(String theattr:event.getAttributes().keySet() ) {
-System.out.println("Attr: " + theattr +
-    " has value: " + event.getAttributes().get(theattr));
-
-}*/

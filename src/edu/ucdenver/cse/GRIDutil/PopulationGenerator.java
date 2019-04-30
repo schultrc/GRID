@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
+
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.network.Link;
@@ -24,16 +27,32 @@ import org.matsim.core.scenario.ScenarioUtils;
 import edu.ucdenver.cse.GRIDmap.*;
 
 public class PopulationGenerator {
-
+	private static CommandLine theCmdLine;
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 		// Load the map that we are generating FROM
 		GRIDmap myMap;
+		String mapFile;
+		
 		// Load our version of the map first
 		GRIDmapReader masterMap = new GRIDmapReader();
 		
-		String mapFile = FileUtils.getXmlFile();
+		GRIDPopGenCmdLine GRIDpopCmdLine = new GRIDPopGenCmdLine(args);
+		try {
+			theCmdLine = GRIDpopCmdLine.parseArgs();
+		}
+
+		catch (ParseException e) {
+			System.out.println("GRIDPopGen: This is bad: " + e.toString());
+		}
+		
+		if (theCmdLine.hasOption("mapFile")) {
+			mapFile = theCmdLine.getOptionValue("mapFile");
+		} else {
+			mapFile = FileUtils.getMapFile();		}
+		
 		myMap = masterMap.readMapFile(mapFile);
 		
 		//Drivers distribution on road
@@ -44,24 +63,26 @@ public class PopulationGenerator {
 		int range = 1;
 		int drivers = 0;
 
-		System.out.print("Enter the number of Agents: ");
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-		try {
-			drivers = Integer.parseInt(br.readLine());
+		if (theCmdLine.hasOption("agentCount")) {
+			drivers = Integer.parseInt(theCmdLine.getOptionValue("agentCount"));
+		} else {
+			try {
+				System.out.print("Enter the number of Agents: ");
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				drivers = Integer.parseInt(br.readLine());
+			}
+			catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.exit(1);
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.exit(1);
+			}
 		}
-		catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
-
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
-		}
-
+		
 		System.out.println("Using: " + drivers + " drivers");
 
 		double [] drivers_on_road_hourly = distribution.calculateDistribution(drivers, range);
@@ -69,13 +90,7 @@ public class PopulationGenerator {
 		drivers = times.size();
 
 		//=========================Smart randomizing location=========================
-		
-		// Get all the links from a file
-		
-		// this is the OLD way
-		//ParseLink pn = new ParseLink();
-		
-		// randomize these
+
 		RandomizeLocation rndLoc = new RandomizeLocation(myMap);
 		
         int randomize_type = 2;//1 or 2
@@ -124,8 +139,7 @@ public class PopulationGenerator {
 			person.addPlan(plan);
 
 			population.addPerson(person);
-			
-			
+						
 			Id<Link> homeLinkId = Id.createLinkId(trips.get(idSeed).getStartLocation());
 			Activity activity1 = populationFactory.createActivityFromLinkId("h", homeLinkId);
 
@@ -141,16 +155,21 @@ public class PopulationGenerator {
 			plan.addLeg(populationFactory.createLeg("car"));
 
 			Activity activity3 = populationFactory.createActivityFromLinkId("h", homeLinkId);
-			activity3.setEndTime((activity2.getEndTime()+distribution.generateRandom(0, 28800, rnd))%86400);
+			// If the following is commented out, the agent will not leave the 2nd destination, I.E. it's "home"
+			//activity3.setEndTime((activity2.getEndTime()+distribution.generateRandom(0, 28800, rnd))%86400);
 			plan.addActivity(activity3);
 			plan.addLeg(populationFactory.createLeg("car"));
 		}
 
 		MatsimWriter popWriter = new PopulationWriter(population, network);
 				
-		String popFileName = FileUtils.chooseFile();
-		//String popFileName = "./data/tempPopulation.xml";
+		String popFileName;
 		
+		if (theCmdLine.hasOption("output")) {
+			popFileName = theCmdLine.getOptionValue("output");
+		} else {
+			popFileName = FileUtils.chooseFile();
+		}
 		if (popFileName != "") {
 			popWriter.write(popFileName);
 		}

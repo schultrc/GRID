@@ -2,15 +2,10 @@ package edu.ucdenver.cse.GRIDmessages;
 
 import java.io.Serializable;
 
-import edu.ucdenver.cse.GRIDclient.GRIDrequest;
-
-
 public class GRIDtimeMsg  implements GRIDrequest, Serializable {
 	/**
 	 * 
-	 */
-	
-	
+	 */	
 	private static final long serialVersionUID = 1L;
 	
 	private Long theTime;

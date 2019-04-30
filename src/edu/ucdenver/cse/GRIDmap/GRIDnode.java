@@ -1,6 +1,5 @@
 package edu.ucdenver.cse.GRIDmap;
 
-
 public class GRIDnode {
     private double nodeWeightTotal;
     private long nodeTimeTotal;

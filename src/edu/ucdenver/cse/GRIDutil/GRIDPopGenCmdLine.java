@@ -1,20 +1,24 @@
-package edu.ucdenver.cse.GRIDsim;
+package edu.ucdenver.cse.GRIDutil;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
-public class GRIDsimCmdLine {
-	
+public class GRIDPopGenCmdLine {
 	private String[] theArgs;
 	private final Options theOptions;
 	
-	public GRIDsimCmdLine(String[] args) {
+	public GRIDPopGenCmdLine(String[] args) {
 		this.theArgs = args;
 		this.theOptions = new Options();
 	
-		final Option mapOption = Option.builder("config")
-				                       .argName("config file")
+		final Option mapOption = Option.builder("mapFile")
+				                       .argName("map file")
 				                       .hasArg(true).required(false)
-				                       .desc("MATSIM config file")
+				                       .desc("MATSIM Map file")
 				                       .build();
 
 		this.theOptions.addOption(mapOption);
@@ -37,22 +41,22 @@ public class GRIDsimCmdLine {
 		this.theOptions.addOption(ipOption);	
 	
 		final Option outputDir = Option.builder("output")
-                					   .argName("Output Directory")
+                					   .argName("Output File Name")
                 					   .hasArg(true)
                 					   .required(false)
-                					   .desc("Output Directory")
+                					   .desc("Output File Name")
                 					   .build();
 		
 		this.theOptions.addOption(outputDir);
 		
-		final Option agentCtrl = Option.builder("AgtCtrl")
-									   .argName("Agent Control Percent")
+		final Option agentCountOpt = Option.builder("agentCount")
+									   .argName("Agent Count")
 									   .hasArg(true)
 									   .required(false)
-									   .desc("Agent Control Percent")
+									   .desc("Agent Count")
 									   .build();
 		
-		this.theOptions.addOption(agentCtrl);
+		this.theOptions.addOption(agentCountOpt);
 	}
 	
 	public CommandLine parseArgs() throws ParseException{

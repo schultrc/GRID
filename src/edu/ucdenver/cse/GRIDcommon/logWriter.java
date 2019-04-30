@@ -1,6 +1,5 @@
 package edu.ucdenver.cse.GRIDcommon;
 
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -119,7 +118,6 @@ public class logWriter {
 		
 		finally {
 			System.out.println("We are done");
-		}
-		
+		}	
 	}
 }

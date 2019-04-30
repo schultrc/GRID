@@ -1,10 +1,3 @@
-/**
- * 
- */
-/**
- * @author Ray
- *
- */
 package edu.ucdenver.cse.GRIDsim;
 
 import java.io.IOException;
@@ -39,12 +32,12 @@ import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripRouterProviderImpl;
 import com.google.inject.Provider;
 
-import edu.ucdenver.cse.GRIDclient.GRIDrequest;
 import edu.ucdenver.cse.GRIDclient.GRIDrequestSender;
 import edu.ucdenver.cse.GRIDcommon.GRIDagent;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
 import edu.ucdenver.cse.GRIDmap.GRIDmapReader;
 import edu.ucdenver.cse.GRIDmessages.GRIDServerTerm;
+import edu.ucdenver.cse.GRIDmessages.GRIDrequest;
 import edu.ucdenver.cse.GRIDutil.FileUtils;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 
@@ -56,7 +49,7 @@ public class GRIDsim {
 	final Queue<String> agentsToReplan;
 	private int agentControlPercent;
 	
-	// The official map
+	// The master map
 	private GRIDmap ourMap;
 
 	public static void main(String[] args) {
@@ -89,7 +82,7 @@ public class GRIDsim {
 	
 	private void simulate() {
 		
-		/* This is the primary simulation. It will run the sim (currently matsim) making requests of the 
+		/* This is the primary simulation. It will run the sim (currently MATsim) making requests of the 
 		 * GRIDserver as needed to determine routes
 		 */	
 		System.out.println("It's not hard--you just gotta use finesse!");
@@ -169,7 +162,6 @@ public class GRIDsim {
 			
 			// build our map from the data file
 			ourMap = masterMap.readMapFile(mapFile);
-			//ourMap.initMap();
 
 			// From WithinDayReplanning
 			Set<String> analyzedModes = new HashSet<String>();
@@ -185,8 +177,7 @@ public class GRIDsim {
 			theAgentHandler.setAgentsToReplan(agentsToReplan);
 			
 			controler.getEvents().addHandler(theAgentHandler);
-			
-			
+						
 			// Add listeners for the sim steps
 			controler.addOverridingModule(new AbstractModule() {
 				
@@ -224,7 +215,6 @@ public class GRIDsim {
 			// Everything is set up, let's run this thing
 			controler.run();
 			
-			//System.out.println("Total travel time was: " + theAgentHandler.getTotalTravelTime());
 			totalTravelTime = theAgentHandler.getTotalTravelTime();
 		}
 		

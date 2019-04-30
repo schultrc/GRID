@@ -1,9 +1,5 @@
 package edu.ucdenver.cse.GRIDmap;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,8 +14,6 @@ public class GRIDroad {
 	// If there are no cars, the weight should be 0
 	 private static final Double ourDefaultValue = (double) 0;
 
-	//private static final Double MAX_WEIGHT = 2000000.0;
-
 	private String Id = "";
 	private String to = "";
 	private String from = "";
@@ -33,7 +27,6 @@ public class GRIDroad {
 	// Defined in km/hr
 	private double currentSpeed;
 
-	// RCS is this miliseconds or seconds?????
 	// Use a long as the key, which represents miliseconds since midnight,
 	// January 1, 1970
 	
@@ -125,20 +118,6 @@ public class GRIDroad {
 		this.currentSpeed = currentSpeed;
 	}
 
-	// RCS remove
-	// Not currently used
-	// public void calcCurrentSpeed(Long intervalStartTime) {
-	// double carLengths = 0.0,
-	// speedModifier = 1.0;
-
-	// carLengths = this.getAvgVehicleCount(intervalStartTime)*4.5;
-	// speedModifier = carLengths/this.getLength();
-
-	// if(speedModifier > 0.8) {
-	// this.currentSpeed = this.currentSpeed/3.0;
-	// }
-	// }
-
 	public void removeAgentsFromRoadAtTime(long time) {
 
 		long size = this.newVehiclesOnRoadAtTime.size();
@@ -152,7 +131,7 @@ public class GRIDroad {
 				 " on road: " + this.Id);
 	}
 
-	// RCS is there a better, batch type way of doing this?
+	// is there a better, batch type way of doing this?
 	public void addAgentsToRoadAtTime(long time) {
 
 		if (this.newVehiclesOnRoadAtTime.containsKey(time)) {
@@ -163,32 +142,18 @@ public class GRIDroad {
 		else {
 			this.newVehiclesOnRoadAtTime.put(time, ourDefaultValue + 1);
 		}
-		
-		//System.out.println("value of road: " + this.Id + " at time: " + time + "changed to: " + this.newVehiclesOnRoadAtTime.get(time));
 	}
 	
-
 	public void subFromWeight(long time) {
 		// If there is already an offset, add to it
 		if (this.newVehiclesOnRoadAtTime.containsKey(time)) {
 			this.newVehiclesOnRoadAtTime.replace(time, ((this.newVehiclesOnRoadAtTime.get(time) == 0) ? 0 : this.newVehiclesOnRoadAtTime.get(time) -1));
 		}
-		//if (this.vehiclesCurrentlyOnRoadAtTime.containsKey(time)) {
-		//	this.vehiclesCurrentlyOnRoadAtTime.replace(time, (this.vehiclesCurrentlyOnRoadAtTime.get(time) + 1));
+
 		else {
 			this.newVehiclesOnRoadAtTime.put(time, ourDefaultValue);
 		}
-		
-		//if (this.vehiclesCurrentlyOnRoadAtTime.containsKey(time)) {
-		//	this.vehiclesCurrentlyOnRoadAtTime.replace(time, (this.vehiclesCurrentlyOnRoadAtTime.get(time) - 1));
-		//	if (this.vehiclesCurrentlyOnRoadAtTime.get(time) < 0) {
-		//		this.vehiclesCurrentlyOnRoadAtTime.replace(time, 0.0);
-		//	}
-		//} else {
-		//	this.vehiclesCurrentlyOnRoadAtTime.put(time, 0.0);
-		//}
 	}
-
 
 	// Returns the average number of vehicles on this road between the 2 times provided
 	// Currently adjusted to a per hour rate
@@ -242,21 +207,5 @@ public class GRIDroad {
 		else {
 			this.newVehiclesOnRoadAtTime = new TreeMap<Long, Double>();
 		}
-		
-		// This method will create a new hashmap for the traffic, copy over only traffic in the future
-		// and replace the existing vehiclesOnRoad map
-		
-	//	ConcurrentHashMap<Long, Double> futureMap = new ConcurrentHashMap<Long, Double>();
-		
-		//Set<Long> activeTimes = new Set<long>(this.vehiclesCurrentlyOnRoadAtTime.keySet());
-
-		//List<Long> sortedActiveTimes = new ArrayList<Long>();
-		//for (long key : activeTimes) {
-			//sortedActiveTimes.add(key);
-		//}
-		
-	//	Collections.sort(sortedActiveTimes);
-		
-	}
-	
+	}	
 }

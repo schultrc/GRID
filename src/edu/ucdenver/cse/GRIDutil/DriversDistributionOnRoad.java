@@ -1,4 +1,5 @@
 package edu.ucdenver.cse.GRIDutil;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -97,9 +98,7 @@ public class DriversDistributionOnRoad
 	{		
 		return rnd.nextInt(max - min + 1) + min; 
 	}
-	
-	
-	
+		
 	// Test stub
 	public static void main(String[] args) 
 	{
@@ -114,13 +113,5 @@ public class DriversDistributionOnRoad
 		System.out.println(times);
 		System.out.println(times.size());
 		System.out.println("Sum: " + d.sum(drivers_on_road_hourly));
-//		
-//		if(range == 1)
-//			for(int i=0; i<drivers_on_road_hourly.length; i++)
-//				System.out.println("Hour: "+ i + " Drivers: " + drivers_on_road_hourly[i]);
-//		else
-//			for(int i=0; i<drivers_on_road_hourly.length; i++)
-//				System.out.println("Interval: "+ (i*range)+"-"+ (i+1)*range + " Drivers: " + drivers_on_road_hourly[i]);
 	}
-
 }

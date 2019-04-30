@@ -1,7 +1,6 @@
 package edu.ucdenver.cse.GRIDcommon;
 
 import java.util.ArrayList;
-//import java.util.Collections;
 import java.io.Serializable;
 
 public class GRIDroute implements Serializable {	

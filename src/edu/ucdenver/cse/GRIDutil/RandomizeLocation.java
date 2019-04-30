@@ -51,35 +51,17 @@ public class RandomizeLocation
 	/**
 	 * removes the work area nodes from the home area nodes, and returns home area nodes
 	 * */
-	private static ArrayList<String> clearWorkNodesFromHomeNodes(ArrayList<String> work_links, ArrayList<String> home_links)
+	private static ArrayList<String> clearWorkNodesFromHomeNodes(ArrayList<String> work_links, ArrayList<String> home_links) {
+		for(int i=0; i<work_links.size(); i++)
 		{
-			for(int i=0; i<work_links.size(); i++)
+			for(int j=0; j<home_links.size(); j++)
 			{
-				for(int j=0; j<home_links.size(); j++)
+				if(work_links.get(i).equals(home_links.get(j)))
 				{
-					if(work_links.get(i).equals(home_links.get(j)))
-					{
-						home_links.remove(work_links.get(i));
-					}
+					home_links.remove(work_links.get(i));
 				}
-			}		
-			return home_links;
-		}
-	
-	
-//	public static void main(String[] args) 
-//	{
-//		ParseLink pn = new ParseLink();
-//		RandomizeLocation rndLoc = new RandomizeLocation(pn);
-//		String work_area = "./data/PubloDowntownLinks.txt";
-//		String home_area = "./data/PuebloLinks.txt";
-//		ArrayList<StartToDestinationLocation> trips = rndLoc.generateHomeToWorkLocations(work_area, home_area, 100);
-//		for(int i=0; i<trips.size(); i++)
-//		{
-//			System.out.println(trips.get(i).toString());
-//		}
-//		
-//	}
-	
-	
+			}
+		}		
+		return home_links;
+	}
 }

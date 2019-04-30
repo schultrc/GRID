@@ -14,6 +14,7 @@ import org.apache.commons.cli.ParseException;
 import edu.ucdenver.cse.GRIDcommon.*;
 import edu.ucdenver.cse.GRIDmap.GRIDmap;
 import edu.ucdenver.cse.GRIDmap.GRIDmapReader;
+import edu.ucdenver.cse.GRIDmessages.GRIDrequest;
 import edu.ucdenver.cse.GRIDmessages.GRIDrouteRequest;
 import edu.ucdenver.cse.GRIDmessages.GRIDtimeMsg;
 import edu.ucdenver.cse.GRIDutil.FileUtils;
@@ -48,11 +49,9 @@ public class GRIDclientTest extends Thread {
 		// Get the logger. Since this "should" be the first time, we can set the path
 		
 		logWriter.setOutputDir(outputDir);
-		logWriter.log(Level.INFO, "DOES THIS WORK???!!!");
-
 		
 		if (theCmdLine.hasOption("map")) {
-			System.out.print("We found the mapfile?");
+			System.out.print("We found the mapfile");
 
 			ourMapFile = (String) theCmdLine.getOptionValue("map");
 			System.out.println("The mapfile from the cmdLine: " + ourMapFile);
@@ -141,7 +140,7 @@ public class GRIDclientTest extends Thread {
 		if ((Files.exists(outputDir, LinkOption.NOFOLLOW_LINKS))) {
 
 			if (Files.isDirectory(outputDir)) {
-				// Do we want to clear it at this point? Add a cmd line flag
+
 			}
 		}
 

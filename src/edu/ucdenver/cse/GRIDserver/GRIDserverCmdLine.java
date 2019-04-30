@@ -2,7 +2,6 @@ package edu.ucdenver.cse.GRIDserver;
 
 import org.apache.commons.cli.*;
 
-
 public class GRIDserverCmdLine {
 
 	private String[] theArgs;
@@ -74,6 +73,5 @@ public class GRIDserverCmdLine {
 		}
 
 		return cmd;
-	
 	}
 }
