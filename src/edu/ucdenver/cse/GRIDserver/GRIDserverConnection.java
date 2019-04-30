@@ -4,4 +4,4 @@ public interface GRIDserverConnection {
 
 	void run();
 	
-	}
+}

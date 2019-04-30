@@ -5,11 +5,6 @@ import java.io.Serializable;
 import edu.ucdenver.cse.GRIDcommon.logWriter;
 
 /* routeSegments are the individual pieces that make up a route. 
- * 
- * RCS DEFINE PARAMETERS AND PURPOSE
- * 
- * 
- * 
  */
 
 public class GRIDrouteSegment implements Serializable{
@@ -48,9 +43,7 @@ public class GRIDrouteSegment implements Serializable{
 
 	public void setEndIntersection(String endIntersection) {
 		this.endIntersection = endIntersection;
-	}
-
-	
+	}	
 
     // Default constructor
     public GRIDrouteSegment() {

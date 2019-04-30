@@ -5,8 +5,6 @@ import org.xml.sax.*;
 
 import edu.ucdenver.cse.GRIDutil.FileUtils;
 
-import javax.xml.parsers.SAXParserFactory;
-
 public class GRIDmapReader {
 
 	public GRIDmap readMapFile(String mapFile){
@@ -20,7 +18,8 @@ public class GRIDmapReader {
 	         SAXParser saxParser = factory.newSAXParser();
 	         
 	         XMLReader xmlreader = saxParser.getXMLReader();
-	         	         
+	         
+	         // Change this to use a different map input type
 	         GRIDmapParser GMP = new GRIDmapParser();
 	         xmlreader.setContentHandler(GMP);
 	      

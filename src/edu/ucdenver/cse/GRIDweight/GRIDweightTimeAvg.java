@@ -38,16 +38,9 @@ public class GRIDweightTimeAvg implements GRIDweight{
         
     	//if(vehOnRoad <= (road.getMaxCapacity() / 2)) {
         if(vehOnRoad <= (road.getMaxCapacity() / 1.25)) {
-
-        	//logWriter.log(Level.INFO, "GRIDweightTimeAvg: returning default weight for road: " + road.getId() +
-        	//                          " vehOnRoad was: " + vehOnRoad);
             return (road.getLength()/currentSpeed);
         }
         else {
-        	//logWriter.log(Level.INFO, "GRIDweightTimeAvg: returning mod weight for " + road.getId() + 
-        	//		                  " vehOnRoad was: " + vehOnRoad +
-        	//		                  " road max cap was: " + road.getMaxCapacity());
-
             return (road.getLength()/(currentSpeed) * 1.1);
         }
 	}

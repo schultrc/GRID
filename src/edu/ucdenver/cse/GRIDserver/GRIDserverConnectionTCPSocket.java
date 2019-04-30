@@ -1,7 +1,6 @@
 package edu.ucdenver.cse.GRIDserver;
 
 import java.io.IOException;
-
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -35,7 +34,7 @@ public final class GRIDserverConnectionTCPSocket implements GRIDserverConnection
 
 		} catch (SocketException se) {
 			se.printStackTrace();
-			// System.exit(0);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

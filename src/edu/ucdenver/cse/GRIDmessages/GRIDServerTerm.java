@@ -2,8 +2,6 @@ package edu.ucdenver.cse.GRIDmessages;
 
 import java.io.Serializable;
 
-import edu.ucdenver.cse.GRIDclient.GRIDrequest;
-
 public class GRIDServerTerm implements GRIDrequest, Serializable {
 
 	/**

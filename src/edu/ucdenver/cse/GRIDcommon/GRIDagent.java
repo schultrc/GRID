@@ -1,7 +1,5 @@
 package edu.ucdenver.cse.GRIDcommon;
 
-
-
 public class GRIDagent {
     private String Id = "";
     private GRIDroute newRoute;         // a new route that has been planned but not being followed, yet
@@ -88,8 +86,4 @@ public class GRIDagent {
     {  
         return "GRIDagent Id=" + this.Id + " Origin: " + this.origin + " CurrentLink: " + this.currentLink + " Dest: " + this.destination;
     }
-
-
-
-
 }

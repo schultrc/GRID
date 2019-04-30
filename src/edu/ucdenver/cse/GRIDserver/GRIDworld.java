@@ -1,10 +1,8 @@
 package edu.ucdenver.cse.GRIDserver;
 
-import edu.ucdenver.cse.GRIDmap.*;
-
 import java.util.concurrent.ConcurrentHashMap;
-
 import edu.ucdenver.cse.GRIDcommon.*;
+import edu.ucdenver.cse.GRIDmap.*;
 
 // This class is a holder for the current state of the server system. 
 
@@ -35,7 +33,5 @@ public class GRIDworld {
 
 	public ConcurrentHashMap<String, GRIDagent> getMasterAgents() {
 		return masterAgents;
-	}
-	
-	
+	}	
 }

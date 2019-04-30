@@ -45,7 +45,7 @@ public class GRIDrequestListenerTCP extends Thread {
 				GRIDagent tempAgent;
 				
 				if (theGRID.getMasterAgents().containsKey(((GRIDrouteRequest) theRequest).getAgentID() )){
-					//System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " already exists!");
+
 					tempAgent = theGRID.getMasterAgents().get(((GRIDrouteRequest) theRequest).getAgentID());
 					tempAgent.setLink(((GRIDrouteRequest) theRequest).getOrigin());
 					
@@ -56,8 +56,6 @@ public class GRIDrequestListenerTCP extends Thread {
 				}
 				
 				else {
-					//System.out.println("Agent: " + (((GRIDrouteRequest) theRequest).getAgentID()) + " NOT FOUND!");
-
 					tempAgent = new GRIDagent((((GRIDrouteRequest) theRequest).getAgentID()), 
 					                          (((GRIDrouteRequest) theRequest).getOrigin()), 
 					                          (((GRIDrouteRequest) theRequest).getDestination()));
@@ -98,8 +96,6 @@ public class GRIDrequestListenerTCP extends Thread {
 					return;
 				}
 				
-				// RCS This is where we can convert what we get from the alg to a real route, if it isn't one
-				//tempRoute.setRoads(this.theGRID.getMap().getPathByRoad(tempRoute.getIntersections()));
 				logWriter.log(Level.INFO, "RequestListener - Route to be written = " + 
 				                           tempRoute.toString() +
 				                           " at GRID time: " + 
@@ -148,12 +144,6 @@ public class GRIDrequestListenerTCP extends Thread {
 			}
 			
 			else if (theRequest instanceof GRIDtimeMsg) {
-//				if ((((GRIDtimeMsg) theRequest).getTheTime() % 1000) == 0) {
-//				logWriter.log(Level.INFO, "RequestListener - GridTimeMsg received with time: " +
-//						((GRIDtimeMsg) theRequest).getTheTime());
-//				
-//				}
-				
 				this.theGRID.setTime(((GRIDtimeMsg) theRequest).getTheTime());
 				
 				// need to remove the values in the hashMap
@@ -187,9 +177,6 @@ public class GRIDrequestListenerTCP extends Thread {
 		catch (SocketException se) {
 			// se.printStackTrace();
 			System.out.println("Socket Exception");
-			// try to keep going
-			//inputStream.close();
-			//outputStream.close();
 			
 		}
 		catch (IOException e) {

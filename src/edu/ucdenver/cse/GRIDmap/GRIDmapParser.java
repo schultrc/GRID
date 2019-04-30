@@ -4,6 +4,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+// This class will read the MATSim network files and convert them into a GRIDmap
+
 public class GRIDmapParser extends DefaultHandler  {
 	
 	GRIDmap theMap = new GRIDmap();

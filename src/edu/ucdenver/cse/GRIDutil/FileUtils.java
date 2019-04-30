@@ -28,6 +28,18 @@ public class FileUtils {
 	    return showChooser(chooser);
 	}
 	
+	public static String getMapFile() {
+
+		JFileChooser chooser = new JFileChooser();
+	    chooser.setCurrentDirectory(new File("./"));
+	    
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+	            "xml map files", "xml");
+	    chooser.setFileFilter(filter);
+	    
+	    return showChooser(chooser);
+	}
+	
 	public static String showChooser(JFileChooser chooser) {
 		
 	    int returnVal = chooser.showOpenDialog(null);
@@ -40,7 +52,5 @@ public class FileUtils {
 	    else {
 	    	return "";
 	    }
-	}
-	
-	
+	}		
 }
