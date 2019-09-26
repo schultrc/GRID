@@ -13,7 +13,7 @@ import java.util.*;
 public class GRIDpathfinder {
     private GRIDmap ourMap;
     
-// This is the modified implementation of Dijkstra’s shortest path algorithm
+// This is the modified implementation of Dijkstra's shortest path algorithm
     
     private List<String> visitedIntersections;
     private ConcurrentHashMap<String, GRIDrouteSegment> routeSegments;
