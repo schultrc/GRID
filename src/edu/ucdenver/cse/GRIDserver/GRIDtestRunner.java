@@ -17,7 +17,7 @@ public class GRIDtestRunner{
     static logWriter testLW;
 
     private GRIDmapReader myReader = new GRIDmapReader();
-    // SmallNetwork2 PuebloNetwork 5x5network RyeNetwork 5x5network_12cap
+    // SmallNetwork2 PuebloNetwork 5x5network RyeNetwork 5x5network_12cap AlamosaNetwork AvocaNetwork
     private GRIDmap myMap = new GRIDmap();//myReader.readMapFile("data/5x5network_12cap.xml");
     //private GRIDmap networkMap = graphMiddleware(myMap);
 
@@ -30,7 +30,7 @@ public class GRIDtestRunner{
     { // Pueblo start to finish 34.97s
 
 
-        this.myMap = myReader.readMapFile("data/AlamosaNetwork.xml");
+        this.myMap = myReader.readMapFile("data/AvocaNetwork.xml");
         myMap.setupMapAsServer();
         this.testAgent001 = getTestAgent();
 
@@ -106,9 +106,12 @@ public class GRIDtestRunner{
     private GRIDagent getTestAgent()
     { // String Id, String newLink, String origin, String destination
         String agtID = "testAgent001",
-                currentLink = "401538273_2_r", // 40963664_0 106292026_0 1to2 17005466_7_r
-                currentIntrx = "401538273_2_r", // 1040921516 // 1to2
-                destIntrx = "17005466_7_r"; // 72823276_0 99to99 24to25 401538273_2_r
+                currentLink = "15994253_0_r", // 40963664_0 106292026_0 1to2 17005466_7_r 401538273_2_r
+                                               // avoca: 15994253_0_r
+                currentIntrx = "15994253_0_r", // 1040921516 // 1to2
+                                                // avoca 15994253_0_r
+                destIntrx = "15994270_2"; // 72823276_0 99to99 24to25 401538273_2_r 17005466_7_r
+                                                // avoca 15994270_2
         // 864162469 - 1400447055 99282649_0_r [72823276_0 problem link]
 
         GRIDagent myAgent = new GRIDagent(agtID,currentLink,currentIntrx,destIntrx, false, false);
